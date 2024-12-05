@@ -24,6 +24,9 @@ This method requires extensive validation of the settings. MixDeR provides the o
 
 _Note: MixDeR (and EFM) assume the mixture samples are composed of two contributors. MixDeR is able to identify and alert the user to samples that may be potentially either single source or consist of a mixture with a large mixture ratio (i.e. > 1:100 ratio between contributors). In these scenarios, the user is warned to be cautious with the minor contributor inferred genotyping results._
 
+The preprint of the manuscript on MixDeR is available [here](https://www.preprints.org/manuscript/202407.1705/v1). 
+ 
+
 ## Installation
 
 For any installation, EuroForMix must be installed. Please follow the instructions from the [EuroForMix GitHub page](https://github.com/oyvble/euroformix/).  

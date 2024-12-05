@@ -25,6 +25,9 @@ with a large mixture ratio (i.e. \> 1:100 ratio between contributors).
 In these scenarios, the user is warned to be cautious with the minor
 contributor inferred genotyping results.*
 
+The preprint of the manuscript on MixDeR is available
+[here](https://www.preprints.org/manuscript/202407.1705/v1).
+
 ## Installation
 
 For any installation, EuroForMix must be installed. Please follow the
