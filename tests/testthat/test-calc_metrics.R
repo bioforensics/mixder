@@ -1,0 +1,13 @@
+test_that("Calculating validation metrics", {
+  testdf = data.frame(Locus = c("rs28635343", "rs16824588", "rs424079", "rs2055204"), A1 = c("A", "T", "T", "T"), A2 = c("A", "A", "A", "C"), A1_Prob = c(1, 0.99, 0.9, 0.6), A2_Prob = c(1, 0.9, 0.99, 0.5))
+  ref = data.frame(Marker = c("rs28635343", "rs16824588", "rs424079", "rs2055204"), A1_order = c("A", "T", "T", "T"), A2_order=c("A", "C", "A", "T"))
+  expect_equal(calc_metrics(testdf, 0.9, 0.5, ref, 2)$SNPs_Tested, 3)
+  expect_equal(calc_metrics(testdf, 0.9, 0.5, ref, 2)$N_Geno_Correct, 2)
+  expect_equal(calc_metrics(testdf, 0.95, 0.5, ref, 2)$SNPs_Tested, 2)
+  expect_equal(calc_metrics(testdf, 0.95, 0.5, ref, 2)$N_Geno_Correct, 1)
+  expect_equal(calc_metrics(testdf, 0.5, 0.7, ref, 2)$SNPs_Tested, 4)
+  expect_equal(calc_metrics(testdf, 0.5, 0.7, ref, 2)$N_Geno_Correct, 3)
+  expect_equal(calc_metrics(testdf, 0.5, 0.3, ref, 2)$N_Geno_Correct, 2)
+  expect_equal(calc_metrics(testdf, 0.95, 0.9, ref, 2)$Heterozygosity, 0.5)
+  expect_equal(calc_metrics(testdf, 0.95, 0.91, ref, 2)$Heterozygosity, 0.0)
+})

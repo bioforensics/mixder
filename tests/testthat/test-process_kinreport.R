@@ -1,0 +1,11 @@
+test_that("Processing Kintelligence Sample Reports to calculate AT and create table", {
+  singlesample = process_kinreport("Sample01a", "", test_path("testdata"), 0.015, 10)
+  expect_equal(singlesample[singlesample["Marker"]=="RS1000022",][[2]], 31)
+  expect_equal(singlesample[singlesample["Marker"]=="RS1000137",][[2]], 10)
+  expect_equal(nrow(singlesample), 10039)
+  repsample = process_kinreport("Sample01a", "Sample01b", test_path("testdata"), 0.015, 10)
+  expect_equal(repsample[repsample["Marker"]=="RS10002268",][[2]], 29)
+  expect_equal(repsample[repsample["Marker"]=="RS1000022",][[2]], 31)
+  expect_equal(repsample[repsample["Marker"]=="RS1000137",][[2]], 10)
+  expect_equal(nrow(repsample), 10039)
+})

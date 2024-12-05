@@ -1,0 +1,11 @@
+test_that("Extracting Reference IDs", {
+  outpath = tempdir()
+  unlink(glue("{outpath}/*"))
+  ref_path = test_path("testdata", "Ref01_Sample_Report_2023_10_31_12_51_27.xlsx")
+  file.copy(c(ref_path), outpath)
+  expect_equal(get_ids(outpath), c("Ref01"))
+  unlink(glue("{outpath}/*"))
+  ref_path = test_path("testdata", "EFM_references.csv")
+  file.copy(c(ref_path), outpath)
+  expect_equal(get_ids(outpath), c("Ref1", "Ref2"))
+})

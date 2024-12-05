@@ -1,0 +1,318 @@
+# -------------------------------------------------------------------------------------------------
+# Copyright (c) 2024, DHS.
+#
+# This file is part of MixDeR and is licensed under the BSD license: see LICENSE.
+#
+# This software was prepared for the Department of Homeland Security (DHS) by the Battelle National
+# Biodefense Institute, LLC (BNBI) as part of contract HSHQDC-15-C-00064 to manage and operate the
+# National Biodefense Analysis and Countermeasures Center (NBACC), a Federally Funded Research and
+# Development Center.
+# -------------------------------------------------------------------------------------------------
+#' @title Run MixDeR
+#'
+#' @export
+#'
+#' @import prompter
+#' @import shiny
+#' @import shinyFiles
+#'
+mixder = function() {
+  ui = fluidPage(
+    # App title
+    titlePanel("Running Mixture Deconvolution using EFM"),
+    sidebarPanel(width=6,
+      use_prompt(),
+      #checkboxInput("run_mixdeconv", tags$span("Run EFM Mixture Deconvolution", bsButton("mixdecon", label = "", icon = icon("question"), style = "default", size = "extra-small"))),
+      checkboxInput("run_mixdeconv", tags$span("Run EFM Mixture Deconvolution", tags$span(
+        icon(
+          name = "question-circle",
+        )
+      ) |>
+        add_prompt(message = "Check box to run mixture deconvolution using EuroForMix. Not required if run previously using MixDeR.", position = "right")
+      ), value = TRUE),
+      checkboxInput("uncond", tags$span("Unconditioned Analysis", tags$span(icon(
+        name = "question-circle",
+      )
+      ) |>
+        add_prompt(message = "An unconditioned analysis assumes no known contributor to the mixture and therefore does not require known genotypes to be provided.", position = "right")
+      ), value = FALSE),
+      checkboxInput("cond", tags$span("Conditioned Analysis", tags$span(icon(
+        name = "question-circle",
+      )
+      ) |>
+        add_prompt(message = "A conditioned analysis assumes a single known contributor to the mixture. User will select which reference sample to condition on after providing the Reference Sample Report Folder.", position = "right")
+      ), value = FALSE),
+      selectInput("method", tags$span("Method to run after mixture deconvolution?", tags$span(icon(
+        name = "question-circle",
+      )
+      ) |>
+        add_prompt(message = "Optional- if selecting Calculate Metrics, must include reference genotypes.", position = "right")
+      ), c("", "Calculate Metrics", "Create GEDmatch PRO Report")),
+      selectInput("uploadfreq", tags$span("Select Allele Frequency Data", tags$span(icon(
+        name = "question-circle",
+      )
+      ) |>
+        add_prompt(message = "Select allele frequency data. Options are general population datasets (1000G Phase 3 or gnomAD v4) or upload your own file. See README for more details.", position = "right")
+      ), choices = c("General - 1000G", "General - gnomAD", "Upload Custom")),
+      shinyFilesButton("sample_GetFile", "Select a Sample Manifest File", "Select a sample manifest", multiple = FALSE,
+                       buttonType = "default", class = NULL), tags$span(icon(
+                         name = "question-circle",
+                       )
+                       ) |>
+                         add_prompt(message = "A tab-delimited file containing the list of samples to run MixDeR. <br> It must contain two columns (SampleID and ReplicateID). Each row contains the ID of a single sample or the IDs of both the sample and replicate.", position = "right"),
+      textOutput("sample_file"),
+      shinyDirButton("kin_prefix", "Select Folder containing Mixture Sample Reports", "Please select a folder containing Mixture Sample Reports",
+                     buttonType = "default", class = NULL), tags$span(icon(
+                       name = "question-circle",
+                      )
+                      ) |>
+                        add_prompt(message = "Select a folder containing the Mixture Sample Reports.", position = "right"),
+      textOutput("kin_inpath"),
+      conditionalPanel(condition = "input.uploadfreq == 'Upload Custom'", uiOutput("freq_GetFile"), uiOutput("freq_text")),
+      conditionalPanel(condition = "input.method == 'Calculate Metrics' | input.cond == 1", uiOutput("ref_GetFile"), uiOutput("ref_text")),
+      conditionalPanel(condition = "input.cond == 1", uiOutput("ref_selector")),
+      conditionalPanel(condition = "input.method == 'Calculate Metrics'", uiOutput("major_selector"), uiOutput("minor_selector"), uiOutput("metrics_A1min"), uiOutput("metrics_A1max"), uiOutput("metrics_A2min"), uiOutput("metrics_A2max")),
+      conditionalPanel(condition = "input.method == 'Create GEDmatch PRO Report'", uiOutput("report_A1"), uiOutput("report_A2")),
+      conditionalPanel(condition = "input.run_mixdeconv == 1", uiOutput("sets"), uiOutput("staticAT"), uiOutput("dynamicAT")),
+      textInput("output", tags$span("Output Folder Name", tags$span(icon(
+        name = "question-circle",
+      )
+      ) |>
+        add_prompt(message = "This folder will be created in the specified SNP files folder to store generated output.
+                   If not running EFM, it is required to specify the name of the folder containing previously generated EFM output.", position = "right")
+      ), "output"),
+      numericInput("minimum_snps", tags$span("Minimum Number of SNPs",  tags$span(
+        icon(
+          name = "question-circle",
+        )
+      ) |>
+        add_prompt(message = "The minimum number of SNPs to retain either for calculating metrics or for creating the GEDmatch PRO report.", position = "right")
+      ), value=6000),
+    shinyjs::useShinyjs(),
+    actionButton("Submit", "Run MixDeR")
+    ),
+    mainPanel(width=15,
+    textOutput("text")
+  ),
+)
+
+# Define server
+server = function(input, output, session) {
+  output$freq_GetFile = renderUI({
+                fluidRow(column(10,shinyFilesButton("freq_GetFile", "Select an Allele Frequency file" ,
+                     title = "Please select an allele frequency file:", multiple = FALSE,
+                     buttonType = "default", class = NULL),
+                             tags$span(
+                       icon(
+                         name = "question-circle",
+                       )
+                     ) |>
+    add_prompt(message = "Allele frequency file.", position = "right")
+                ))
+    })
+  output$freq_text = renderUI({
+    textOutput("freq_file")
+  })
+  output$ref_GetFile = renderUI({
+        fluidRow(
+          column(10,
+                 shinyDirButton("ref_GetFile", "Select Folder containing References" ,
+                     title = "Please select a folder containing reference genotypes:", multiple = FALSE,
+                     buttonType = "default", class = NULL),
+                 tags$span(
+                   icon(
+                     name = "question-circle",
+                   )
+                 ) |>
+                   add_prompt(message = "A folder containing the reference genotypes in either the UAS Sample Report format or in a CSV file (see README for specific formatting). If both are present, MixDeR will use the CSV file.", position = "right")
+          ))
+  })
+  output$ref_text = renderUI({
+    textOutput("refs_file")
+  })
+  output$ref_selector = renderUI({
+    if (isTruthy(refs())) {
+      sampleids = get_ids(refs())
+      selectInput("ref_selector",
+                label = tags$span("Select Reference(s) to Condition on:", tags$span(
+                  icon(
+                    name = "question-circle",
+                  )
+                ) |>
+                  add_prompt(message = "Select one or more references to condition on. If more than one selected, the mixture(s) will be conditioned on each reference separately.", position = "right")
+                ),
+                choices = sampleids, multiple = TRUE)
+    }
+  })
+  output$major_selector = renderUI({
+    if (isTruthy(refs())) {
+      sampleids = get_ids(refs())
+      selectInput("major_selector",
+                label = tags$span("Select major contributor:", tags$span(
+                  icon(
+                    name = "question-circle",
+                  )
+                ) |>
+                  add_prompt(message = "When calculating metrics for an unconditioned analysis, the major contributor sample ID is required for calculating the genotyping accuracy. Please select the correct sample from the Dropdown menu.", position = "right")
+                ),
+                choices = sampleids)
+    }
+  })
+  output$minor_selector = renderUI({
+    if (isTruthy(refs())) {
+      sampleids = get_ids(refs())
+      selectInput("minor_selector",
+                label = tags$span("Select minor contributor:",tags$span(
+                  icon(
+                    name = "question-circle",
+                  )
+                ) |>
+                  add_prompt(message = "When calculating metrics for an unconditioned analysis, the minor contributor sample ID is required for calculating the genotyping accuracy. Please select the correct sample from the Dropdown menu.", position = "right")
+                ),
+                choices = sampleids)
+    }
+  })
+  output$sets = renderUI({
+    numericInput("sets", tags$span("Number of SNP Bins", tags$span(
+      icon(
+        name = "question-circle",
+      )
+    ) |>
+      add_prompt(message = "The number of SNP bins a mixture SNP profile is divided into. This tells MixDeR how many SNP files to process for each mixture. The default is 10.", position = "right")
+    ), value=10)
+  })
+  output$staticAT = renderUI({
+    numericInput("staticAT", tags$span("Static Analytical Threshold", tags$span(
+      icon(
+        name = "question-circle",
+      )
+    ) |>
+      add_prompt(message = "The static analytical threshold indicates the minimum number of reads required to include a called allele it in the deconvolution at a particular SNP. The default is 10 reads.", position = "right")
+    ), value=10)
+  })
+  output$dynamicAT = renderUI({
+    numericInput("dynamicAT", tags$span("Dynamic Analytical Threshold", tags$span(
+      icon(
+        name = "question-circle",
+      )
+    ) |>
+      add_prompt(message = "The dynamic analytical thresholds indicates the percentage of number of total reads to set the minimum number of reads required to include a called allele it in the deconvolution at a particular SNP. For example, if a SNP has 100 total reads, a 10% dynamic AT would require an allele to have at least 10 reads to be included.", position = "right")
+    ), value=0.015)
+  })
+  output$report_A1 = renderUI({
+    numericInput("A1_threshold", tags$span("Allele 1 Probability Threshold to create GEDmatch PRO Report", tags$span(
+      icon(
+        name = "question-circle",
+      )
+    ) |>
+      add_prompt(message = "This sets the allele 1 probability threshold for creating the GEDmatch PRO report. Any SNP with an allele 1 probability below the threshold will be removed from the report.", position = "right")
+    ), value=0.99, min = 0, max = 1)
+  })
+  output$report_A2 = renderUI({
+    numericInput("A2_threshold", tags$span("Allele 2 Probability Threshold to create GEDmatch PRO Report", tags$span(
+      icon(
+        name = "question-circle",
+      )
+    ) |>
+      add_prompt(message = "This sets the allele 2 probability threshold for creating the GEDmatch PRO report. Any SNP with an allele 2 probability below the threshold will be removed from the report.", position = "right")
+    ), value=0.60, min = 0, max = 1)
+  })
+  output$metrics_A1min = renderUI({
+    numericInput("A1_threshmin_metrics", tags$span("Minimum Allele 1 Probability Threshold", tags$span(
+      icon(
+        name = "question-circle",
+      )
+    ) |>
+      add_prompt(message = "When calculating metrics, a range of allele 1 probability thresholds can be used to calculate the metrics at each combination of allele 1 and allele 2 probability thresholds. This sets the minimum allele 1 probability threshold. The threshold increases in increments of 0.01.", position = "right")
+    ), value=0, min = 0, max = 1)
+  })
+  output$metrics_A1max = renderUI({
+    numericInput("A1_threshmax_metrics", tags$span("Maximum Allele 1 Probability Threshold", tags$span(
+      icon(
+        name = "question-circle",
+      )
+    ) |>
+      add_prompt(message = "When calculating metrics, a range of allele 1 probability thresholds can be used to calculate the metrics at each combination of allele 1 and allele 2 probability thresholds. This sets the maximum allele 1 probability threshold. The threshold increases in increments of 0.01.", position = "right")
+    ), value=1, min = 0, max = 1)
+  })
+  output$metrics_A2min = renderUI({
+    numericInput("A2_threshmin_metrics", tags$span("Minimum Allele 2 Probability Threshold",  tags$span(
+      icon(
+        name = "question-circle",
+      )
+    ) |>
+      add_prompt(message = "When calculating metrics, a range of allele 2 probability thresholds can be used to calculate the metrics at each combination of allele 1 and allele 2 probability thresholds. This sets the minimum allele 2 probability threshold. The threshold increases in increments of 0.01.", position = "right")
+    ), value=0, min = 0, max = 1)
+  })
+  output$metrics_A2max = renderUI({
+    numericInput("A2_threshmax_metrics", tags$span("Maximum Allele 2 Probability Threshold", tags$span(
+      icon(
+        name = "question-circle",
+      )
+    ) |>
+      add_prompt(message = "When calculating metrics, a range of allele 2 probability thresholds can be used to calculate the metrics at each combination of allele 1 and allele 2 probability thresholds. This sets the maximum allele 2 probability threshold. The threshold increases in increments of 0.01.", position = "right")
+    ), value=1, min = 0, max = 1)
+  })
+  volumes = getVolumes()
+  ## sample file
+  shinyFileChoose(input, "sample_GetFile", roots=volumes, session=session)
+  samplefile = reactive({parseFilePaths(volumes, input$sample_GetFile)})
+  observe({
+    if(!is.null(samplefile)){
+      output$sample_file = renderText({if(input$Submit==0){as.character(samplefile()$datapath)} else {return()}})
+    }
+  })
+
+  ## freq file
+  shinyFileChoose(input, "freq_GetFile", roots=volumes, session=session)
+  freq = reactive({parseFilePaths(volumes, input$freq_GetFile)})
+  if (!is.null(freq)) {
+    observe({
+      output$freq_file = renderText({if(input$Submit==0){as.character(freq()$datapath)} else {return()}})
+    })
+  }
+
+  ## refs
+  shinyDirChoose(input, "ref_GetFile", roots=volumes(), session=session)
+  refs = reactive({parseDirPath(volumes, input$ref_GetFile)})
+  if (!is.null(refs)) {
+    observe({
+      output$refs_file = renderText({if(input$Submit==0){as.character(refs())} else {return()}})
+    })
+  }
+
+  shinyDirChoose(input, "kin_prefix", roots=volumes(), session=session)
+  kin_inpath = reactive({parseDirPath(volumes, input$kin_prefix)})
+  observe({
+    if(!is.null(kin_inpath)){
+      output$kin_inpath = renderText({if(input$Submit==0){as.character(kin_inpath())} else {return()}})
+    }
+  })
+
+
+## Input the sample manifest and run the workflow on each line (sample)
+observeEvent(input$Submit, {
+  sample_list = read.table(samplefile()$datapath, sep="\t", header=T)
+  date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
+  create_config(date, ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath), refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector)
+  withProgress(message = "Running Samples", value = 0, {
+    n = nrow(sample_list)
+    for (row in 1:n) {
+      id = sample_list[row, 1]
+      replicate_id = ifelse(is.na(sample_list[row, 2]), "", sample_list[row, 2])
+      incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
+        withCallingHandlers({
+          shinyjs::html(id = "text", html = "")
+          run_workflow(date, id, replicate_id, ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath), refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector)
+        },
+        message = function(m) {
+          shinyjs::html(id = "text", html = m$message, add = TRUE)
+        })
+    }
+  })
+})
+}
+
+# Run the application
+shinyApp(ui = ui, server = server)
+}

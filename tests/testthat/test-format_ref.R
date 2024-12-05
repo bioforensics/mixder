@@ -1,0 +1,10 @@
+test_that("Formatting Reference Genotypes", {
+  ref_path = test_path("testdata", "EFM_references.csv")
+  refData = euroformix::sample_tableToList(euroformix::tableReader(ref_path))
+  refs = format_ref(refData, "Ref1", test_path("testdata"))
+  expect_equal(nrow(subset(refs, A2_order>A1_order)), 0)
+  expect_equal(refs[1,1], "Ref1")
+  refs_2 = format_ref(refData, 2, test_path("testdata"))
+  expect_equal(nrow(subset(refs_2, A2_order>A1_order)), 0)
+  expect_equal(refs_2[1,1], "Ref2")
+})

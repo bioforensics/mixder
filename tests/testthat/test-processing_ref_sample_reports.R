@@ -1,0 +1,10 @@
+test_that("Processing Reference Sample Reports", {
+  outpath = tempdir()
+  unlink(glue("{outpath}/*"))
+  kin_a = test_path("testdata", "Ref01_Sample_Report_2023_10_31_12_51_27.xlsx")
+  file.copy(c(kin_a), outpath)
+  output = processing_ref_sample_reports(outpath)
+  expect_equal(nrow(output), 9963)
+  expect_equal(subset(output, Marker=="rs1294331")$Allele1, "T")
+  expect_equal(subset(output, Marker=="rs1294331")$Allele2, "T")
+})

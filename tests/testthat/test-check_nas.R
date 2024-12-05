@@ -1,0 +1,10 @@
+test_that("Checking columns for all NA values and removing", {
+  test_noNAs = data.frame(Allele.1 = c("A", "C", "A", "G"), Allele.2 = c("G", "A", "T", "C"), Allele.3 = c("T", "G", "C", "A"))
+  test_3NA = data.frame(Allele.1 = c("A", "C", "A", "G"), Allele.2 = c("G", "A", "T", "C"), Allele.3 = c(NA, NA, NA, NA))
+  test_4NA = data.frame(Allele.1 = c("A", "C", "A", "G"), Allele.2 = c("G", "A", "T", "C"), Allele.3 = c("T", "G", "C", "A"), Allele.4 = c(NA, NA, NA, NA))
+  test_someNA = data.frame(Allele.1 = c("A", "C", "A", "G"), Allele.2 = c("G", "A", "T", "C"), Allele.3 = c("T", NA, "C", NA))
+  expect_equal(check_nas(test_noNAs), test_noNAs)
+  expect_equal(check_nas(test_3NA), data.frame(Allele.1 = c("A", "C", "A", "G"), Allele.2 = c("G", "A", "T", "C")))
+  expect_equal(check_nas(test_4NA), test_noNAs)
+  expect_equal(check_nas(test_someNA), data.frame(Allele.1 = c("A", "C", "A", "G"), Allele.2 = c("G", "A", "T", "C"), Allele.3 = c("T", 0, "C", 0)))
+})

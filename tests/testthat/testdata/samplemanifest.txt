@@ -1,0 +1,4 @@
+SampleID	ReplicateID
+Sample01a	
+Sample01b	
+Sample01a	Sample01b

@@ -1,0 +1,17 @@
+test_that("Running EFM", {
+  outpath = tempdir()
+  input = test_path("testdata", "Sample01a_set1.tsv")
+  inputb = test_path("testdata", "Sample01b_rep_set1.tsv")
+  alla = test_path("testdata", "Sample01a_snpsetscombined_evidence.tsv")
+  allb = test_path("testdata", "Sample01b_snpsetscombined_evidence.tsv")
+  kin_a = test_path("testdata", "Sample01a_Sample_Report_2021_11_01_16_56_38.xlsx")
+  kin_b = test_path("testdata", "Sample01b_Sample_Report_2021_12_09_14_51_19.xlsx")
+  file.copy(c(input, inputb, alla, allb, kin_a, kin_b), outpath)
+  popFreq = mixder::popFreq_1000G
+  refData = euroformix::sample_tableToList(euroformix::tableReader(test_path("testdata", "EFM_references.csv")))
+  attable_a = process_kinreport("Sample01a", "", outpath, 0.015, 10)
+  attable_b = process_kinreport("Sample01a", "Sample01b", outpath, 0.015, 10)
+  expect_message(run_indiv_efm_set(1, "", outpath, popFreq, refData, "Sample01a", "", glue("{outpath}/output"), attable_a, cond = NULL, uncond=TRUE), "Running unconditioned analysis for set 1, attempt #1")
+  expect_message(run_indiv_efm_set(1, "", outpath, popFreq, refData, "Sample01a", "", glue("{outpath}/output"), attable_a, cond = c("Ref1"), uncond=TRUE), "Running mixture deconvolution conditioned on Ref1")
+  expect_message(run_indiv_efm_set(1, "", outpath, popFreq, refData, "Sample01a", "", glue("{outpath}/output"), attable_a, cond = c("Ref1", "Ref2"), uncond=TRUE), "Running mixture deconvolution conditioned on Ref2")
+})
