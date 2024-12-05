@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# MixDeR
+# MixDeR - Current Version: 0.7.1
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -27,18 +27,28 @@ contributor inferred genotyping results.*
 
 ## Installation
 
-If installing from source, first install the following R packages:  
-`install.packages(c( "dplyr", "glue", "prompter","readxl", "rlang", shiny", "shinyFiles", "shinyjs", "tibble", "tidyr"))`
+For any installation, EuroForMix must be installed. Please follow the
+instructions from the [EuroForMix GitHub
+page](https://github.com/oyvble/euroformix/).
 
-EuroForMix also must be installed. Please follow the instructions from
-the [EuroForMix GitHub page](https://github.com/oyvble/euroformix/).
+If installing from GitHub:  
+The R package `devtools` is required to install from GitHub:
 
-To install MixDeR from source (i.e. the `mixder_0.1.0.tar.gz` file):  
-`install.packages("/path/to/mixder_0.1.0.tar.gz", repos = NULL, type="source")`
+    install.packages("devtools")
+    devtools::install_github("bioforensics/mixder")
+
+If installing from source, first install the following R packages:
+
+    install.packages(c( "dplyr", "glue", "prompter","readxl", "rlang", shiny", "shinyFiles", "shinyjs", "tibble", "tidyr"))
+
+To install MixDeR from source (i.e. the `mixder_0.1.0.tar.gz` file):
+
+    install.packages("/path/to/mixder_0.1.0.tar.gz", repos = NULL, type="source")
 
 For example, if the `mixder_0.1.0.tar.gz` file is located in your
-Documents folder:  
-`install.packages("~/Documents/mixder_0.1.0.tar.gz", repos = NULL, type="source")`
+Documents folder:
+
+    install.packages("~/Documents/mixder_0.1.0.tar.gz", repos = NULL, type="source")
 
 ## Usage
 
