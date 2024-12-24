@@ -13,7 +13,8 @@ process_efm_files(
   A1max,
   A2min,
   A2max,
-  metrics = TRUE
+  metrics = TRUE,
+  filter_missing = FALSE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ process_efm_files(
 \item{A2max}{Maximum value for allele 2 probability thresholds for calculating metrics}
 
 \item{metrics}{TRUE/FALSE to calculate validation metrics}
+
+\item{filter_missing}{TRUE/FALSE to filter SNPs with missing allele 2 values}
 }
 \value{
 Data frame containing either calculated metrics (if specified) or

@@ -16,14 +16,19 @@
 #' @param minimum_snps Minimum number of SNPs required
 #' @param A1_threshold Allele 1 probability threshold
 #' @param A2_threshold Allele 2 probability threshold
+#' @param minor_threshold If apply allele 1 probability threshold to minor contributor
+#' @param filter_missing TRUE/FALSE to filter SNPs with missing allele 2 values
 #'
 #' @return Data frame with filtered allele calls
 #' @export
-filter_alleles = function(all_files, contrib_status, minimum_snps, A1_threshold, A2_threshold) {
+filter_alleles = function(all_files, contrib_status, minimum_snps, A1_threshold, A2_threshold, minor_threshold, filter_missing) {
   . = NULL
+  if (filter_missing) {
+    all_files = subset(all_files, !(all_files$A2 == 99 & all_files$A2_Prob<A2_threshold))
+  }
   filt_df = all_files %>%
     filter(.data$A1_Prob>=A1_threshold)
-  if (nrow(filt_df) < minimum_snps | contrib_status == "minor") {
+  if (nrow(filt_df) < minimum_snps | (contrib_status=="minor" & isFALSE(minor_threshold))) {
     message("Does not contain minimum number of SNPs above established thresholds or is the minor component. Will use SNP minimum.<br/>")
     filt_df = all_files %>%
       arrange(desc(.data$A1_Prob)) %>%

@@ -4,10 +4,12 @@
 \alias{check_allele_probabilities}
 \title{Checks EFM predicted genotypes for errors}
 \usage{
-check_allele_probabilities(data)
+check_allele_probabilities(data, i)
 }
 \arguments{
 \item{data}{EFM predicted genotypes}
+
+\item{i}{Set number}
 }
 \value{
 TRUE/FALSE

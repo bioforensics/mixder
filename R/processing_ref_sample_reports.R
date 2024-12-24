@@ -19,7 +19,7 @@ processing_ref_sample_reports = function(inpath){
     filepath = glue("{inpath}/{file}")
     uas_setting = suppressMessages(read_excel(filepath, sheet = "Settings"))
     sampleid = suppressMessages(read_excel(filepath, sheet = "Sample History"))[2,2][[1]]
-    if ("2.5" %in% uas_setting[11,2] | "2.6" %in% uas_setting[11,2]) {
+    if (grepl("2.5", uas_setting[11,2]) | grepl("2.6", uas_setting[11,2])) {
       final_snps = load_kin_uas25(filepath)
     } else {
       compiled_snps = load_kin_older(filepath)

@@ -35,12 +35,12 @@ create_replicatedf = function(inpath, id, replicate_id, nsets) {
       message(i)
       evidfnrep = glue("{inpath}/{replicate_id}_set{i}.tsv")
       evidfn = glue("{inpath}/{id}_set{i}.tsv")
-      dataseta = euroformix::tableReader(evidfn) %>%
+      dataseta = read_in_table(evidfn) %>%
         check_nas(.)
       if (ncol(dataseta) != ncol(df_allsets)) {
         dataseta = check_3_or_4_col(df_allsets, dataseta)
       }
-      repdata = euroformix::tableReader(evidfnrep) %>%
+      repdata = read_in_table(evidfnrep) %>%
         check_nas(.)
       if (ncol(repdata) != ncol(rep_allsets)) {
         repdata = check_3_or_4_col(rep_allsets, repdata)

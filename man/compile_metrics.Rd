@@ -4,7 +4,16 @@
 \alias{compile_metrics}
 \title{Compiling metrics for the range of allele 1 and allele 2 probablity thresholds}
 \usage{
-compile_metrics(x, ref, minimum_snps, A1min, A1max, A2min, A2max)
+compile_metrics(
+  x,
+  ref,
+  minimum_snps,
+  A1min,
+  A1max,
+  A2min,
+  A2max,
+  filter_missing
+)
 }
 \arguments{
 \item{x}{Data frame of allele probabilities and genotype calls}
@@ -20,6 +29,8 @@ compile_metrics(x, ref, minimum_snps, A1min, A1max, A2min, A2max)
 \item{A2min}{Minimum value of allele 2 probability threshold}
 
 \item{A2max}{Maximum value of allele 2 probability threshold}
+
+\item{filter_missing}{TRUE/FALSE to filter SNPs with missing allele 2 values}
 }
 \value{
 List of data frames compiled using the min/max values of the allele probability thresholds and the minimum number of SNPs

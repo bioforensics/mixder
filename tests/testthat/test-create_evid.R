@@ -7,4 +7,7 @@ test_that("Creating evidence data frame for EFM", {
   expect_equal(length(evidrep[["Sample01b_set1"]]), 1005)
   evidnorep = create_evid(sampleid, "", test_path("testdata"))
   expect_equal(length(evidnorep), 1)
+  test_empty = "Empty_snps_set1"
+  empty_evid = create_evid(test_empty, "", test_path("testdata"))
+  expect_equal(length(evidrep[[test_empty]]), 0)
 })

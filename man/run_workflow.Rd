@@ -8,7 +8,11 @@ run_workflow(
   date,
   id,
   replicate_id,
-  freq,
+  twofreqs,
+  freq_both,
+  freq_major,
+  freq_minor,
+  refData,
   refs,
   sample_path,
   output,
@@ -28,15 +32,28 @@ run_workflow(
   A2min,
   A2max,
   major,
-  minor
+  minor,
+  minor_threshold,
+  keep_bins,
+  filter_missing
 )
 }
 \arguments{
+\item{date}{date and time of run}
+
 \item{id}{Sample ID}
 
 \item{replicate_id}{Sample ID of replicate, if specified}
 
-\item{freq}{Path of allele frequency data}
+\item{twofreqs}{TRUE if using separate AF data for major and minor contributors}
+
+\item{freq_both}{Path (or name) of allele frequency data if using same data for both}
+
+\item{freq_major}{Path (or name) of allele frequency data for major contributor}
+
+\item{freq_minor}{Path (or name) of allele frequency data for minor contributor}
+
+\item{refData}{Reference data (if available)}
 
 \item{refs}{Path of reference genotype(s) file}
 
@@ -77,6 +94,12 @@ run_workflow(
 \item{major}{Major contributor ID}
 
 \item{minor}{Minor contributor ID}
+
+\item{minor_threshold}{If apply the allele 1 probability threshold to the minor contributor}
+
+\item{keep_bins}{To use existing SNP bins or create new bins (and files)}
+
+\item{filter_missing}{TRUE/FALSE whether to filter SNPs with either allele missing}
 }
 \description{
 Runs workflow

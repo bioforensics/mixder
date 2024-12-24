@@ -14,13 +14,14 @@
 #'   allele probabilities than the C2 predicted genotypes.
 #'
 #' @param data EFM predicted genotypes
+#' @param i Set number
 #'
 #' @return TRUE/FALSE
 #' @export
-check_allele_probabilities = function(data) {
+check_allele_probabilities = function(data, i) {
   correct = FALSE
   if (check_allele_calls(data)) {
-    message("alleles all the same!<br/>")
+    message(glue("Set {i}: alleles all the same!"))
     correct = FALSE
   } else {
     for (i in 1:nrow(data)) {

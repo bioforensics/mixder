@@ -5,6 +5,7 @@
 \title{Running mixture deconvolution in EuroForMix}
 \usage{
 run_efm(
+  date,
   popFreq,
   refData,
   id,
@@ -14,10 +15,13 @@ run_efm(
   attable,
   nsets,
   cond = NULL,
-  uncond = TRUE
+  uncond = TRUE,
+  keep_bins = TRUE
 )
 }
 \arguments{
+\item{date}{Date and time of MixDeR run}
+
 \item{popFreq}{Allele frequency file}
 
 \item{refData}{Reference genotypes file}
@@ -37,6 +41,8 @@ run_efm(
 \item{cond}{Sample IDs to condition on}
 
 \item{uncond}{TRUE/FALSE if performing unconditioned analysis}
+
+\item{keep_bins}{To use existing SNP bins or create new bins (and files)}
 }
 \description{
 Running mixture deconvolution in EuroForMix

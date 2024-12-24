@@ -10,7 +10,9 @@ filter_alleles(
   contrib_status,
   minimum_snps,
   A1_threshold,
-  A2_threshold
+  A2_threshold,
+  minor_threshold,
+  filter_missing
 )
 }
 \arguments{
@@ -23,6 +25,10 @@ filter_alleles(
 \item{A1_threshold}{Allele 1 probability threshold}
 
 \item{A2_threshold}{Allele 2 probability threshold}
+
+\item{minor_threshold}{If apply allele 1 probability threshold to minor contributor}
+
+\item{filter_missing}{TRUE/FALSE to filter SNPs with missing allele 2 values}
 }
 \value{
 Data frame with filtered allele calls

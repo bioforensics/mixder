@@ -15,54 +15,38 @@
 #' @param A2_thresh Allele 2 probability threshold
 #' @param ref Data frame of reference genotypes
 #' @param minimum_snps Minimum number of SNPs required
+#' @param filter_missing TRUE/FALSE to filter SNPs with missing allele 2 values
 #'
 #' @importFrom rlang .data
 #'
 #' @return return row of metrics for specified thresholds
 #' @export
 #'
-calc_metrics = function(x, A1_thresh, A2_thresh, ref, minimum_snps) {
+calc_metrics = function(x, A1_thresh, A2_thresh, ref, minimum_snps, filter_missing) {
   . = NULL
-  n_snps_total = 0
-  n_snps_tested = 0
-  n_correct = 0
-  n_noref = 0
-  n_het = 0
+  if (filter_missing) {
+    x = subset(x, !(x$A2 == 99 & x$A2_Prob<A2_thresh))
+  }
   if (A1_thresh == "Min") {
     x_sort = x %>%
       filter(.data$A1 != 99) %>%
       arrange(desc(.data$A1_Prob)) %>%
       .[c(1:minimum_snps),]
   } else {
-    x_sort = x
+    x_sort = x %>%
+      filter(.data$A1_Prob >= A1_thresh)
   }
-  for (row in 1:nrow(x_sort)) {
-    snp = x_sort[row, "Locus"]
-    if (A1_thresh == "Min" | (A1_thresh != "Min" & x_sort[row, "A1_Prob"] >= A1_thresh)) { ## check if Allele 1 is above threshold, if not drop from dataset
-      A1 = x_sort[row, "A1"]
-    } else {
-      next
-    }
-    if (x_sort[row, "A2"] == 99 | x_sort[row, "A2_Prob"] < (A2_thresh)) { ## check if A2 is missing or below threshold
-      A2 = x_sort[row, "A1"]
-    } else {
-      A2 = x_sort[row, "A2"]
-    }
-    pred_geno = ifelse(A1 > A2, paste0(A1,A2), paste0(A2,A1))
-    if (A1 != A2) {
-      n_het = n_het + 1
-    }
-    n_snps_total = n_snps_total + 1
-    if (snp %in% ref$Marker) { ## check if SNP is in reference
-      true_geno = paste0(ref$A1_order[ref$Marker==snp], ref$A2_order[ref$Marker==snp])
-      n_snps_tested = n_snps_tested + 1
-      if (pred_geno == true_geno) {
-        n_correct = n_correct + 1
-      }
-    } else {
-      n_noref = n_noref + 1
-    }
-  }
+  x_sort$A2_real = ifelse(x_sort$A2_Prob<A2_thresh | x_sort$A2 == 99, x_sort$A1, x_sort$A2)
+  x_sort$geno = ifelse(x_sort$A1>x_sort$A2_real, paste0(x_sort$A1, x_sort$A2_real), paste0(x_sort$A2_real, x_sort$A1))
+  x_sort$het = ifelse(x_sort$A1==x_sort$A2_real, 0, 1)
+  ref$ref_geno = paste0(ref$A1_order,ref$A2_order)
+  merged_ref = merge(x_sort, ref, by.x="Locus", by.y="Marker", all.x=T)
+  n_snps_total=nrow(x_sort)
+  n_noref = sum(is.na(merged_ref$ref_geno))
+  matching_ref = subset(merged_ref, !is.na(merged_ref$ref_geno))
+  n_snps_tested = nrow(matching_ref)
+  n_correct = sum(matching_ref$geno==matching_ref$ref_geno)
+  n_het=sum(x_sort$het==1)
   snp_row = data.frame(A1_Cutoff=A1_thresh, A2_Cutoff=A2_thresh, Total_SNPs=n_snps_total, N_noref=n_noref, SNPs_Tested=n_snps_tested, N_Geno_Correct=n_correct, Genotype_Accuracy=n_correct/n_snps_tested, Heterozygosity = n_het/n_snps_total)
   #if (n_snps_total < minimum_snps) {
   #  return(NULL)

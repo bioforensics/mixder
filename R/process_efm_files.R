@@ -21,6 +21,7 @@
 #' @param A2min Minimum value for allele 2 probability thresholds for calculating metrics
 #' @param A2max Maximum value for allele 2 probability thresholds for calculating metrics
 #' @param metrics TRUE/FALSE to calculate validation metrics
+#' @param filter_missing TRUE/FALSE to filter SNPs with missing allele 2 values
 #'
 #' @return Data frame containing either calculated metrics (if specified) or
 #'    data frame containing genotype calls
@@ -31,7 +32,7 @@
 #' @export
 
 
-process_efm_files = function(x, contrib, ref, minimum_snps, A1min, A1max, A2min, A2max, metrics=TRUE) {
+process_efm_files = function(x, contrib, ref, minimum_snps, A1min, A1max, A2min, A2max, metrics=TRUE, filter_missing=FALSE) {
   . = NULL
   C_df=x %>%
     filter(.data$Contr. == contrib)
@@ -44,7 +45,7 @@ process_efm_files = function(x, contrib, ref, minimum_snps, A1min, A1max, A2min,
   df_sep$A2_Prob = ifelse(is.na(df_sep$A2_Prob), df_sep$A1_Prob, df_sep$A2_Prob)
   if (metrics) {
     df_sep$Locus = tolower(df_sep$Locus)
-    final_table_list = compile_metrics(df_sep, ref, minimum_snps, A1min, A1max, A2min, A2max)
+    final_table_list = compile_metrics(df_sep, ref, minimum_snps, A1min, A1max, A2min, A2max, filter_missing)
   } else {
     final_table_list = df_sep
   }

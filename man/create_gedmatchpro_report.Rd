@@ -5,6 +5,7 @@
 \title{Create GEDmatch PRO report}
 \usage{
 create_gedmatchpro_report(
+  path,
   x,
   contrib,
   contrib_status,
@@ -14,10 +15,14 @@ create_gedmatchpro_report(
   A1min,
   A1max,
   A2min,
-  A2max
+  A2max,
+  minor_threshold,
+  filter_missing
 )
 }
 \arguments{
+\item{path}{Write path}
+
 \item{x}{Data frame of EFM predicted genotypes}
 
 \item{contrib}{Contributor number from the EFM output file (C1/C2)}
@@ -37,9 +42,13 @@ create_gedmatchpro_report(
 \item{A2min}{Minimum value for allele 2 probability threshold}
 
 \item{A2max}{Maximum value for allele 2 probability threshold}
+
+\item{minor_threshold}{If apply allele 1 probability to minor contributor}
+
+\item{filter_missing}{TRUE/FALSE to filter SNPs with missing allele 2 values}
 }
 \value{
-Data frame
+list of two data frames, the GEDmatch PRO report and a data frame of metrics calculated for that report
 }
 \description{
 Create GEDmatch PRO report

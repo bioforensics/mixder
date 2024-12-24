@@ -18,7 +18,7 @@
 #' @return Data frame
 #' @export
 create_at = function(evidData, sample, replicate_id, attable) {
-  message("Creating AT table<br/>")
+  #message("Creating AT table<br/>")
   locs = unique(attable[,"Marker"])
   id = ifelse(length(names(evidData[[sample]]) > length(names(evidData[[replicate_id]]))), sample, replicate_id)
   sample_at = c()

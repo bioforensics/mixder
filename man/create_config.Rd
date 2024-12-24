@@ -6,7 +6,10 @@
 \usage{
 create_config(
   date,
-  freq,
+  twofreqs,
+  freq_all,
+  freq_major,
+  freq_minor,
   refs,
   sample_path,
   out_path,
@@ -26,13 +29,20 @@ create_config(
   A2min,
   A2max,
   major,
-  minor
+  minor,
+  filter_missing
 )
 }
 \arguments{
 \item{date}{date and time of run}
 
-\item{freq}{path or frequency dataset used}
+\item{twofreqs}{TRUE if using separate AF data for major and minor contributors}
+
+\item{freq_all}{Path (or name) of allele frequency data if using same data for both}
+
+\item{freq_major}{Path (or name) of allele frequency data for major contributor}
+
+\item{freq_minor}{Path (or name) of allele frequency data for minor contributor}
 
 \item{refs}{path to reference folder}
 
@@ -73,6 +83,8 @@ create_config(
 \item{major}{assumed major contributor of mixture}
 
 \item{minor}{assumed minor contributor of mixture}
+
+\item{filter_missing}{TRUE/FALSE whether to filter SNPs if second allele is missing (99)}
 }
 \description{
 Create configuration file containing all settings for a specific run

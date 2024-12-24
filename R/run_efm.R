@@ -10,6 +10,7 @@
 # -------------------------------------------------------------------------------------------------
 #' @title Running mixture deconvolution in EuroForMix
 #'
+#' @param date Date and time of MixDeR run
 #' @param popFreq Allele frequency file
 #' @param refData Reference genotypes file
 #' @param id Sample ID
@@ -20,95 +21,72 @@
 #' @param nsets Number of SNP sets
 #' @param cond Sample IDs to condition on
 #' @param uncond TRUE/FALSE if performing unconditioned analysis
+#' @param keep_bins To use existing SNP bins or create new bins (and files)
 #'
 #' @export
-run_efm = function(popFreq, refData, id, replicate_id, inpath, out_path, attable, nsets, cond = NULL, uncond=TRUE) {
+#'
+#' @import parallel
+#'
+run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, attable, nsets, cond = NULL, uncond=TRUE, keep_bins=TRUE) {
   if (replicate_id == "") {
-    create_evid_all(inpath, id, nsets)
+    create_evid_all(inpath, id, nsets, keep_bins)
     write_path = glue("{out_path}Single/{id}")
+    log_name = id
   } else {
-    create_evid_all(inpath, id, nsets)
-    create_evid_all(inpath, replicate_id, nsets)
+    create_evid_all(inpath, id, nsets, keep_bins)
+    create_evid_all(inpath, replicate_id, nsets, keep_bins)
     write_path = glue("{out_path}Replicates/{id}")
+    log_name = glue("{id}_{replicate_id}")
   }
   snps_input = glue("{inpath}/snp_sets/")
   final_list = c()
-  uncond_finaltable_all = data.frame()
-  uncond_ratios = data.frame()
   if (replicate_id != "") {
     ids = create_replicatedf(snps_input, id, replicate_id, nsets)
+  } else {
+    ids = NULL
   }
-  for (i in 1:(nsets)) {
-    message(glue("Processing set #{i}<br/>"))
-    if (replicate_id != "") {
-      sample = glue("{as.character(ids[[1]])}_set{i}")
-      replicate = glue("{as.character(ids[[2]])}_set{i}")
-    } else {
-      sample = glue("{id}_set{i}")
-      replicate = replicate_id
-    }
-    evidData = create_evid(sample, replicate, snps_input)
-    ##create AT vector
-    sample_at = create_at(evidData, sample, replicate, attable)
-    if (uncond) {
-      if (i == 1) {
-      }
-      dir.create(file.path(write_path, "unconditioned"), showWarnings = FALSE, recursive=TRUE)
-      ##unconditioned analysis
-      repeat_num = 0
-      repeat {
-        message("Running unconditioned analysis<br/>")
-        uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01)
-        uncond_finaltable = euroformix::deconvolve(uncond_results)
-        if (check_allele_probabilities(data.frame(uncond_finaltable[["table4"]]))) break
-        message("Mixture proportion = 0.5 or Allele probability flipping detected- will rerun!<br/>")
-        repeat_num = repeat_num + 1
-        if (repeat_num == 10) break
-      }
-      if (repeat_num < 10) {
-        ratio_row = data.frame(Set=i, C1_Prop=uncond_results[["fit"]][["thetahat2"]][["Mix-prop. C1"]], C2_Prob=uncond_results[["fit"]][["thetahat2"]][["Mix-prop. C2"]])
-        uncond_ratios = rbind(uncond_ratios, ratio_row)
-        write.table(uncond_finaltable[["table4"]], glue("{write_path}/unconditioned/{id}_set{i}_uncond.tsv"), quote=F, row.names=F, sep="\t")
-        uncond_finaltable_all = rbind(uncond_finaltable_all, uncond_finaltable[["table4"]])
+  numCores = ifelse(detectCores()<10, detectCores(), 10)
+  message(glue("Running EFM mixture deconvolution using {numCores} cores."))
+  cl = makeCluster(numCores, outfile=glue("{out_path}config_log_files/{date}/efm_output_{log_name}_{date}.txt"))
+  results = parLapply(cl, 1:(nsets), run_indiv_efm_set, ids=ids, snps_input=snps_input, popFreq=popFreq, refData=refData, id=id, replicate_id=replicate_id, write_path=write_path, attable=attable, cond=cond, uncond=uncond)
+  stopCluster(cl)
+  uncond_ratios = data.frame()
+  uncond_finaltable_all = data.frame()
+  if (uncond) {
+    for (i in 1:(nsets)) {
+      set_file = glue("{write_path}/unconditioned/{id}_set{i}_uncond.tsv")
+      if (file.exists(set_file)) {
+        set_results = read.table(set_file, header=T, sep="\t")
+        uncond_finaltable_all = rbind(uncond_finaltable_all, set_results)
+        uncond_ratios = rbind(uncond_ratios, data.frame(Set=i, C1_Prob=results[[i]][[1]], C2_Prob=results[[i]][[2]]))
       } else {
-        message("Repeated analysis 10 times unsuccessfully. Will skip set!<br/>")
-      }
-      if (i == nsets) {
-        final_list = c(final_list, list(uncond_finaltable_all, uncond_ratios))
-      }
-    } else {
-      if (i == nsets) {
-        final_list = c(final_list, list(uncond_finaltable_all, uncond_ratios))
+        message(glue("Set {i} for the unconditioned analysis was skipped. See EFM run log in {out_path}config_log_files/{date}/efm_output_{log_name}_{date}.txt for more information.<br/>"))
       }
     }
-    ## conditioned analysis
-    if (!is.null(cond)) {
-      total_refs = length(names(refData))
-      cond_vector = rep.int(0, total_refs)
-      for (cond_on in cond) {
-        nam = glue("df_{cond_on}")
-        if (i == 1) {
-          assign(nam, data.frame())
-          assign(glue("ratios_{cond_on}"), data.frame())
-        }
-        message(glue("Running conditioned analysis on {cond_on}<br/>"))
-        list_num = match(cond_on, names(refData))
-        dir.create(file.path(write_path, glue("/conditioned/cond_on_{cond_on}")), showWarnings = FALSE, recursive=TRUE)
-        condresults = euroformix::calcMLE(2, evidData, popFreq, refData, AT=sample_at, condOrder=replace(cond_vector, list_num, 1), BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01)
-        final_condresults = euroformix::deconvolve(condresults)
-        ratio_row = data.frame(Set=i, C1_Prop=condresults[["fit"]][["thetahat2"]][["Mix-prop. C1"]], C2_Prob=condresults[["fit"]][["thetahat2"]][["Mix-prop. C2"]])
-        write.table(final_condresults[["table4"]], glue("{write_path}/conditioned/cond_on_{cond_on}/unknown_cond_on_{cond_on}_set{i}.tsv"), quote=F, row.names=F, sep="\t")
-        dfratio = rbind(get(glue("ratios_{cond_on}")), ratio_row)
-        assign(glue("ratios_{cond_on}"), dfratio)
-        neededdf = data.frame(final_condresults[["table4"]])
-        dfall = rbind(get(nam), neededdf)
-        assign(nam, dfall)
-        if (i == nsets) {
-          final_list = c(final_list, list(dfall, dfratio))
+    check_ratios(uncond_ratios, uncond=TRUE)
+  }
+  final_list = list(uncond_finaltable_all, uncond_ratios)
+  if (!is.null(cond)) {
+    C1_num = 3
+    C2_num = 4
+    for (cond_on in cond) {
+      cond_ratios = data.frame()
+      cond_finaltable_all = data.frame()
+      for (i in 1:nsets) {
+        set_file = glue("{write_path}/conditioned/cond_on_{cond_on}/unknown_cond_on_{cond_on}_set{i}.tsv")
+        if (file.exists(set_file)) {
+          set_results = read.table(set_file, header=T, sep="\t")
+          cond_finaltable_all = rbind(cond_finaltable_all, set_results)
+          cond_ratios = rbind(cond_ratios, data.frame(Set=i, C1_Prob=results[[i]][[C1_num]], C2_Prob=results[[i]][[C2_num]]))
+        } else {
+          message(glue("Set {i} for the conditioned analysis (conditioned on {cond_on}) was skipped. See EFM run log in {out_path}config_log_files/{date}/efm_output_{log_name}_{date}.txt for more information.<br/>"))
         }
       }
+      check_ratios(cond_ratios, uncond=FALSE)
+      final_list = c(final_list, list(cond_finaltable_all, cond_ratios))
+      C1_num = C1_num + 2
+      C2_num = C2_num + 2
     }
   }
-  #return(list(uncond_finaltable_all, uncond_ratios, final_condresults_all, final_cond_ratios, final_condresults_2ndref_all, final_cond_2ndref_ratios))
   return(final_list)
 }

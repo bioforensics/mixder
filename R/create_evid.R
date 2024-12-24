@@ -19,13 +19,25 @@
 create_evid = function(sample, rep_sample, inpath) {
   evidfn = glue("{inpath}/{sample}.tsv")
   if (rep_sample == "") {
-    evidData = euroformix::sample_tableToList(euroformix::tableReader(evidfn))
+    if (check_reads(evidfn)) {
+      evidData = vector()
+    } else {
+      evidData = euroformix::sample_tableToList(read_in_table(evidfn))
+    }
   } else {
+    if (check_reads(evidfn)) {
+      dataseta = data.frame()
+    } else {
+      dataseta = read_in_table(evidfn) %>%
+        check_nas()
+    }
     evidfnrep = glue("{inpath}/{rep_sample}.tsv")
-    dataseta = euroformix::tableReader(evidfn) %>%
-      check_nas()
-    repdata = euroformix::tableReader(evidfnrep) %>%
-      check_nas()
+    if (check_reads(evidfnrep)) {
+      repdata = data.frame()
+    } else {
+      repdata = read_in_table(evidfnrep) %>%
+        check_nas()
+    }
     if (ncol(dataseta) == ncol(repdata)) {
       final_dfs = equalize_samples(dataseta, repdata)
     } else {

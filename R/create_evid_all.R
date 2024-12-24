@@ -3,9 +3,10 @@
 #' @param inpath input path
 #' @param id Sample ID
 #' @param nsets number of SNP sets to create
+#' @param keep_bins To use existing SNP bins or create new bins (and files)
 
 #' @export
-create_evid_all = function(inpath, id, nsets){
+create_evid_all = function(inpath, id, nsets, keep_bins){
   evid_all = processing_evid_sample_reports(inpath, id)
   evid_all$Total_Reads = rowSums(evid_all[,grepl("Height",colnames(evid_all))], na.rm = TRUE)
   evid_sort = evid_all[order(evid_all$Total_Reads),]
@@ -15,7 +16,7 @@ create_evid_all = function(inpath, id, nsets){
   write.table(evid_final, glue("{inpath}/snp_sets/{id}_snpsetscombined_evidence.tsv"), row.names=F, quote=F, col.names=T, sep="\t")
   end = 0
   for (snpset in 1:(nsets)) {
-    if (!file.exists(glue("{inpath}/snp_sets/",id,"_set",snpset,".tsv"))) {
+    if (!isTruthy(keep_bins) | !file.exists(glue("{inpath}/snp_sets/{id}_set{snpset}.tsv"))) {
       start = end + 1
       end = ifelse(snpset != nsets, start + bin_size, nrow(evid_final))
       evid_set=evid_final[start:end,]

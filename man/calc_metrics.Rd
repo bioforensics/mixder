@@ -4,7 +4,7 @@
 \alias{calc_metrics}
 \title{Calculating metrics for a single set of allele 1 and allele 2 probability thresholds}
 \usage{
-calc_metrics(x, A1_thresh, A2_thresh, ref, minimum_snps)
+calc_metrics(x, A1_thresh, A2_thresh, ref, minimum_snps, filter_missing)
 }
 \arguments{
 \item{x}{Data frame of allele probabilities and genotype calls}
@@ -16,6 +16,8 @@ calc_metrics(x, A1_thresh, A2_thresh, ref, minimum_snps)
 \item{ref}{Data frame of reference genotypes}
 
 \item{minimum_snps}{Minimum number of SNPs required}
+
+\item{filter_missing}{TRUE/FALSE to filter SNPs with missing allele 2 values}
 }
 \value{
 return row of metrics for specified thresholds

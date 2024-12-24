@@ -17,12 +17,13 @@
 #' @param A1max Maximum value of allele 1 probability threshold
 #' @param A2min Minimum value of allele 2 probability threshold
 #' @param A2max Maximum value of allele 2 probability threshold
+#' @param filter_missing TRUE/FALSE to filter SNPs with missing allele 2 values
 #'
 #' @return List of data frames compiled using the min/max values of the allele probability thresholds and the minimum number of SNPs
 #' @export
 #'
 #' @importFrom stats setNames
-compile_metrics = function(x, ref, minimum_snps, A1min, A1max, A2min, A2max) {
+compile_metrics = function(x, ref, minimum_snps, A1min, A1max, A2min, A2max, filter_missing) {
   final_table = setNames(data.frame(matrix(ncol=8, nrow=0)), c("A1_Cutoff", "A2_Cutoff", "Total_SNPs", "N_noref", "SNPs_Tested", "N_Geno_Correct", "Genotype_Accuracy", "Heterozygosity"))
   final_table_min = setNames(data.frame(matrix(ncol=8, nrow=0)), c("A1_Cutoff", "A2_Cutoff", "Total_SNPs", "N_noref", "SNPs_Tested", "N_Geno_Correct", "Genotype_Accuracy", "Heterozygosity"))
   if (A1max < A1min | A2max < A2min) {
@@ -30,15 +31,15 @@ compile_metrics = function(x, ref, minimum_snps, A1min, A1max, A2min, A2max) {
     stop()
   }
   for (t in seq(A2min, A2max, 0.01)) {
-    message(paste0(t, "<br/>"))
-    for (j in seq(A1min, A1max, 0.01)) {
-      message(paste0(j, "<br/>"))
-      new_row = calc_metrics(x, j, t, ref, minimum_snps)
+    message(paste0("Allele Probability Threshold: ", t, "<br/>"))
+      for (j in seq(A1min, A1max, 0.01)) {
+      #message(paste0("Allele 1 threshold: ", j, "<br/>"))
+      new_row = calc_metrics(x, j, t, ref, minimum_snps, filter_missing)
       if (!is.null(new_row)) {
         final_table = rbind(final_table, new_row)
       }
     }
-    new_row_min = calc_metrics(x, "Min", t, ref, minimum_snps)
+    new_row_min = calc_metrics(x, "Min", t, ref, minimum_snps, filter_missing)
     final_table_min = rbind(final_table_min, new_row_min)
   }
   sort_final_table = final_table %>%

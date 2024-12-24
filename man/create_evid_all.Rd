@@ -4,7 +4,7 @@
 \alias{create_evid_all}
 \title{Creating SNP sets from evidence samples containing all SNPs}
 \usage{
-create_evid_all(inpath, id, nsets)
+create_evid_all(inpath, id, nsets, keep_bins)
 }
 \arguments{
 \item{inpath}{input path}
@@ -12,6 +12,8 @@ create_evid_all(inpath, id, nsets)
 \item{id}{Sample ID}
 
 \item{nsets}{number of SNP sets to create}
+
+\item{keep_bins}{To use existing SNP bins or create new bins (and files)}
 }
 \description{
 Creating SNP sets from evidence samples containing all SNPs
