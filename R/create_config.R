@@ -12,7 +12,10 @@
 #' Create configuration file containing all settings for a specific run
 #'
 #' @param date date and time of run
-#' @param freq path or frequency dataset used
+#' @param twofreqs TRUE if using separate AF data for major and minor contributors
+#' @param freq_all Path (or name) of allele frequency data if using same data for both
+#' @param freq_major Path (or name) of allele frequency data for major contributor
+#' @param freq_minor Path (or name) of allele frequency data for minor contributor
 #' @param refs path to reference folder
 #' @param sample_path path to sample manifest
 #' @param out_path name of output folder
@@ -33,18 +36,27 @@
 #' @param A2max maximum allele 2 probability threshold in range for calculating metrics
 #' @param major assumed major contributor of mixture
 #' @param minor assumed minor contributor of mixture
+#' @param filter_missing TRUE/FALSE whether to filter SNPs if second allele is missing (99)
 #'
 #' @export
 #'
-create_config = function(date, freq, refs, sample_path, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor){
+create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs, sample_path, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, filter_missing){
   config = setNames(data.frame(matrix(ncol=2, nrow=0)), c("Setting", "Value"))
+  config = rbind(config, data.frame(Setting="MixDeR Version:", Value=getNamespaceVersion("mixder")[["version"]]))
+  config = rbind(config, data.frame(Setting="EuroForMix Version:", Value=getNamespaceVersion("euroformix")[["version"]]))
   config = rbind(config, data.frame(Setting="Path to sample manifest:", Value=sample_path))
   if (isTruthy(refs)){
     config = rbind(config, data.frame(Setting="Path to references:", Value=refs))
   }
   config = rbind(config, data.frame(Setting="Path to mixtures:", Value=kinpath))
   if (isTruthy(run_mixdeconv)) {
-    config = rbind(config, data.frame(Setting="Frequency data:", Value=freq))
+    if (isTruthy(twofreqs)) {
+      config = rbind(config, data.frame(Setting="Frequency data Major Contributor:", Value=freq_major))
+      config = rbind(config, data.frame(Setting="Frequency data Minor Contributor:", Value=freq_minor))
+    } else {
+      config = rbind(config, data.frame(Setting="Frequency data for Major Contributor:", Value=freq_all))
+      config = rbind(config, data.frame(Setting="Frequency data for Minor Contributor:", Value=freq_all))
+    }
   }
   config = rbind(config, data.frame(Setting="Output path:", Value=glue("{kinpath}/snp_sets/{out_path}/")))
   config = rbind(config, data.frame(Setting="Number of SNP sets:", Value=sets))
@@ -62,6 +74,7 @@ create_config = function(date, freq, refs, sample_path, out_path, run_mixdeconv,
     config = rbind(config, data.frame(Setting="Method run post deconvolution:", Value="None"))
   } else {
     config = rbind(config, data.frame(Setting="Method run post deconvolution:", Value=method))
+    config = rbind(config, data.frame(Setting="Filtering SNPs if allele 2 is missing?", Value=filter_missing))
   }
   if (method == "Create GEDmatch PRO Report"){
     config = rbind(config, data.frame(Setting="Allele 1 probability threshold (for GEDmatch PRO reports):", Value=A1_threshold))
