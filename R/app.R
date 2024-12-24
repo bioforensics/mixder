@@ -245,24 +245,24 @@ server = function(input, output, session) {
       name = "question-circle",
     )
     ) |>
-      add_prompt(message = "Select allele frequency data. Options are general population datasets (1000G Phase 3 or gnomAD v4) or upload your own file. See README for more details.", position = "right")
-    ), choices = c("General - 1000G", "General - gnomAD", "Upload Custom"))
+      add_prompt(message = "Select allele frequency data. Options are global population datasets (1000G Phase 3 or gnomAD v4) or upload your own file. See README for more details.", position = "right")
+    ), choices = c("Global - 1000G", "Global - gnomAD", "Upload Custom"))
   })
   output$freqselect_major = renderUI({
     selectInput("uploadfreq_major", tags$span("Select Allele Frequency Data for the Major Contributor", tags$span(icon(
       name = "question-circle",
     )
     ) |>
-      add_prompt(message = "Select allele frequency data for the major contributor. Options are general population datasets (1000G Phase 3 or gnomAD v4) or upload your own file. See README for more details.", position = "right")
-    ), choices = c("General - 1000G", "General - gnomAD", "Upload Custom"))
+      add_prompt(message = "Select allele frequency data for the major contributor. Options are global population datasets (1000G Phase 3 or gnomAD v4) or upload your own file. See README for more details.", position = "right")
+    ), choices = c("Global - 1000G", "Global - gnomAD", "Upload Custom"))
   })
   output$freqselect_minor = renderUI({
     selectInput("uploadfreq_minor", tags$span("Select Allele Frequency Data for the Minor Contributor", tags$span(icon(
       name = "question-circle",
     )
     ) |>
-      add_prompt(message = "Select allele frequency data for the minor contributor. Options are general population datasets (1000G Phase 3 or gnomAD v4) or upload your own file. See README for more details.", position = "right")
-    ), choices = c("General - 1000G", "General - gnomAD", "Upload Custom"))
+      add_prompt(message = "Select allele frequency data for the minor contributor. Options are global population datasets (1000G Phase 3 or gnomAD v4) or upload your own file. See README for more details.", position = "right")
+    ), choices = c("Global - 1000G", "Global - gnomAD", "Upload Custom"))
   })
   output$report_A1 = renderUI({
     numericInput("A1_threshold", tags$span("Allele 1 Probability Threshold to create GEDmatch PRO Report", tags$span(

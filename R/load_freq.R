@@ -20,10 +20,10 @@
 #' @export
 load_freq = function(out_path, twofreqs, freq_both, freq_major, freq_minor) {
   if (!twofreqs) {
-    if (freq_both == "General - 1000G") {
+    if (freq_both == "Global - 1000G") {
       freq_minor = mixder::popFreq_1000G
       freq_major = mixder::popFreq_1000G
-    } else if (freq_both == "General - gnomAD"){
+    } else if (freq_both == "Global - gnomAD"){
       freq_minor = mixder::popFreq_gnomad
       freq_major = mixder::popFreq_gnomad
     } else {
@@ -31,18 +31,18 @@ load_freq = function(out_path, twofreqs, freq_both, freq_major, freq_minor) {
       freq_major = freq_minor
     }
   } else {
-    if (freq_major != "General - 1000G" & freq_major != "General - gnomAD") {
+    if (freq_major != "Global - 1000G" & freq_major != "Global - gnomAD") {
       freq_major = checking_af(freq_major, out_path)
-    } else if (freq_major == "General - 1000G") {
+    } else if (freq_major == "Global - 1000G") {
       freq_major = mixder::popFreq_1000G
-    } else if (freq_major == "General - gnomAD") {
+    } else if (freq_major == "Global - gnomAD") {
       freq_major = mixder::popFreq_gnomad
     }
-    if (freq_minor != "General - 1000G" & freq_minor != "General - gnomAD") {
+    if (freq_minor != "Global - 1000G" & freq_minor != "Global - gnomAD") {
       freq_minor = checking_af(freq_minor, out_path)
-    } else if (freq_minor == "General - 1000G") {
+    } else if (freq_minor == "Global - 1000G") {
       freq_minor = mixder::popFreq_1000G
-    } else if (freq_minor == "General - gnomAD") {
+    } else if (freq_minor == "Global - gnomAD") {
       freq_minor = mixder::popFreq_gnomad
     }
   }
