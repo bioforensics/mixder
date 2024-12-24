@@ -43,7 +43,7 @@
 create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs, sample_path, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, filter_missing){
   config = setNames(data.frame(matrix(ncol=2, nrow=0)), c("Setting", "Value"))
   config = rbind(config, data.frame(Setting="MixDeR Version:", Value=getNamespaceVersion("mixder")[["version"]]))
-  config = rbind(config, data.frame(Setting="EuroForMix Version: ", Value=getNamespaceVersion("euroformix")[["version"]]))
+  config = rbind(config, data.frame(Setting="EuroForMix Version:", Value=getNamespaceVersion("euroformix")[["version"]]))
   config = rbind(config, data.frame(Setting="Path to sample manifest:", Value=sample_path))
   if (isTruthy(refs)){
     config = rbind(config, data.frame(Setting="Path to references:", Value=refs))
