@@ -43,6 +43,7 @@
 #' @param minor_threshold If apply the allele 1 probability threshold to the minor contributor
 #' @param keep_bins To use existing SNP bins or create new bins (and files)
 #' @param filter_missing TRUE/FALSE whether to filter SNPs with either allele missing
+#' @param ancestry TRUE/FALSE skip ancestry prediction step
 #'
 #' @export
 #'
@@ -52,7 +53,7 @@
 #'@importFrom utils write.table write.csv read.table
 #'@importFrom grDevices dev.off png
 #'@importFrom methods show
-run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refs, sample_path, output, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing) {
+run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refs, sample_path, output, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, ancestry) {
   out_path = glue("{kinpath}/snp_sets/{output}/")
   if (replicate_id == "") {
     logfile = file(glue("{out_path}config_log_files/{date}/run_log_{id}_{date}.txt"), open = "wt")
@@ -77,6 +78,9 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
   message(glue("Sample: {id}<br/>"))
   message(glue("Replicate Sample: {replicate_id}<br/>"))
     ## run EFM
+  if (!ancestry) {
+
+  }
   if (run_mixdeconv) {
     attable = process_kinreport(id, replicate_id, kinpath, dynamicAT, staticAT)
     if (twofreqs) {
@@ -193,11 +197,13 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
       i = i + 2
     }
   }
-  if (method == "") {
+  if (!ancestry) {
+    message("Ancestry Prediction complete!")
+  } else if (run_mixdeconv) {
     message("Mixture Deconvolution complete!")
   } else if (method == "Calculate Metrics") {
     message("Calculating Metrics Complete!")
-  } else {
+  } else if (method == "Create GEDmatch PRO Report") {
     message("Creating GEDmatch PRO Reports Complete!")
   }
   #shiny::stopApp()
