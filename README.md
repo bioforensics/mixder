@@ -33,7 +33,7 @@ The preprint of the manuscript on MixDeR is available
 For any installation, EuroForMix must be installed. Please follow the
 instructions from the [EuroForMix GitHub
 page](https://github.com/oyvble/euroformix/). For this version of
-MixDeR, EFM version 4.0.8 or earlier is required.
+MixDeR, EFM version 4.0.8 or earlier is required.  
 
 If installing from GitHub:  
 The R package `devtools` is required to install from GitHub:
