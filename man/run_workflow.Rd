@@ -35,7 +35,8 @@ run_workflow(
   minor,
   minor_threshold,
   keep_bins,
-  filter_missing
+  filter_missing,
+  ancestry
 )
 }
 \arguments{
@@ -100,6 +101,8 @@ run_workflow(
 \item{keep_bins}{To use existing SNP bins or create new bins (and files)}
 
 \item{filter_missing}{TRUE/FALSE whether to filter SNPs with either allele missing}
+
+\item{ancestry}{TRUE/FALSE whether to skip ancestry prediction}
 }
 \description{
 Runs workflow
