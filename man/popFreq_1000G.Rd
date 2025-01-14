@@ -13,7 +13,7 @@ A list containing a 10039 elements (SNPs) with 4 rows:
      }
 }
 \source{
-gnomAD v4 genomes (https://gnomad.broadinstitute.org/downloads#v4)
+1000 Genomes (https://www.internationalgenome.org/data)
 }
 \usage{
 popFreq_1000G

@@ -50,7 +50,7 @@
 #'      \item{Probability}{Allele Probability}
 #'      }
 #'
-#' @source gnomAD v4 genomes (https://gnomad.broadinstitute.org/downloads#v4)
+#' @source 1000 Genomes (https://www.internationalgenome.org/data)
 #'
 "popFreq_1000G"
 
@@ -70,3 +70,17 @@
 #' @source lusSTR Python package (https://github.com/bioforensics/lusSTR)
 #'
 "snpinfo"
+
+#' 1000 Genomes genotypes for 54 ancestry SNPs
+#'
+#' Used to run PCA for ancestry prediction
+#'
+#' @format A dataframe containing 60 columns (each SNP) and 2,157 rows (each individual):
+#'  \describe{
+#'      \item{SNP}{SNP rsID with reference allele}
+#'      \item{ID}{Sample ID of individual}
+#'      }
+#'
+#' @source 1000 Genomes (https://www.internationalgenome.org/data)
+#'
+"ancestry_1000G"

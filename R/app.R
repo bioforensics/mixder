@@ -29,7 +29,19 @@ mixder = function() {
       ) |>
         add_prompt(message = "Check box to skip ancestry prediction step and move to mixture deconvolution.", position = "right")
       ), value = FALSE),
-      conditionalPanel(condition = "input.skip_ancestry == 0", uiOutput("ancestry_text"), uiOutput("ancestry_selector")),
+      conditionalPanel(condition = "input.skip_ancestry == 0", uiOutput("ancestry_text")),
+      checkboxInput("uncond", tags$span("Unconditioned Analysis", tags$span(icon(
+        name = "question-circle",
+      )
+      ) |>
+        add_prompt(message = "An unconditioned analysis assumes no known contributor to the mixture and therefore does not require known genotypes to be provided.", position = "right")
+      ), value = FALSE),
+      checkboxInput("cond", tags$span("Conditioned Analysis", tags$span(icon(
+        name = "question-circle",
+      )
+      ) |>
+        add_prompt(message = "A conditioned analysis assumes a single known contributor to the mixture. User will select which reference sample to condition on after providing the Reference Sample Report Folder.", position = "right")
+      ), value = FALSE),
       shinyFilesButton("sample_GetFile", "Select a Sample Manifest File", "Select a sample manifest", multiple = FALSE,
                        buttonType = "default", class = NULL), tags$span(icon(
                          name = "question-circle",
@@ -43,8 +55,8 @@ mixder = function() {
                      )
                      ) |>
         add_prompt(message = "Select a folder containing the Mixture Sample Reports.", position = "right"),
-      textOutput("kin_prefix"),
-      conditionalPanel(condition = "input.skip_ancestry == 1", uiOutput("runmd"), uiOutput("uncond"), uiOutput("cond"), uiOutput("twofreqs"), uiOutput("method")),
+      textOutput("kin_inpath"),
+      conditionalPanel(condition = "input.skip_ancestry == 1", uiOutput("runmd"), uiOutput("twofreqs"), uiOutput("method")),
       conditionalPanel(condition = "input.skip_ancestry == 1 & input.twofreqs == 0", uiOutput("freqselect")),
       conditionalPanel(condition = "input.twofreqs == 1", uiOutput("freqselect_major"), uiOutput("freqselect_minor")),
       conditionalPanel(condition = "input.skip_ancestry == 1 & input.twofreqs == 0 & input.uploadfreq == 'Upload Custom'", uiOutput("freq_GetFile"), uiOutput("freq_text")),
@@ -89,22 +101,6 @@ server = function(input, output, session) {
       add_prompt(message = "Check box to run mixture deconvolution using EuroForMix. Not required if run previously using MixDeR.", position = "right")
     ), value = TRUE)
   })
-  output$uncond = renderUI({
-    checkboxInput("uncond", tags$span("Unconditioned Analysis", tags$span(icon(
-    name = "question-circle",
-  )
-  ) |>
-    add_prompt(message = "An unconditioned analysis assumes no known contributor to the mixture and therefore does not require known genotypes to be provided.", position = "right")
-  ), value = FALSE)
-  })
-  output$cond = renderUI({
-    checkboxInput("cond", tags$span("Conditioned Analysis", tags$span(icon(
-    name = "question-circle",
-  )
-  ) |>
-    add_prompt(message = "A conditioned analysis assumes a single known contributor to the mixture. User will select which reference sample to condition on after providing the Reference Sample Report Folder.", position = "right")
-  ), value = FALSE)
-  })
   output$method = renderUI({
     selectInput("method", tags$span("Method to run after mixture deconvolution?", tags$span(icon(
     name = "question-circle",
@@ -112,14 +108,6 @@ server = function(input, output, session) {
   ) |>
     add_prompt(message = "Optional- if selecting Calculate Metrics, must include reference genotypes.", position = "right")
   ), c("", "Calculate Metrics", "Create GEDmatch PRO Report"))
-  })
-  output$ancestry_selector = renderUI({
-    selectInput("ancestry_samples", tags$span("Select Contributor(s) for Ancestry Prediction", tags$span(icon(
-      name = "question-circle",
-    )
-    ) |>
-      add_prompt(message = "Select which contributor(s) to run ancestry prediction on.", position = "right")
-    ), c("", "Major Contributor", "Minor Contributor"), multiple = TRUE)
   })
   output$twofreqs = renderUI({
     checkboxInput("twofreqs", tags$span("Use Different Allele Frequency Files For Each Contributor?", tags$span(icon(
@@ -199,7 +187,7 @@ server = function(input, output, session) {
 
   })
   output$ancestry_text = renderUI({
-    HTML("<b>Optional: Ancestry Prediction Tool using PCA</b> <br/> Use this tool to assist in predicting the ancestry of selected contributors. The population-specific allele frequency file can then be used in mixture deconvolution. Select the above box to skip this step and move forward to mixture deconvolution.<br/>See the README for more information.<br/><br/>")
+    HTML("<b>Optional: Ancestry Prediction Tool using PCA</b> <br/> Use this tool to assist in predicting the ancestry of each contributor. The population-specific allele frequency file can then be used in the next mixture deconvolution step. Select the above box to skip this step and move forward to mixture deconvolution.<br/>See the README for more information.<br/><br/>")
   })
   output$major_selector = renderUI({
     if (isTruthy(refs())) {
