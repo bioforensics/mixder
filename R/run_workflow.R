@@ -152,9 +152,9 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
         dev.off()
       } else if (!ancestry) {
         write.table(major_report[[1]], glue("{write_path}/{id}/unconditioned/{id}_uncond_major_{type}_Inferred_Genotypes.txt"), col.names=T, sep="\t", row.names=F, quote=F)
-        ancestry_prediction(major_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned_major")
+        ancestry_prediction(major_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned", "major")
         write.table(minor_report[[1]], glue("{write_path}/{id}/unconditioned/{id}_uncond_minor_{type}_Inferred_Genotypes.txt"), col.names=T, sep="\t", row.names=F, quote=F)
-        ancestry_prediction(minor_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned_minor")
+        ancestry_prediction(minor_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned", "minor")
       }
     } else if (method == "Calculate Metrics") {
       major_ref = format_ref(refData, major, refs)
@@ -198,14 +198,15 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
       if (method == "Create GEDmatch PRO Report" | !ancestry) {
         message(glue("Creating GEDmatch PRO report for {contrib_status} contributor conditioned on {cond_on} in conditioned analysis.<br/>"))
         cond_report = create_gedmatchpro_report(write_path, get(glue("efm_table_{contrib_status}")), "C2", contrib_status, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
-        write.table(cond_report[[1]], glue("{write_path}/GEDMatchPROReports/{id}_{contrib_status}_contrib_conditioned_on_{cond_on}_{type}_GEDmatchPROReport.txt"), col.names=T, sep="\t", row.names=F, quote=F)
         if (method == "Create GEDmatch PRO Report") {
+          write.table(cond_report[[1]], glue("{write_path}/GEDMatchPROReports/{id}_{contrib_status}_contrib_conditioned_on_{cond_on}_{type}_GEDmatchPROReport.txt"), col.names=T, sep="\t", row.names=F, quote=F)
           write.csv(cond_report[[2]], glue("{write_path}/GEDMatchPROReports/Metrics/{id}_{contrib_status}_contrib_conditioned_on_{cond_on}_{type}_GEDmatchPROReport_Metrics.csv"), row.names=F, quote=F)
           png(glue("{write_path}/GEDMatchPROReports/Metrics/{id}_{contrib_status}_contrib_{type}_GEDmatchPROReport_Allele1_Probabilities_Density_Plot.png"))
           show(cond_report[[3]])
           dev.off()
         } else if (!ancestry) {
-          ancestry_prediction(cond_report, write_path, id, paste0("conditioned_on_", cond_on))
+          write.table(cond_report[[1]], glue("{write_path}/{id}/conditioned/{id}_{contrib_status}_contrib_conditioned_on_{cond_on}_{type}_InferredGenotypes.txt"), col.names=T, sep="\t", row.names=F, quote=F)
+          ancestry_prediction(cond_report[[1]], glue("{write_path}/{id}/conditioned/"), id, paste0("conditioned_on_", cond_on), contrib_status)
         }
       } else if (method == "Calculate Metrics") {
         unk = ifelse(contrib_status == "major", major, minor)

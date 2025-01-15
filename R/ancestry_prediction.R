@@ -21,7 +21,7 @@
 #' @return NA
 #' @export
 #'
-ancestry_prediction = function(report, path, id, analysis_type) {
+ancestry_prediction = function(report, path, id, analysis_type, contrib_status) {
   ## using R library to obtain ancestry info for 1000G samples
   ancestry=kgp::kgp3[,c("id", "reg")]
   ancestry_filt = subset(ancestry, reg != "SAS")
@@ -75,7 +75,7 @@ ancestry_prediction = function(report, path, id, analysis_type) {
                                  labels = levels(as.factor(PCs_anc$ancestry)))
 
   ## PCA plot
-  png(glue("{path}/{id}_{analysis_type}_PCA_plot.png"))
+  png(glue("{path}/{id}_{contrib_status}_{analysis_type}_PCA_plot.png"))
   show(ggplot(PCs_anc, aes(x=PC1,y=PC2))+
     geom_point(aes(color=ancestry))+
     colScale+

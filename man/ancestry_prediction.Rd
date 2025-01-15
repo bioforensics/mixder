@@ -4,7 +4,7 @@
 \alias{ancestry_prediction}
 \title{Title Ancestry prediction using PCA}
 \usage{
-ancestry_prediction(report, path, id, analysis_type)
+ancestry_prediction(report, path, id, analysis_type, contrib_status)
 }
 \arguments{
 \item{report}{inferred genotypes}
