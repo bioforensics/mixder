@@ -25,12 +25,12 @@ ancestry_prediction = function(report, path, id, analysis_type) {
   ## using R library to obtain ancestry info for 1000G samples
   ancestry=kgp::kgp3[,c("id", "reg")]
   ancestry_filt = subset(ancestry, reg != "SAS")
-  geno_filt=mixder::geno[,c(7:60)]
+  geno_filt=mixder::ancestry_1000G[,c(7:60)]
   snps = data.frame("snp_id"=colnames(geno_filt))
   snps = snps %>%
     separate(snp_id, c("rsid", "ref_allele"), remove=F)
   snps$order = seq(1:nrow(snps))
-  merged_alleles = merge(snps, report, by.x="rsid", by.y="Marker", all.x=T) %>%
+  merged_alleles = merge(snps, report, by="rsid", all.x=T) %>%
     arrange(order)
   ## count alleles
   merged_alleles$num_alt = ifelse(merged_alleles$Allele1==merged_alleles$ref_allele & merged_alleles$Allele2==merged_alleles$ref_allele, 2, ifelse(merged_alleles$Allele1==merged_alleles$ref_allele | merged_alleles$Allele2==merged_alleles$ref_allele, 1, 0))
@@ -75,11 +75,11 @@ ancestry_prediction = function(report, path, id, analysis_type) {
                                  labels = levels(as.factor(PCs_anc$ancestry)))
 
   ## PCA plot
-  png(paste0(path, "/", id, "_", analysis_type, "_PCA_plot.png"))
+  png(glue("{path}/{id}_{analysis_type}_PCA_plot.png"))
   show(ggplot(PCs_anc, aes(x=PC1,y=PC2))+
     geom_point(aes(color=ancestry))+
     colScale+
     guides(color=guide_legend(title="Superpopulation"))+
-    ggtitle(paste(id, analysis_type, ncol(betaRedNAOmit_major_cond),"ancestry SNPs", sep=" ")))
+    ggtitle(paste(id, analysis_type, ncol(betaRedNAOmit),"ancestry SNPs", sep=" ")))
   dev.off()
 }

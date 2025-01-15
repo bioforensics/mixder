@@ -85,13 +85,13 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
   if (run_mixdeconv | !ancestry) {
     attable = process_kinreport(id, replicate_id, kinpath, dynamicAT, staticAT)
     if (!ancestry) {
-      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, paste(out_path, "ancestry_prediction"), attable, sets, cond, uncond=unconditioned, keep_bins)
+      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, ancestry, cond, uncond=unconditioned, keep_bins)
       efm_results_minor = efm_results_major
     } else if (twofreqs) {
-      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, cond, uncond=unconditioned, keep_bins)
-      efm_results_minor = run_efm(date, popFreq[[2]], refData, id, replicate_id, kinpath, out_path, attable, sets, cond, uncond=unconditioned, keep_bins)
+      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, ancestry, cond, uncond=unconditioned, keep_bins)
+      efm_results_minor = run_efm(date, popFreq[[2]], refData, id, replicate_id, kinpath, out_path, attable, sets, ancestry, cond, uncond=unconditioned, keep_bins)
     } else {
-      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, cond, uncond=unconditioned, keep_bins)
+      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, ancestry, cond, uncond=unconditioned, keep_bins)
       efm_results_minor = efm_results_major
     }
   }
@@ -137,23 +137,24 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
     if (method == "Create GEDmatch PRO Report" | !ancestry) {
       message("Creating GEDmatch PRO report for major contributor in unconditioned analysis.<br/>")
       major_report = create_gedmatchpro_report(write_path, uncond_table_major, "C1", "major", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
-      write.table(major_report[[1]], glue("{write_path}/GEDMatchPROReports/{id}_uncond_major_{type}_GEDmatchPROReport.txt"), col.names=T, sep="\t", row.names=F, quote=F)
-
       message("Creating GEDmatch PRO report for minor contributor in unconditioned analysis.<br/>")
       minor_report = create_gedmatchpro_report(write_path, uncond_table_minor, "C2", "minor", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
-      write.table(minor_report[[1]], glue("{write_path}/GEDMatchPROReports/{id}_uncond_minor_{type}_GEDmatchPROReport.txt"), col.names=T, sep="\t", row.names=F, quote=F)
       if (method == "Create GEDmatch PRO Report") {
+        write.table(major_report[[1]], glue("{write_path}/GEDMatchPROReports/{id}_uncond_major_{type}_GEDmatchPROReport.txt"), col.names=T, sep="\t", row.names=F, quote=F)
         write.csv(major_report[[2]], glue("{write_path}/GEDMatchPROReports/Metrics/{id}_uncond_major_{type}_GEDmatchPROReport_Metrics.csv"), row.names=F, quote=F)
         png(glue("{write_path}/GEDMatchPROReports/Metrics/{id}_uncond_major_{type}_GEDmatchPROReport_Allele1_Probabilities_Density_Plot.png"))
         show(major_report[[3]])
         dev.off()
+        write.table(minor_report[[1]], glue("{write_path}/GEDMatchPROReports/{id}_uncond_minor_{type}_GEDmatchPROReport.txt"), col.names=T, sep="\t", row.names=F, quote=F)
         write.csv(minor_report[[2]], glue("{write_path}/GEDMatchPROReports/Metrics/{id}_uncond_minor_{type}_GEDmatchPROReport_metrics.csv"), row.names=F, quote=F)
         png(glue("{write_path}/GEDMatchPROReports/Metrics/{id}_uncond_minor_{type}_GEDmatchPROReport_Allele1_Probabilities_Density_Plot.png"))
         show(minor_report[[3]])
         dev.off()
       } else if (!ancestry) {
-        ancestry_prediction(major_report, write_path, id, "unconditioned_major")
-        ancestry_prediction(minor_report, write_path, id, "unconditioned_minor")
+        write.table(major_report[[1]], glue("{write_path}/{id}/unconditioned/{id}_uncond_major_{type}_Inferred_Genotypes.txt"), col.names=T, sep="\t", row.names=F, quote=F)
+        ancestry_prediction(major_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned_major")
+        write.table(minor_report[[1]], glue("{write_path}/{id}/unconditioned/{id}_uncond_minor_{type}_Inferred_Genotypes.txt"), col.names=T, sep="\t", row.names=F, quote=F)
+        ancestry_prediction(minor_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned_minor")
       }
     } else if (method == "Calculate Metrics") {
       major_ref = format_ref(refData, major, refs)
