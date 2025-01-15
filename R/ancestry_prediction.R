@@ -80,6 +80,7 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status) 
     geom_point(aes(color=ancestry))+
     colScale+
     guides(color=guide_legend(title="Superpopulation"))+
-    ggtitle(paste(id, analysis_type, ncol(betaRedNAOmit),"ancestry SNPs", sep=" ")))
+    ggtitle(glue("{id} {contrib_status} {analysis_type};\n{ncol(betaRedNAOmit)} ancestry SNPs"))+
+    theme(plot.title = element_text(hjust = 0.5)))
   dev.off()
 }
