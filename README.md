@@ -41,7 +41,7 @@ The R package `devtools` is required to install from GitHub:
     install.packages("devtools")
     devtools::install_github("bioforensics/mixder")
 
-If installing from source, first install the following R packages:
+If installing from source, first install the following R packages:  
 
     install.packages(c("dplyr", "ggplot2", "glue", "prompter", "readxl", "rlang", "shiny", "shinyFiles", "shinyjs", "tibble", "tidyr"))
 
