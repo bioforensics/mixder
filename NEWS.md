@@ -1,5 +1,5 @@
 
-### 0.7.2: January 23, 2025
+### 0.7.2: February 5, 2025
 - Fixed bug with compiling metrics test script
 - Changed labels of 'General' allele frequencies to 'Global' allele frequencies
 - Specified required EFM version
