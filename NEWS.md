@@ -3,6 +3,7 @@
 - Fixed bug with compiling metrics test script
 - Changed labels of 'General' allele frequencies to 'Global' allele frequencies
 - Specified required EFM version
+- Removed parallelization of running SNP sets through EFM (error-prone)
 
 ### 0.7.1: November 14, 2024
 - Added option to remove SNPs with missing allele 2 if the allele 2 probability is above the allele 2 probability threshold (default is to report SNP as homozygous for allele 1 if allele 2 is missing)
