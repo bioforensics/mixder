@@ -5,7 +5,7 @@
 \alias{ancestry_1000G}
 \title{1000 Genomes genotypes for 54 ancestry SNPs}
 \format{
-A dataframe containing 60 columns (each SNP) and 2,157 rows (each individual):
+A dataframe containing 60 columns (each SNP) and 2,015 rows (each individual):
  \describe{
      \item{SNP}{SNP rsID with reference allele}
      \item{ID}{Sample ID of individual}

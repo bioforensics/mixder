@@ -17,6 +17,7 @@
 #' @param analysis_type mixure deconvolution type (conditioned vs. unconditioned)
 #'
 #' @import kgp
+#' @import ggplot2
 #'
 #' @return NA
 #' @export
@@ -25,7 +26,8 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status) 
   ## using R library to obtain ancestry info for 1000G samples
   ancestry=kgp::kgp3[,c("id", "reg")]
   ancestry_filt = subset(ancestry, reg != "SAS")
-  geno_filt=mixder::ancestry_1000G[,c(7:60)]
+  geno=mixder::ancestry_1000G_all
+  geno_filt=geno[,c(7:10030)]
   snps = data.frame("snp_id"=colnames(geno_filt))
   snps = snps %>%
     separate(snp_id, c("rsid", "ref_allele"), remove=F)
@@ -51,7 +53,7 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status) 
   pcaRed <- prcomp(betaRedNAOmit, center=TRUE, scale=FALSE)
 
   ## create data table of PCs
-  PCs = data.table(pcaRed$x)
+  PCs = data.frame(pcaRed$x)
 
   ## add unknown to ancestry and genotype IDs
   ancestry_unk = ancestry %>%
@@ -63,8 +65,7 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status) 
   geno_ancestry=merge(geno_unk, ancestry_unk, by.x="IID", by.y="id")
 
   ## add ancestry info to PC data
-  PCs_anc = cbind(ancestry=geno_ancestry[,c(61)], data.frame(PCs))
-
+  PCs_anc = cbind(ancestry=geno_ancestry[,c(10031)], data.frame(PCs))
 
   colScale <- scale_color_manual(name = "Superpopulation",
                                  values = c("AFR" = "lightblue3",

@@ -75,7 +75,7 @@
 #'
 #' Used to run PCA for ancestry prediction
 #'
-#' @format A dataframe containing 60 columns (each SNP) and 2,157 rows (each individual):
+#' @format A dataframe containing 60 columns (each SNP) and 2,015 rows (each individual):
 #'  \describe{
 #'      \item{SNP}{SNP rsID with reference allele}
 #'      \item{ID}{Sample ID of individual}
