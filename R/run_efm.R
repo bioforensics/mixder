@@ -25,8 +25,6 @@
 #'
 #' @export
 #'
-#' @import parallel
-#'
 run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, attable, nsets, cond = NULL, uncond=TRUE, keep_bins=TRUE) {
   if (replicate_id == "") {
     create_evid_all(inpath, id, nsets, keep_bins)
@@ -45,11 +43,10 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
   } else {
     ids = NULL
   }
-  numCores = ifelse(detectCores()<10, detectCores(), 10)
-  message(glue("Running EFM mixture deconvolution using {numCores} cores."))
-  cl = makeCluster(numCores, outfile=glue("{out_path}config_log_files/{date}/efm_output_{log_name}_{date}.txt"))
-  results = parLapply(cl, 1:(nsets), run_indiv_efm_set, ids=ids, snps_input=snps_input, popFreq=popFreq, refData=refData, id=id, replicate_id=replicate_id, write_path=write_path, attable=attable, cond=cond, uncond=uncond)
-  stopCluster(cl)
+  results = list()
+  for (i in 1:nsets) {
+    results[[i]] = run_indiv_efm_set(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, cond=cond, uncond=uncond)
+  }
   uncond_ratios = data.frame()
   uncond_finaltable_all = data.frame()
   if (uncond) {
