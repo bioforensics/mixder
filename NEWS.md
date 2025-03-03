@@ -1,4 +1,7 @@
 
+### 0.7.3: March 3, 2025
+- Allow input of single TSV file instead of Sample Report
+
 ### 0.7.2: February 5, 2025
 - Fixed bug with compiling metrics test script
 - Changed labels of 'General' allele frequencies to 'Global' allele frequencies

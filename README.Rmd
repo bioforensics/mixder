@@ -69,18 +69,20 @@ This can be in the form of the UAS Sample Report or a TSV file with the below fo
 
 ```{r table1, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
 tabl = "
-| Sample.Name | Marker    | Allele.1 | Allele.2 | Height.1 | Height.2 |
-|:-----------:|:---------:|:--------:|:--------:|:--------:|:--------:|
-| Sample01    |rs12615742 | T        | C        | 0        | 134      |
-| Sample01    |rs16885694 | G        | A        | 43       | 63       |
+| Marker    | Allele | Reads  |
+|:---------:|:--------:|:--------:|
+|rs12615742 | T        | 0        |
+|rs12615742 | C        | 134      |
+|rs16885694 | G        | 43       |
+|rs16885694 | A        | 63       |
 "
 cat(tabl)
 ```
-The files should be tab delimited and should be named as a `.tsv` file, such as: `SampleID_set1.tsv`.
+The files should be tab delimited and should be named as a `.tsv` file, such as: `SampleID.tsv`.
 
 If using the Shiny app, you must specify the folder containing these SNP files. Multiple samples (with multiple files each) can be in the same folder. Additional files may be present in the folder and will be ignored by MixDeR.  
 
-MixDeR will divide the entire Kintelligence dataset into more manageable sets (organized by total SNP read depth) to run through EFM (ideal for best performance). The user may specify how many sets the program will use (see below); the default is 10 sets. If providing TSV files, the SNP should be divided into multiple sets and named accordingly (i.e. `SampleID_set1.tsv`). The user must then specify how many sets are provided so MixDeR knows how many files to process per sample.  
+MixDeR will divide the entire Kintelligence dataset into more manageable sets (organized by total SNP read depth) to run through EFM (ideal for best performance). The user may specify how many sets the program will use (see below); the default is 10 sets. The user must then specify how many sets are provided so MixDeR knows how many files to process per sample.  
 
 The default is for MixDeR to use previously-created SNP sets, if present in the specified input folder. If this option is unselected, MixDeR will create new SNP sets files, overwriting any previously made files.  
 
