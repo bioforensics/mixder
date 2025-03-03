@@ -20,17 +20,22 @@
 #'
 #' @importFrom readxl read_excel
 calculate_at = function(sample, kinreports, dynamicAT, staticAT) {
-  for (file in list.files(kinreports)) {
+  for (file in list.files(kinreports, pattern = "^[^~]")) {
     sampleid = ifelse(grepl("rep", sample, fixed=TRUE), gsub("_rep","", sample), sample)
-    if (grepl(sampleid, file, fixed=TRUE) & (grepl("Report", file, fixed=TRUE))) {
+    if (grepl(sampleid, file, fixed=TRUE) & grepl("Report", file, fixed=TRUE)) {
       filename = paste(kinreports, file, sep="/")
+      uas_setting = suppressMessages(read_excel(filename, sheet = "Settings"))
+      if (grepl("2.5", uas_setting[11,2], fixed=TRUE) | grepl("2.6", uas_setting[11,2], fixed=TRUE)) {
+        compiled_snps = load_kin_uas25(filename)
+      } else {
+        compiled_snps = load_kin_older(filename)
+      }
+      break
+    } else if (grepl(sample, file, fixed=TRUE) & grepl(".tsv", file, fixed=TRUE)) {
+      filename = paste(kinreports, file, sep="/")
+      compiled_snps = read.table(filename, header=T, sep="\t")
+      break
     }
-  }
-  uas_setting = suppressMessages(read_excel(filename, sheet = "Settings"))
-  if (grepl("2.5", uas_setting[11,2], fixed=TRUE) | grepl("2.6", uas_setting[11,2], fixed=TRUE)) {
-    compiled_snps = load_kin_uas25(filename)
-  } else {
-    compiled_snps = load_kin_older(filename)
   }
   at = compiled_snps %>%
     group_by(.data$Marker) %>%

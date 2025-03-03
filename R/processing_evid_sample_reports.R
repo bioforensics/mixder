@@ -16,26 +16,26 @@
 #' @export
 #' @importFrom tidyr pivot_wider
 processing_evid_sample_reports = function(inpath, id) {
-  for (file in list.files(inpath)) {
-    if (grepl(id, file, fixed=TRUE) & (grepl("Report", file, fixed=TRUE))) {
+  for (file in list.files(inpath, pattern = "^[^~]")) {
+    if (grepl(id, file, fixed=TRUE) & grepl("Report", file, fixed=TRUE)) {
       filename = paste(inpath, file, sep="/")
+      uas_setting = suppressMessages(read_excel(filename, sheet = "Settings"))
+      if (grepl("2.5", uas_setting[11,2], fixed=TRUE) | grepl("2.6", uas_setting[11,2], fixed=TRUE)) {
+        final_snps = load_kin_uas25(filename)
+      } else {
+        compiled_snps = load_kin_older(filename)
+        final_snps = reverse_comp(compiled_snps)
+      }
+      final_snps$Typed = NULL
+    } else if (grepl(id, file, fixed=TRUE) & grepl(".tsv", file, fixed=TRUE)) {
+      filename = paste(inpath, file, sep="/")
+      final_snps = read.table(filename, header=T, sep="\t")
     }
   }
-  if (exists("filename")) {
-    uas_setting = suppressMessages(read_excel(filename, sheet = "Settings"))
-  } else {
-    stop(glue("Sample {id} not found in {inpath}. Check sample ID in manifest and file name of Sample Reports to ensure compatibility."))
-  }
-  if (grepl("2.5", uas_setting[11,2], fixed=TRUE) | grepl("2.6", uas_setting[11,2], fixed=TRUE)) {
-    final_snps = load_kin_uas25(filename)
-  } else {
-    compiled_snps = load_kin_older(filename)
-    final_snps = reverse_comp(compiled_snps)
-  }
+
   evid_formatted = final_snps %>%
     group_by(.data$Marker) %>%
     rename(Height = "Reads") %>%
-    select(-"Typed") %>%
     mutate(row = row_number()) %>%
     pivot_wider(names_from = row, values_from = c("Allele", "Height"), names_sep = ".")
   return(evid_formatted)
