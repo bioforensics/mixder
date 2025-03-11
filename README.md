@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# MixDeR - Current Version: 0.7.3
+# MixDeR - Current Version: 0.7.4
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -32,8 +32,10 @@ The preprint of the manuscript on MixDeR is available
 
 For any installation, EuroForMix must be installed. Please follow the
 instructions from the [EuroForMix GitHub
-page](https://github.com/oyvble/euroformix/). For this version of
-MixDeR, EFM version 4.0.8 or earlier is required.
+page](https://github.com/oyvble/euroformix/). EuroForMix version 4.2.3
+and earlier have been tested and are compatible with MixDeR. If using a
+newer version, please be aware it has not been tested and errors may
+occur!
 
 If installing from GitHub:  
 The R package `devtools` is required to install from GitHub:
