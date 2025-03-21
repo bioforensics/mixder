@@ -21,7 +21,7 @@ run_indiv_efm_set(
 \arguments{
 \item{i}{Set number}
 
-\item{ids}{dataframe of relicate data}
+\item{ids}{dataframe of replicate data}
 
 \item{snps_input}{Path of SNP sets}
 

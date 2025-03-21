@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# MixDeR - Current Version: 0.7.1
+# MixDeR - Current Version: 0.7.3
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -41,7 +41,7 @@ The R package `devtools` is required to install from GitHub:
     install.packages("devtools")
     devtools::install_github("bioforensics/mixder")
 
-If installing from source, first install the following R packages:  
+If installing from source, first install the following R packages:
 
     install.packages(c("dplyr", "ggplot2", "glue", "prompter", "readxl", "rlang", "shiny", "shinyFiles", "shinyjs", "tibble", "tidyr"))
 
@@ -67,13 +67,15 @@ To launch the shiny app:
     This can be in the form of the UAS Sample Report or a TSV file with
     the below format:
 
-| Sample.Name |   Marker   | Allele.1 | Allele.2 | Height.1 | Height.2 |
-|:-----------:|:----------:|:--------:|:--------:|:--------:|:--------:|
-|  Sample01   | rs12615742 |    T     |    C     |    0     |   134    |
-|  Sample01   | rs16885694 |    G     |    A     |    43    |    63    |
+|   Marker   | Allele | Reads |
+|:----------:|:------:|:-----:|
+| rs12615742 |   T    |   0   |
+| rs12615742 |   C    |  134  |
+| rs16885694 |   G    |  43   |
+| rs16885694 |   A    |  63   |
 
 The files should be tab delimited and should be named as a `.tsv` file,
-such as: `SampleID_set1.tsv`.
+such as: `SampleID.tsv`.
 
 If using the Shiny app, you must specify the folder containing these SNP
 files. Multiple samples (with multiple files each) can be in the same
@@ -83,10 +85,9 @@ ignored by MixDeR.
 MixDeR will divide the entire Kintelligence dataset into more manageable
 sets (organized by total SNP read depth) to run through EFM (ideal for
 best performance). The user may specify how many sets the program will
-use (see below); the default is 10 sets. If providing TSV files, the SNP
-should be divided into multiple sets and named accordingly
-(i.e. `SampleID_set1.tsv`). The user must then specify how many sets are
-provided so MixDeR knows how many files to process per sample.
+use (see below); the default is 10 sets. The user must then specify how
+many sets are provided so MixDeR knows how many files to process per
+sample.
 
 The default is for MixDeR to use previously-created SNP sets, if present
 in the specified input folder. If this option is unselected, MixDeR will
@@ -267,10 +268,10 @@ range of allele 1 probability thresholds and allele 2 probability
 thresholds specified by the user. The final output file looks as such:
 
 | A1 cutoff | A2 cutoff | Total SNPs | N No Ref | N SNPs tested | N Genotypes Correct | Genotype Accuracy | Heterozygosity |
-|:---------:|:---------:|:----------:|:--------:|:-------------:|:-------------------:|:-----------------:|:--------------:|
-|   0.99    |   0.01    |    9735    |    8     |     9727      |        9549         |      0.9817       |     0.456      |
-|   0.99    |   0.02    |    9735    |    8     |     9727      |        9548         |      0.9815       |     0.456      |
-|   0.99    |   0.03    |    9735    |    8     |     9727      |        9548         |      0.9815       |     0.456      |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| 0.99 | 0.01 | 9735 | 8 | 9727 | 9549 | 0.9817 | 0.456 |
+| 0.99 | 0.02 | 9735 | 8 | 9727 | 9548 | 0.9815 | 0.456 |
+| 0.99 | 0.03 | 9735 | 8 | 9727 | 9548 | 0.9815 | 0.456 |
 
 ## Creating GEDmatch PRO Reports
 
@@ -312,7 +313,7 @@ exactly what qualifies as acceptable should be determined by individual
 labs.
 
 | Allele1 Threshold Applied | Allele2 Threshold Applied | Total SNPs | Mean A1 Prob | Median A1 Prob | SD A1 Prob | Heterozygosity |
-|:-------------------------:|:-------------------------:|:----------:|:------------:|:--------------:|:----------:|:--------------:|
-|            No             |            Yes            |   10024    |    0.9984    |       1        |   0.0096   |     0.4626     |
-|            Yes            |            Yes            |    9718    |    0.9998    |       1        |  9.00E-04  |     0.4569     |
-|    Minimum \# of SNPs     |            Yes            |    6000    |      1       |       1        |     0      |     0.4495     |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| No | Yes | 10024 | 0.9984 | 1 | 0.0096 | 0.4626 |
+| Yes | Yes | 9718 | 0.9998 | 1 | 9.00E-04 | 0.4569 |
+| Minimum \# of SNPs | Yes | 6000 | 1 | 1 | 0 | 0.4495 |

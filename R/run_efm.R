@@ -50,6 +50,7 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
   } else {
     ids = NULL
   }
+<<<<<<< HEAD
   numCores = ifelse(detectCores()<10, detectCores(), 10)
   message(glue("Running EFM mixture deconvolution using {numCores} cores."))
   cl = makeCluster(numCores, outfile=glue("{out_path}config_log_files/{date}/efm_output_{log_name}_{date}.txt"))
@@ -60,6 +61,12 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
   #  message(i)
   #  results[[i]] = run_indiv_efm_set(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, cond=cond, uncond=uncond)
   #}
+=======
+  results = list()
+  for (i in 1:nsets) {
+    results[[i]] = run_indiv_efm_set(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, cond=cond, uncond=uncond)
+  }
+>>>>>>> main
   uncond_ratios = data.frame()
   uncond_finaltable_all = data.frame()
   if (uncond) {

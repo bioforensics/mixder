@@ -1,5 +1,10 @@
 test_that("Processing Kintelligence Sample Reports to make evidence files", {
   outpath = tempdir()
+  kin_c_tsv = test_path("testdata", "Sample01c.tsv")
+  file.copy(kin_c_tsv, outpath)
+  output_1 = processing_evid_sample_reports(outpath, "Sample01c")
+  expect_equal(nrow(output_1), 10039)
+  expect_equal(ncol(output_1), 7)
   kin_a = test_path("testdata", "Sample01a_Sample_Report_2021_11_01_16_56_38.xlsx")
   kin_b = test_path("testdata", "NA24385_Sample_Report_2023_09_07_15_11_11.xlsx")
   file.copy(c(kin_a, kin_b), outpath)
