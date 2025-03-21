@@ -19,6 +19,7 @@
 #' @return TRUE/FALSE
 #' @export
 check_allele_probabilities = function(data, i) {
+  efm_v = getNamespaceVersion("euroformix")[["version"]]
   correct = FALSE
   if (check_allele_calls(data)) {
     message(glue("Set {i}: alleles all the same!"))
@@ -28,12 +29,20 @@ check_allele_probabilities = function(data, i) {
       if (data[i, "Locus"] == "") next
       snp = data[i, "Locus"]
       data_snp = subset(data, data$Locus==snp)
-      C2_snp = subset(data_snp, data_snp$Contr.=="C2")
-      if (length(C2_snp) == 0) next
-      C1_snp = subset(data_snp, data_snp$Contr.=="C1")
-      if (as.numeric(C1_snp[1,"Probability"]) == as.numeric(C2_snp[1, "Probability"])) {
+      if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
+        major_snp = subset(data_snp, data_snp$Contr. == "C2")
+      } else {
+        major_snp = subset(data_snp, data_snp$Contr.=="C1")
+      }
+      if (length(major_snp) == 0) next
+      if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
+        minor_snp = subset(data_snp, data_snp$Contr.=="C1")
+      } else {
+        minor_snp = subset(data_snp, data_snp$Contr.=="C2")
+      }
+      if (as.numeric(major_snp[1,"Probability"]) == as.numeric(minor_snp[1, "Probability"])) {
         next
-      } else if (as.numeric(C1_snp[1,"Probability"]) < as.numeric(C2_snp[1, "Probability"])) {
+      } else if (as.numeric(major_snp[1,"Probability"]) < as.numeric(minor_snp[1, "Probability"])) {
         correct = FALSE
         break
       } else {

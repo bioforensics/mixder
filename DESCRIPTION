@@ -1,13 +1,13 @@
 Package: mixder
 Type: Package
 Title: A workflow for performing SNP mixture deconvolution
-Version: 0.7.3
+Version: 0.7.4
 Author: Rebecca Mitchell <rebecca.mitchell@st.dhs.gov>
 Maintainer: Rebecca Mitchell <rebecca.mitchell@st.dhs.gov>
 Description: A workflow for performing SNP mixture deconvolution of ForenSeq Kintelligence SNPs. Mixture deconvolution is performed using EuroForMix (https://github.com/oyvble/euroformix/). After mixture deconvolution, the user can choose to calculate metrics such as genotype accuracy and heterozygosity for a range of allele probability thresholds (useful for validation work) or create GEDmatch PRO reports utilizing specified allele probability thresholds.
 License: file LICENSE
 Imports: dplyr, euroformix, ggplot2, glue, methods, prompter, readxl, rlang, shiny, shinyFiles, shinyjs, tibble, tidyr
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Encoding: UTF-8
 Depends: 
     R (>= 2.10)

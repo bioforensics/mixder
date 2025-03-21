@@ -1,3 +1,5 @@
+### 0.7.4: March 11, 2025
+- Able to run the newest version of EuroForMix (version 4.2.3) and earlier.
 
 ### 0.7.3: March 3, 2025
 - Allow input of single TSV file instead of Sample Report
