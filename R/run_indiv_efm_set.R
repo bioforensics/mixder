@@ -16,6 +16,7 @@
 #' @export
 #'
 run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, cond = NULL, uncond=TRUE) {
+  efm_v = getNamespaceVersion("euroformix")[["version"]]
   final_list = c()
   if (replicate_id != "") {
     sample = glue("{as.character(ids[[1]])}_set{i}")
@@ -38,7 +39,11 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
       repeat_num = 0
       repeat {
         message(glue("Running unconditioned analysis for set {i}, attempt #{repeat_num+1}<br/>"))
-        uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01)
+        if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
+          uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0)
+        } else {
+          uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01)
+        }
         uncond_finaltable = euroformix::deconvolve(uncond_results)
         if (check_allele_probabilities(data.frame(uncond_finaltable[["table4"]]), i)) break
         message(glue("Set {i} unconditioned: Mixture proportion = 0.5 or Allele probability flipping detected - will rerun!<br/>"))
@@ -70,7 +75,11 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
         list_num = match(cond_on, names(refData))
         dir.create(file.path(write_path, glue("/conditioned/cond_on_{cond_on}")), showWarnings = FALSE, recursive=TRUE)
         message(glue("Running conditioned analysis on {cond_on} for set {i}.<br/>"))
-        condresults = euroformix::calcMLE(2, evidData, popFreq, refData, AT=sample_at, condOrder=replace(cond_vector, list_num, 1), BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01)
+        if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
+          condresults = euroformix::calcMLE(2, evidData, popFreq, refData, AT=sample_at, condOrder=replace(cond_vector, list_num, 1), BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0)
+        } else {
+          condresults = euroformix::calcMLE(2, evidData, popFreq, refData, AT=sample_at, condOrder=replace(cond_vector, list_num, 1), BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01)
+        }
         final_condresults = euroformix::deconvolve(condresults)
         ratio_row[glue("Set{i}_C1_Prob_cond_on_{cond_on}")] = condresults[["fit"]][["thetahat2"]][["Mix-prop. C1"]]
         ratio_row[glue("Set{i}_C2_Prob_cond_on_{cond_on}")] = condresults[["fit"]][["thetahat2"]][["Mix-prop. C2"]]

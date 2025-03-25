@@ -111,6 +111,15 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
   }
   if (unconditioned) {
     if (run_mixdeconv | !ancestry) {
+    efm_v = getNamespaceVersion("euroformix")[["version"]]
+    if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
+      major_c = "C2"
+      minor_c = "C1"
+    } else {
+      major_c = "C1"
+      minor_c = "C2"
+    }
+    if (run_mixdeconv) {
       uncond_table_major = data.frame(efm_results_major[[1]]) %>%
         filter(.data$Locus != "")
       uncond_table_minor = data.frame(efm_results_minor[[1]]) %>%
@@ -156,12 +165,25 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
         write.table(minor_report[[1]], glue("{write_path}/{id}/unconditioned/{id}_uncond_minor_{type}_Inferred_Genotypes.txt"), col.names=T, sep="\t", row.names=F, quote=F)
         ancestry_prediction(minor_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned", "minor")
       }
+      major_report = create_gedmatchpro_report(write_path, uncond_table_major, major_c, "major", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
+      write.table(major_report[[1]], glue("{write_path}/GEDMatchPROReports/{id}_uncond_major_{type}_GEDmatchPROReport.txt"), col.names=T, sep="\t", row.names=F, quote=F)
+      write.csv(major_report[[2]], glue("{write_path}/GEDMatchPROReports/Metrics/{id}_uncond_major_{type}_GEDmatchPROReport_Metrics.csv"), row.names=F, quote=F)
+      png(glue("{write_path}/GEDMatchPROReports/Metrics/{id}_uncond_major_{type}_GEDmatchPROReport_Allele1_Probabilities_Density_Plot.png"))
+      show(major_report[[3]])
+      dev.off()
+      message("Creating GEDmatch PRO report for minor contributor in unconditioned analysis.<br/>")
+      minor_report = create_gedmatchpro_report(write_path, uncond_table_minor, minor_c, "minor", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
+      write.table(minor_report[[1]], glue("{write_path}/GEDMatchPROReports/{id}_uncond_minor_{type}_GEDmatchPROReport.txt"), col.names=T, sep="\t", row.names=F, quote=F)
+      write.csv(minor_report[[2]], glue("{write_path}/GEDMatchPROReports/Metrics/{id}_uncond_minor_{type}_GEDmatchPROReport_metrics.csv"), row.names=F, quote=F)
+      png(glue("{write_path}/GEDMatchPROReports/Metrics/{id}_uncond_minor_{type}_GEDmatchPROReport_Allele1_Probabilities_Density_Plot.png"))
+      show(minor_report[[3]])
+      dev.off()
     } else if (method == "Calculate Metrics") {
       major_ref = format_ref(refData, major, refs)
-      major_tables = suppressWarnings(process_efm_files(uncond_table_major, "C1", major_ref, minimum_snps, A1min, A1max, A2min, A2max, metrics=TRUE, filter_missing))
+      major_tables = suppressWarnings(process_efm_files(uncond_table_major, major_c, major_ref, minimum_snps, A1min, A1max, A2min, A2max, metrics=TRUE, filter_missing))
       write_tables(major_tables, glue("{write_path}/{id}/unconditioned/{major}"), minimum_snps)
       minor_ref = format_ref(refData, minor, refs)
-      minor_tables = suppressWarnings(process_efm_files(uncond_table_minor, "C2", minor_ref, minimum_snps, A1min, A1max, A2min, A2max, metrics=TRUE, filter_missing))
+      minor_tables = suppressWarnings(process_efm_files(uncond_table_minor, minor_c, minor_ref, minimum_snps, A1min, A1max, A2min, A2max, metrics=TRUE, filter_missing))
       write_tables(minor_tables, glue("{write_path}/{id}/unconditioned/{minor}"), minimum_snps)
     }
   }
