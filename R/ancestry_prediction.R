@@ -27,7 +27,7 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status) 
   ## using R library to obtain ancestry info for 1000G samples
   #ancestry=kgp::kgp3[,c("id", "reg")]
   #ancestry_filt = subset(ancestry, reg != "SAS")
-  geno=mixder::ancestry_1000G_all
+  geno=mixder::ancestry_1000G_allsamples
   geno_filt=geno[,c(7:10030)]
   snps = data.frame("snp_id"=colnames(geno_filt))
   snps = snps %>%
@@ -46,6 +46,7 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status) 
   ## add unknown to 1000G genotypes
   geno_filt_unk = rbind(geno_filt, formatted_sample)
 
+  message("Running PCA<br/>")
   ## remove any SNPs with NA values (in unknown sample)
   betaRedNAOmit <- geno_filt_unk %>%
     select_if(~ !any(is.na(.)))
@@ -58,25 +59,20 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status) 
 
   ## add unknown to ancestry and genotype IDs
   #ancestry_unk = ancestry %>%
-    add_row(id = "Unk", reg = "Unk")
+    #add_row(id = "Unk", reg = "Unk")
   geno_unk = geno %>%
     add_row(IID="Unk")
-
-  ancestry = read.table("/Users/rebecca.mitchell/Desktop/ancestry_colors.txt", header=T, sep="\t") %>%
-    add_row(id = "Unk", reg = "Unk", population = "Unk", color="red", superpop_color="red")
   ## merge genotypes with ancestry info; need to preserve order to match to PCA data
-  geno_ancestry=merge(geno_unk, ancestry, by.x="IID", by.y="id")
+  geno_ancestry=merge(geno_unk, mixder::ancestry_colors, by.x="IID", by.y="id")
 
   ## add ancestry info to PC data
-  PCs_anc = cbind(ancestry=geno_ancestry[,c(10031:10032)], data.frame(PCs[,c(1:10)]))
-
+  PCs_anc = cbind(geno_ancestry[,c(10031:10034)], data.frame(PCs[,c(1:10)]))
   #colScale <- scale_color_manual(name = "Superpopulation",
   #                               values = c("AFR" = "lightblue3",
   #                                          "EAS" = "chartreuse2",
   #                                          "EUR" = "pink2",
   #                                          "AMR" = "gold3",
   #                                          "Unk" = "firebrick3"),
-  #                               labels = levels(as.factor(PCs_anc$ancestry)))
 
   ## PCA plot
   #png(glue("{path}/{id}_{contrib_status}_{analysis_type}_PCA_plot.png"))
@@ -91,9 +87,10 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status) 
 
     #PCs_anc=merge(ancestry, PCs,by.x="id", by.y="V1")
     ##PCs_anc$Size=ifelse(PCs_anc$reg=="Unk",10,9)
+    dir.create(file.path(path, "PCA_plots"), showWarnings = FALSE, recursive=TRUE)
 
-    pal = unique(ancestry$superpop_color)
-    pal = setNames(pal, unique(ancestry$reg))
+    pal = unique(geno_ancestry$superpop_color)
+    pal = setNames(pal, unique(geno_ancestry$reg))
 
 
     fig = plot_ly(PCs_anc, x = ~PC1, y = ~PC2, z = ~PC3, color = ~reg, colors=pal, size=10)
@@ -101,11 +98,15 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status) 
     fig = fig %>% layout(scene = list(xaxis = list(title = 'PC1'),
                                        yaxis = list(title = 'PC2'),
                                        zaxis = list(title = 'PC3')))
-    htmlwidgets::saveWidget(as_widget(fig), glue("{path}/{id}_{contrib_status}_{analysis_type}_superpop_3D_PCAPlot.html"))
-    fig_sub = plot_ly(PCs_anc, x = ~PC1, y = ~PC2, z = ~PC3, color = ~population, colors=pal, size=10)
+    htmlwidgets::saveWidget(as_widget(fig), glue("{path}/PCA_plots/{id}_{contrib_status}_{analysis_type}_superpop_3D_PCAPlot.html"))
+
+    pal_sub = unique(geno_ancestry$color)
+    pal_sub = setNames(pal_sub, unique(geno_ancestry$population))
+
+    fig_sub = plot_ly(PCs_anc, x = ~PC1, y = ~PC2, z = ~PC3, color = ~population, colors=pal_sub, size=10)
     fig_sub = fig_sub %>% add_markers()
     fig_sub = fig_sub %>% layout(scene = list(xaxis = list(title = 'PC1'),
                                        yaxis = list(title = 'PC2'),
                                        zaxis = list(title = 'PC3')))
-    htmlwidgets::saveWidget(as_widget(fig), glue("{path}/{id}_{contrib_status}_{analysis_type}_subpopulations_3D_PCAPlot.html"))
+    htmlwidgets::saveWidget(as_widget(fig_sub), glue("{path}/PCA_plots/{id}_{contrib_status}_{analysis_type}_subpopulations_3D_PCAPlot.html"))
 }
