@@ -17,18 +17,22 @@
 #' @param analysis_type mixure deconvolution type (conditioned vs. unconditioned)
 #'
 #' @import kgp
-#' @import ggplot2
 #' @import plotly
 #'
 #' @return NA
 #' @export
 #'
-ancestry_prediction = function(report, path, id, analysis_type, contrib_status) {
+ancestry_prediction = function(report, path, id, analysis_type, contrib_status, snps) {
   ## using R library to obtain ancestry info for 1000G samples
   #ancestry=kgp::kgp3[,c("id", "reg")]
   #ancestry_filt = subset(ancestry, reg != "SAS")
-  geno=mixder::ancestry_1000G_allsamples
-  geno_filt=geno[,c(7:10030)]
+  if (snps == "All Autosomal SNPs") {
+    geno=mixder::ancestry_1000G_allsamples
+  } else {
+    geno=mixder::ancestrysnps_1000G_allsamples
+  }
+  ncols=ncol(geno)
+  geno_filt=geno[,c(7:ncols)]
   snps = data.frame("snp_id"=colnames(geno_filt))
   snps = snps %>%
     separate(snp_id, c("rsid", "ref_allele"), remove=F)
@@ -66,7 +70,7 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status) 
   geno_ancestry=merge(geno_unk, mixder::ancestry_colors, by.x="IID", by.y="id")
 
   ## add ancestry info to PC data
-  PCs_anc = cbind(geno_ancestry[,c(10031:10034)], data.frame(PCs[,c(1:10)]))
+  PCs_anc = cbind(geno_ancestry[,c(ncols+1:ncols+4)], data.frame(PCs[,c(1:10)]))
   #colScale <- scale_color_manual(name = "Superpopulation",
   #                               values = c("AFR" = "lightblue3",
   #                                          "EAS" = "chartreuse2",
@@ -98,6 +102,8 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status) 
     fig = fig %>% layout(scene = list(xaxis = list(title = 'PC1'),
                                        yaxis = list(title = 'PC2'),
                                        zaxis = list(title = 'PC3')))
+    fig = fig %>% update_layout(title_text=glue("{ncol(betaRedNAOmit)} SNPs; {id} {contrib_status} {analysis_type} "), title_x=0.5)
+
     htmlwidgets::saveWidget(as_widget(fig), glue("{path}/PCA_plots/{id}_{contrib_status}_{analysis_type}_superpop_3D_PCAPlot.html"))
 
     pal_sub = unique(geno_ancestry$color)
@@ -108,5 +114,7 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status) 
     fig_sub = fig_sub %>% layout(scene = list(xaxis = list(title = 'PC1'),
                                        yaxis = list(title = 'PC2'),
                                        zaxis = list(title = 'PC3')))
+    fig_sub = fig_sub %>% update_layout(title_text=glue("{ncol(betaRedNAOmit)} SNPs; {id} {contrib_status} {analysis_type} "), title_x=0.5)
+
     htmlwidgets::saveWidget(as_widget(fig_sub), glue("{path}/PCA_plots/{id}_{contrib_status}_{analysis_type}_subpopulations_3D_PCAPlot.html"))
 }

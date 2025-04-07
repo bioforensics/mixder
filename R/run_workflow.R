@@ -44,6 +44,7 @@
 #' @param keep_bins To use existing SNP bins or create new bins (and files)
 #' @param filter_missing TRUE/FALSE whether to filter SNPs with either allele missing
 #' @param ancestry TRUE/FALSE whether to skip ancestry prediction
+#' @param ancestrysnps SNPs to use for ancestry prediction (either ancestry only or all SNPs)
 #'
 #' @export
 #'
@@ -53,7 +54,7 @@
 #'@importFrom utils write.table write.csv read.table
 #'@importFrom grDevices dev.off png
 #'@importFrom methods show
-run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refs, sample_path, output, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, ancestry) {
+run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refs, sample_path, output, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, ancestry, ancestrysnps) {
   out_path = glue("{kinpath}/snp_sets/{output}/")
   if (replicate_id == "") {
     logfile = file(glue("{out_path}config_log_files/{date}/run_log_{id}_{date}.txt"), open = "wt")
@@ -111,13 +112,14 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
   }
   if (unconditioned) {
     if (run_mixdeconv | !ancestry) {
-    efm_v = getNamespaceVersion("euroformix")[["version"]]
-    if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
-      major_c = "C2"
-      minor_c = "C1"
-    } else {
-      major_c = "C1"
-      minor_c = "C2"
+      efm_v = getNamespaceVersion("euroformix")[["version"]]
+      if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
+        major_c = "C2"
+        minor_c = "C1"
+      } else {
+        major_c = "C1"
+        minor_c = "C2"
+      }
     }
     if (run_mixdeconv) {
       uncond_table_major = data.frame(efm_results_major[[1]]) %>%
@@ -161,9 +163,9 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
         dev.off()
       } else if (!ancestry) {
         write.table(major_report[[1]], glue("{write_path}/{id}/unconditioned/{id}_uncond_major_{type}_Inferred_Genotypes.txt"), col.names=T, sep="\t", row.names=F, quote=F)
-        ancestry_prediction(major_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned", "major")
+        ancestry_prediction(major_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned", "major", ancestrysnps)
         write.table(minor_report[[1]], glue("{write_path}/{id}/unconditioned/{id}_uncond_minor_{type}_Inferred_Genotypes.txt"), col.names=T, sep="\t", row.names=F, quote=F)
-        ancestry_prediction(minor_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned", "minor")
+        ancestry_prediction(minor_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned", "minor", ancestrysnps)
       }
       major_report = create_gedmatchpro_report(write_path, uncond_table_major, major_c, "major", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
       write.table(major_report[[1]], glue("{write_path}/GEDMatchPROReports/{id}_uncond_major_{type}_GEDmatchPROReport.txt"), col.names=T, sep="\t", row.names=F, quote=F)
@@ -228,7 +230,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
           dev.off()
         } else if (!ancestry) {
           write.table(cond_report[[1]], glue("{write_path}/{id}/conditioned/{id}_{contrib_status}_contrib_conditioned_on_{cond_on}_{type}_InferredGenotypes.txt"), col.names=T, sep="\t", row.names=F, quote=F)
-          ancestry_prediction(cond_report[[1]], glue("{write_path}/{id}/conditioned/"), id, paste0("conditioned_on_", cond_on), contrib_status)
+          ancestry_prediction(cond_report[[1]], glue("{write_path}/{id}/conditioned/"), id, paste0("conditioned_on_", cond_on), contrib_status, ancestrysnps)
         }
       } else if (method == "Calculate Metrics") {
         unk = ifelse(contrib_status == "major", major, minor)

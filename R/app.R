@@ -29,7 +29,7 @@ mixder = function() {
       ) |>
         add_prompt(message = "Check box to skip ancestry prediction step and move to mixture deconvolution.", position = "right")
       ), value = FALSE),
-      conditionalPanel(condition = "input.skip_ancestry == 0", uiOutput("ancestry_text")),
+      conditionalPanel(condition = "input.skip_ancestry == 0", uiOutput("ancestry_text"), uiOutput("ancestry_snps")),
       checkboxInput("uncond", tags$span("Unconditioned Analysis", tags$span(icon(
         name = "question-circle",
       )
@@ -56,6 +56,7 @@ mixder = function() {
                      ) |>
         add_prompt(message = "Select a folder containing the Mixture Sample Reports.", position = "right"),
       textOutput("kin_inpath"),
+
       conditionalPanel(condition = "input.skip_ancestry == 1", uiOutput("runmd"), uiOutput("twofreqs"), uiOutput("method")),
       conditionalPanel(condition = "input.skip_ancestry == 1 & input.twofreqs == 0", uiOutput("freqselect")),
       conditionalPanel(condition = "input.twofreqs == 1", uiOutput("freqselect_major"), uiOutput("freqselect_minor")),
@@ -188,6 +189,13 @@ server = function(input, output, session) {
   })
   output$ancestry_text = renderUI({
     HTML("<b>Optional: Ancestry Prediction Tool using PCA</b> <br/> Use this tool to assist in predicting the ancestry of each contributor. The population-specific allele frequency file can then be used in the next mixture deconvolution step. Select the above box to skip this step and move forward to mixture deconvolution.<br/>See the README for more information.<br/><br/>")
+  })
+  output$ancestry_snps = renderUI({
+    selectInput("ancestry_snps", tags$span("SNPs to Use for PCA:", tags$span(icon(
+      name = "question-circle")
+    ) |>
+      add_prompt(message = "Select whether to use all autosomal SNPs or only ancestry SNPs for ancestry prediction.", position = "right")
+    ), c("Ancestry SNPs Only", "All Autosomal SNPs"))
   })
   output$major_selector = renderUI({
     if (isTruthy(refs())) {
@@ -428,7 +436,7 @@ server = function(input, output, session) {
         incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
           withCallingHandlers({
             shinyjs::html(id = "text", html = "")
-            run_workflow(date, id, replicate_id, input$twofreqs, ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath),ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refData, refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry)
+            run_workflow(date, id, replicate_id, input$twofreqs, ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath),ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refData, refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps)
           },
           message = function(m) {
             shinyjs::html(id = "text", html = m$message, add = TRUE)
