@@ -29,7 +29,7 @@ mixder = function() {
       ) |>
         add_prompt(message = "Check box to skip ancestry prediction step and move to mixture deconvolution.", position = "right")
       ), value = FALSE),
-      conditionalPanel(condition = "input.skip_ancestry == 0", uiOutput("ancestry_text"), uiOutput("ancestry_snps")),
+      conditionalPanel(condition = "input.skip_ancestry == 0", uiOutput("ancestry_text"), uiOutput("pcagroups"), uiOutput("ancestry_snps")),
       checkboxInput("uncond", tags$span("Unconditioned Analysis", tags$span(icon(
         name = "question-circle",
       )
@@ -196,6 +196,15 @@ server = function(input, output, session) {
     ) |>
       add_prompt(message = "Select whether to use all autosomal SNPs or only ancestry SNPs for ancestry prediction.", position = "right")
     ), c("Ancestry SNPs Only", "All Autosomal SNPs"))
+  })
+  output$pcagroups = renderUI({
+    checkboxGroupInput("pcagroups", tags$span("Select Groups for Ancestry Prediction:", tags$span(
+      icon(
+        name = "question-circle",
+      )
+    ) |>
+      add_prompt(message = "PCA plots are colored by the selected grouping to identify ancestry. Both may be selected. Subpopulations include 26 subgroups making up the stated superpopulations.", position = "right")
+    ), choices = list("Superpopulations (AFR/AMR/EAS/EUR/SAS Only)", "Subpopulations"), selected = "Superpopulations (AFR/AMR/EAS/EUR/SAS Only)")
   })
   output$major_selector = renderUI({
     if (isTruthy(refs())) {
@@ -436,7 +445,7 @@ server = function(input, output, session) {
         incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
           withCallingHandlers({
             shinyjs::html(id = "text", html = "")
-            run_workflow(date, id, replicate_id, input$twofreqs, ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath),ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refData, refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps)
+            run_workflow(date, id, replicate_id, input$twofreqs, ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath),ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refData, refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups)
           },
           message = function(m) {
             shinyjs::html(id = "text", html = m$message, add = TRUE)

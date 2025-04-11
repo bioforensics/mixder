@@ -37,11 +37,11 @@
 #' @param major assumed major contributor of mixture
 #' @param minor assumed minor contributor of mixture
 #' @param filter_missing TRUE/FALSE whether to filter SNPs if second allele is missing (99)
-#' @param ancestry TRUE/FALSE whether to skip ancestry prediction step
+#' @param skipancestry TRUE/FALSE whether to skip ancestry prediction step
 #'
 #' @export
 #'
-create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs, sample_path, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, filter_missing, ancestry){
+create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs, sample_path, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, filter_missing, skipancestry){
   config = setNames(data.frame(matrix(ncol=2, nrow=0)), c("Setting", "Value"))
   config = rbind(config, data.frame(Setting="MixDeR Version:", Value=getNamespaceVersion("mixder")[["version"]]))
   config = rbind(config, data.frame(Setting="EuroForMix Version:", Value=getNamespaceVersion("euroformix")[["version"]]))

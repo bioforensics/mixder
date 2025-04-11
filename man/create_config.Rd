@@ -31,7 +31,7 @@ create_config(
   major,
   minor,
   filter_missing,
-  ancestry
+  skipancestry
 )
 }
 \arguments{
@@ -87,7 +87,7 @@ create_config(
 
 \item{filter_missing}{TRUE/FALSE whether to filter SNPs if second allele is missing (99)}
 
-\item{ancestry}{TRUE/FALSE whether to skip ancestry prediction step}
+\item{skipancestry}{TRUE/FALSE whether to skip ancestry prediction step}
 }
 \description{
 Create configuration file containing all settings for a specific run

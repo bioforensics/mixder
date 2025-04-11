@@ -43,18 +43,19 @@
 #' @param minor_threshold If apply the allele 1 probability threshold to the minor contributor
 #' @param keep_bins To use existing SNP bins or create new bins (and files)
 #' @param filter_missing TRUE/FALSE whether to filter SNPs with either allele missing
-#' @param ancestry TRUE/FALSE whether to skip ancestry prediction
+#' @param skipancestry TRUE/FALSE whether to skip ancestry prediction
 #' @param ancestrysnps SNPs to use for ancestry prediction (either ancestry only or all SNPs)
+#' @param pcagroups How to color PCA plots (superpopulations and/or subpopulations)
 #'
 #' @export
 #'
 #'@import dplyr
-#'@import ggplot2
 #'@import glue
 #'@importFrom utils write.table write.csv read.table
 #'@importFrom grDevices dev.off png
 #'@importFrom methods show
-run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refs, sample_path, output, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, ancestry, ancestrysnps) {
+run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refs, sample_path, output, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, skipancestry, ancestrysnps, pcagroups) {
+  print(pcagroups)
   out_path = glue("{kinpath}/snp_sets/{output}/")
   if (replicate_id == "") {
     logfile = file(glue("{out_path}config_log_files/{date}/run_log_{id}_{date}.txt"), open = "wt")
@@ -66,7 +67,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
     stop("No major/minor contributor IDs provided but calculating metrics for an unconditioned analysis. Please re-run!")
   }
   message("Loading Frequency Data<br/>")
-  if (!ancestry) {
+  if (!skipancestry) {
     popFreq = load_freq(out_path, twofreqs, freq_both, freq_major, freq_minor)
   } else {
     popFreq = mixder::popFreq_1000G
@@ -83,16 +84,16 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
   message(glue("Sample: {id}<br/>"))
   message(glue("Replicate Sample: {replicate_id}<br/>"))
     ## run EFM
-  if (run_mixdeconv | !ancestry) {
+  if (run_mixdeconv | !skipancestry) {
     attable = process_kinreport(id, replicate_id, kinpath, dynamicAT, staticAT)
-    if (!ancestry) {
-      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, ancestry, cond, uncond=unconditioned, keep_bins)
+    if (!skipancestry) {
+      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, skipancestry, cond, uncond=unconditioned, keep_bins)
       efm_results_minor = efm_results_major
     } else if (twofreqs) {
-      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, ancestry, cond, uncond=unconditioned, keep_bins)
-      efm_results_minor = run_efm(date, popFreq[[2]], refData, id, replicate_id, kinpath, out_path, attable, sets, ancestry, cond, uncond=unconditioned, keep_bins)
+      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, skipancestry, cond, uncond=unconditioned, keep_bins)
+      efm_results_minor = run_efm(date, popFreq[[2]], refData, id, replicate_id, kinpath, out_path, attable, sets, skipancestry, cond, uncond=unconditioned, keep_bins)
     } else {
-      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, ancestry, cond, uncond=unconditioned, keep_bins)
+      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, skipancestry, cond, uncond=unconditioned, keep_bins)
       efm_results_minor = efm_results_major
     }
   }
@@ -101,17 +102,17 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
   } else {
     type = "Replicates"
   }
-  if (!ancestry) {
+  if (!skipancestry) {
     write_path = paste0(out_path, "ancestry_prediction/", type)
   } else {
     write_path = paste0(out_path, type)
   }
     ## create GEDmatch PRO report directory
-  if (method == "Create GEDmatch PRO Report") {
+  if (method == "Create GEDmatch PRO Report" | !skipancestry) {
     dir.create(file.path(write_path, "GEDMatchPROReports/Metrics"), showWarnings = FALSE, recursive=TRUE)
   }
   if (unconditioned) {
-    if (run_mixdeconv | !ancestry) {
+    if (run_mixdeconv | !skipancestry) {
       efm_v = getNamespaceVersion("euroformix")[["version"]]
       if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
         major_c = "C2"
@@ -145,7 +146,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
         stop(glue("{uncond_filename_minor} does not exist. You may need to run EFM or check the correct SNP file input folder and Output folder are correct!"))
       }
     }
-    if (method == "Create GEDmatch PRO Report" | !ancestry) {
+    if (method == "Create GEDmatch PRO Report" | !skipancestry) {
       message("Creating GEDmatch PRO report for major contributor in unconditioned analysis.<br/>")
       major_report = create_gedmatchpro_report(write_path, uncond_table_major, "C1", "major", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
       message("Creating GEDmatch PRO report for minor contributor in unconditioned analysis.<br/>")
@@ -161,11 +162,11 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
         png(glue("{write_path}/GEDMatchPROReports/Metrics/{id}_uncond_minor_{type}_GEDmatchPROReport_Allele1_Probabilities_Density_Plot.png"))
         show(minor_report[[3]])
         dev.off()
-      } else if (!ancestry) {
+      } else if (!skipancestry) {
         write.table(major_report[[1]], glue("{write_path}/{id}/unconditioned/{id}_uncond_major_{type}_Inferred_Genotypes.txt"), col.names=T, sep="\t", row.names=F, quote=F)
-        ancestry_prediction(major_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned", "major", ancestrysnps)
+        ancestry_prediction(major_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned", "major", ancestrysnps, pcagroups)
         write.table(minor_report[[1]], glue("{write_path}/{id}/unconditioned/{id}_uncond_minor_{type}_Inferred_Genotypes.txt"), col.names=T, sep="\t", row.names=F, quote=F)
-        ancestry_prediction(minor_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned", "minor", ancestrysnps)
+        ancestry_prediction(minor_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned", "minor", ancestrysnps, pcagroups)
       }
       major_report = create_gedmatchpro_report(write_path, uncond_table_major, major_c, "major", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
       write.table(major_report[[1]], glue("{write_path}/GEDMatchPROReports/{id}_uncond_major_{type}_GEDmatchPROReport.txt"), col.names=T, sep="\t", row.names=F, quote=F)
@@ -192,7 +193,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
   if (isTruthy(cond)) {
     i = 3
     for (cond_on in cond) {
-      if (run_mixdeconv | !ancestry) {
+      if (run_mixdeconv | !skipancestry) {
         mix_ratios = efm_results_major[[i+1]]
         write.table(mix_ratios, glue("{write_path}/{id}/conditioned/unk_conditioned_on_{cond_on}_mixture_ratios.tsv"), col.names=T, sep="\t", row.names=F, quote=F)
         contrib_status = ifelse(mean(mix_ratios$C1_Prob) > mean(mix_ratios$C2_Prob), "minor", "major")
@@ -219,7 +220,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
           stop(glue("File {cond_filename} does not exist. You may need to run EFM or check the correct SNP file input folder and Output folder are correct!"))
         }
       }
-      if (method == "Create GEDmatch PRO Report" | !ancestry) {
+      if (method == "Create GEDmatch PRO Report" | !skipancestry) {
         message(glue("Creating GEDmatch PRO report for {contrib_status} contributor conditioned on {cond_on} in conditioned analysis.<br/>"))
         cond_report = create_gedmatchpro_report(write_path, get(glue("efm_table_{contrib_status}")), "C2", contrib_status, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
         if (method == "Create GEDmatch PRO Report") {
@@ -228,9 +229,9 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
           png(glue("{write_path}/GEDMatchPROReports/Metrics/{id}_{contrib_status}_contrib_{type}_GEDmatchPROReport_Allele1_Probabilities_Density_Plot.png"))
           show(cond_report[[3]])
           dev.off()
-        } else if (!ancestry) {
+        } else if (!skipancestry) {
           write.table(cond_report[[1]], glue("{write_path}/{id}/conditioned/{id}_{contrib_status}_contrib_conditioned_on_{cond_on}_{type}_InferredGenotypes.txt"), col.names=T, sep="\t", row.names=F, quote=F)
-          ancestry_prediction(cond_report[[1]], glue("{write_path}/{id}/conditioned/"), id, paste0("conditioned_on_", cond_on), contrib_status, ancestrysnps)
+          ancestry_prediction(cond_report[[1]], glue("{write_path}/{id}/conditioned/"), id, paste0("conditioned_on_", cond_on), contrib_status, ancestrysnps, pcagroups)
         }
       } else if (method == "Calculate Metrics") {
         unk = ifelse(contrib_status == "major", major, minor)
@@ -241,7 +242,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
       i = i + 2
     }
   }
-  if (!ancestry) {
+  if (!skipancestry) {
     message("Ancestry Prediction complete!")
   } else if (run_mixdeconv) {
     message("Mixture Deconvolution complete!")

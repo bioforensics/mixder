@@ -4,7 +4,15 @@
 \alias{ancestry_prediction}
 \title{Title Ancestry prediction using PCA}
 \usage{
-ancestry_prediction(report, path, id, analysis_type, contrib_status, snps)
+ancestry_prediction(
+  report,
+  path,
+  id,
+  analysis_type,
+  contrib_status,
+  snps,
+  groups
+)
 }
 \arguments{
 \item{report}{inferred genotypes}
@@ -14,6 +22,8 @@ ancestry_prediction(report, path, id, analysis_type, contrib_status, snps)
 \item{id}{sample ID}
 
 \item{analysis_type}{mixure deconvolution type (conditioned vs. unconditioned)}
+
+\item{groups}{How to color PCA plots (superpopulations and/or subpopulations)}
 }
 \value{
 NA
