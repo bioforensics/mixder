@@ -191,10 +191,10 @@ server = function(input, output, session) {
     HTML("<b>Optional: Ancestry Prediction Tool using PCA</b> <br/> Use this tool to assist in predicting the ancestry of each contributor. The population-specific allele frequency file can then be used in the next mixture deconvolution step. Select the above box to skip this step and move forward to mixture deconvolution.<br/>See the README for more information.<br/><br/>")
   })
   output$ancestry_snps = renderUI({
-    selectInput("ancestry_snps", tags$span("SNPs to Use for PCA:", tags$span(icon(
+    selectInput("ancestry_snps", tags$span("SNPs to Use for Ancestry Prediction:", tags$span(icon(
       name = "question-circle")
     ) |>
-      add_prompt(message = "Select whether to use all autosomal SNPs or only ancestry SNPs for ancestry prediction.", position = "right")
+      add_prompt(message = "Select whether to use all autosomal SNPs or only ancestry SNPs for ancestry prediction. Warning: using all SNPs may result in longer analysis time!", position = "right")
     ), c("Ancestry SNPs Only", "All Autosomal SNPs"))
   })
   output$pcagroups = renderUI({

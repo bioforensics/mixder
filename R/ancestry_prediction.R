@@ -76,6 +76,9 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status, 
   newcol=ncols+1
   newcol2=ncols+4
   PCs_anc = cbind(geno_ancestry[,c(newcol:newcol2)], data.frame(PCs[,c(1:10)]))
+
+  centroids(groups, PCs_anc, glue("{path}/PCA_plots"), glue("{id}_{contrib_status}_{analysis_type}_{plotid}"))
+
   #colScale <- scale_color_manual(name = "Superpopulation",
   #                               values = c("AFR" = "lightblue3",
   #                                          "EAS" = "chartreuse2",
@@ -112,7 +115,9 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status, 
                            title=list(text=glue("{ncol(betaRedNAOmit)} SNPs; {id} {contrib_status} {analysis_type} Superpopulations")))
 
       htmlwidgets::saveWidget(as_widget(fig), glue("{path}/PCA_plots/{id}_{contrib_status}_{analysis_type}_{plotid}_superpop_3D_PCAPlot.html"))
-    } else if ("Subpopulations" %in% groups) {
+    }
+
+    if ("Subpopulations" %in% groups) {
       pal_sub = unique(geno_ancestry$color)
       pal_sub = setNames(pal_sub, unique(geno_ancestry$population))
 
