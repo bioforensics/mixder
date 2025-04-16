@@ -66,11 +66,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
     stop("No major/minor contributor IDs provided but calculating metrics for an unconditioned analysis. Please re-run!")
   }
   message("Loading Frequency Data<br/>")
-  if (!skipancestry) {
-    popFreq = load_freq(out_path, twofreqs, freq_both, freq_major, freq_minor)
-  } else {
-    popFreq = mixder::popFreq_1000G
-  }
+  popFreq = load_freq(out_path, twofreqs, freq_both, freq_major, freq_minor)
   if (!isTruthy(sample_path)) {
     stop("No Sample Manifest provided. Please re-run!")
   }

@@ -50,8 +50,8 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
     config = rbind(config, data.frame(Setting="Path to references:", Value=refs))
   }
   config = rbind(config, data.frame(Setting="Path to mixtures:", Value=kinpath))
-  if (!isTruthy(ancestry)) {
-    config = rbind(config, data.frame(Setting="Run Ancestry Prediction Step:", Value=!ancestry))
+  if (!isTruthy(skipancestry)) {
+    config = rbind(config, data.frame(Setting="Run Ancestry Prediction Step:", Value=!skipancestry))
   }
   if (isTruthy(run_mixdeconv)) {
     if (isTruthy(twofreqs)) {
