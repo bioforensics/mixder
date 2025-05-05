@@ -24,9 +24,6 @@
 #' @export
 #'
 ancestry_prediction = function(report, path, id, analysis_type, contrib_status, snps, groups) {
-  ## using R library to obtain ancestry info for 1000G samples
-  #ancestry=kgp::kgp3[,c("id", "reg")]
-  #ancestry_filt = subset(ancestry, reg != "SAS")
   if (snps == "All Autosomal SNPs") {
     plotid="AllSNPs"
     geno=mixder::ancestry_1000G_allsamples
@@ -65,8 +62,6 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status, 
   PCs = data.frame(pcaRed$x)
 
   ## add unknown to ancestry and genotype IDs
-  #ancestry_unk = ancestry %>%
-    #add_row(id = "Unk", reg = "Unk")
   geno_unk = geno %>%
     add_row(IID="Unk")
   ## merge genotypes with ancestry info; need to preserve order to match to PCA data
@@ -79,55 +74,32 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status, 
 
   centroids(groups, PCs_anc, glue("{path}/PCA_plots"), glue("{id}_{contrib_status}_{analysis_type}_{plotid}"))
 
-  #colScale <- scale_color_manual(name = "Superpopulation",
-  #                               values = c("AFR" = "lightblue3",
-  #                                          "EAS" = "chartreuse2",
-  #                                          "EUR" = "pink2",
-  #                                          "AMR" = "gold3",
-  #                                          "Unk" = "firebrick3"),
+  dir.create(file.path(path, "PCA_plots"), showWarnings = FALSE, recursive=TRUE)
 
-  ## PCA plot
-  #png(glue("{path}/{id}_{contrib_status}_{analysis_type}_PCA_plot.png"))
-  #show(ggplot(PCs_anc, aes(x=PC1,y=PC2))+
-  #  geom_point(aes(color=ancestry))+
-  #  colScale+
-  #  guides(color=guide_legend(title="Superpopulation"))+
-  #  ggtitle(glue("{id} {contrib_status} {analysis_type};\n{ncol(betaRedNAOmit)} ancestry SNPs"))+
-  #  theme(plot.title = element_text(hjust = 0.5)))
-  #dev.off()
+  if ("Superpopulations (AFR/AMR/EAS/EUR/SAS Only)" %in% groups) {
+    pal = unique(geno_ancestry$superpop_color)
+    pal = setNames(pal, unique(geno_ancestry$reg))
 
+    fig = plot_ly(PCs_anc, x = ~PC1, y = ~PC2, z = ~PC3, color = ~reg, colors=pal, size=10)
+    fig = fig %>% add_markers()
+    fig = fig %>% layout(scene = list(xaxis = list(title = 'PC1'),
+                                        yaxis = list(title = 'PC2'),
+                                       zaxis = list(title = 'PC3')),
+                          title=list(text=glue("{ncol(betaRedNAOmit)} SNPs; {id} {contrib_status} {analysis_type} Superpopulations")))
 
-    #PCs_anc=merge(ancestry, PCs,by.x="id", by.y="V1")
-    ##PCs_anc$Size=ifelse(PCs_anc$reg=="Unk",10,9)
-    dir.create(file.path(path, "PCA_plots"), showWarnings = FALSE, recursive=TRUE)
+    htmlwidgets::saveWidget(as_widget(fig), glue("{path}/PCA_plots/{id}_{contrib_status}_{analysis_type}_{plotid}_superpop_3D_PCAPlot.html"))
+  }
+  if ("Subpopulations" %in% groups) {
+    pal_sub = unique(geno_ancestry$color)
+    pal_sub = setNames(pal_sub, unique(geno_ancestry$population))
 
+    fig_sub = plot_ly(PCs_anc, x = ~PC1, y = ~PC2, z = ~PC3, color = ~population, colors=pal_sub, size=10)
+    fig_sub = fig_sub %>% add_markers()
+    fig_sub = fig_sub %>% layout(scene = list(xaxis = list(title = 'PC1'),
+                                        yaxis = list(title = 'PC2'),
+                                       zaxis = list(title = 'PC3')),
+                                  title=list(text=glue("{ncol(betaRedNAOmit)} SNPs; {id} {contrib_status} {analysis_type} Subpopulations")))
 
-    if ("Superpopulations (AFR/AMR/EAS/EUR/SAS Only)" %in% groups) {
-      pal = unique(geno_ancestry$superpop_color)
-      pal = setNames(pal, unique(geno_ancestry$reg))
-
-
-      fig = plot_ly(PCs_anc, x = ~PC1, y = ~PC2, z = ~PC3, color = ~reg, colors=pal, size=10)
-      fig = fig %>% add_markers()
-      fig = fig %>% layout(scene = list(xaxis = list(title = 'PC1'),
-                                         yaxis = list(title = 'PC2'),
-                                         zaxis = list(title = 'PC3')),
-                           title=list(text=glue("{ncol(betaRedNAOmit)} SNPs; {id} {contrib_status} {analysis_type} Superpopulations")))
-
-      htmlwidgets::saveWidget(as_widget(fig), glue("{path}/PCA_plots/{id}_{contrib_status}_{analysis_type}_{plotid}_superpop_3D_PCAPlot.html"))
-    }
-
-    if ("Subpopulations" %in% groups) {
-      pal_sub = unique(geno_ancestry$color)
-      pal_sub = setNames(pal_sub, unique(geno_ancestry$population))
-
-      fig_sub = plot_ly(PCs_anc, x = ~PC1, y = ~PC2, z = ~PC3, color = ~population, colors=pal_sub, size=10)
-      fig_sub = fig_sub %>% add_markers()
-      fig_sub = fig_sub %>% layout(scene = list(xaxis = list(title = 'PC1'),
-                                         yaxis = list(title = 'PC2'),
-                                         zaxis = list(title = 'PC3')),
-                                   title=list(text=glue("{ncol(betaRedNAOmit)} SNPs; {id} {contrib_status} {analysis_type} Subpopulations")))
-
-      htmlwidgets::saveWidget(as_widget(fig_sub), glue("{path}/PCA_plots/{id}_{contrib_status}_{analysis_type}_{plotid}_subpopulations_3D_PCAPlot.html"))
+    htmlwidgets::saveWidget(as_widget(fig_sub), glue("{path}/PCA_plots/{id}_{contrib_status}_{analysis_type}_{plotid}_subpopulations_3D_PCAPlot.html"))
   }
 }

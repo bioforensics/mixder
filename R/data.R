@@ -146,19 +146,6 @@
 #'
 "snpinfo"
 
-#' 1000 Genomes genotypes for 54 ancestry SNPs
-#'
-#' Used to run PCA for ancestry prediction
-#'
-#' @format A dataframe containing 60 columns (each SNP) and 2,015 rows (each individual):
-#'  \describe{
-#'      \item{SNP}{SNP rsID with reference allele}
-#'      \item{ID}{Sample ID of individual}
-#'      }
-#'
-#' @source 1000 Genomes (https://www.internationalgenome.org/data)
-#'
-"ancestry_1000G"
 
 #' 1000 Genomes genotypes for 10,030 autosomal SNPs for all 2,504 1000G samples
 #'
@@ -173,7 +160,6 @@
 #' @source 1000 Genomes (https://www.internationalgenome.org/data)
 #'
 "ancestry_1000G_allsamples"
-
 
 
 #' 1000 Genomes genotypes for 54 ancestry SNPs for all 2,504 1000G samples
