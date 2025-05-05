@@ -1,3 +1,6 @@
+### 1.0
+- Implemented ancestry prediction tool
+
 ### 0.7.4: March 11, 2025
 - Able to run the newest version of EuroForMix (version 4.2.3) and earlier.
 
