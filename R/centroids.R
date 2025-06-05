@@ -15,7 +15,6 @@ centroids = function(groups, pca, inpath, ID) {
     add_row(id = "Unk", reg = "Unk", population = "Unk", color="red", superpop_color="red") %>%
     add_row(id= "Centroid", reg = "Centroid", population = "Centroid", color = "black", superpop_color="black")
 
-
   if ("Superpopulations (AFR/AMR/EAS/EUR/SAS Only)" %in% groups) {
     pca.centroids.pop = aggregate(pca[,5:14], list(Type = pca$reg), mean)
 
@@ -35,7 +34,6 @@ centroids = function(groups, pca, inpath, ID) {
       filter(Type!="Unk")
 
     pal = unique(ancestry_colors$superpop_color)
-    #pal = append(pal, "black")
     pal = setNames(pal, unique(ancestry_colors$reg))
 
     fig_super = plot_ly()

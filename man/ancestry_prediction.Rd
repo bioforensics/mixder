@@ -10,7 +10,7 @@ ancestry_prediction(
   id,
   analysis_type,
   contrib_status,
-  snps,
+  testsnps,
   groups
 )
 }
