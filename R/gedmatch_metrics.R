@@ -20,7 +20,9 @@
 #' @return data frame of compiled metrics
 #' @export
 #'
-#'@importFrom stats sd
+#' @importFrom stats sd
+#' @rawNamespace import(ggplot2, except = last_plot)
+
 gedmatch_metrics = function(report, A1_threshold, A2_threshold, min_num, path){
   . = NULL
   report$A2_thresh = ifelse(report$A2_Prob >= A2_threshold & report$A2 != 99, report$A2, report$A1)

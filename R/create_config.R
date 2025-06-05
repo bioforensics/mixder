@@ -37,10 +37,13 @@
 #' @param major assumed major contributor of mixture
 #' @param minor assumed minor contributor of mixture
 #' @param filter_missing TRUE/FALSE whether to filter SNPs if second allele is missing (99)
+#' @param skipancestry TRUE/FALSE whether to skip ancestry prediction step
+#' @param pcasnps SNPs used for PCA (ancestry prediction)
+#' @param pcagroups Groups used for PCA (ancestry prediction), either Superpopulations or Subpopulations
 #'
 #' @export
 #'
-create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs, sample_path, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, filter_missing){
+create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs, sample_path, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, filter_missing, skipancestry, pcasnps, pcagroups){
   config = setNames(data.frame(matrix(ncol=2, nrow=0)), c("Setting", "Value"))
   config = rbind(config, data.frame(Setting="MixDeR Version:", Value=getNamespaceVersion("mixder")[["version"]]))
   config = rbind(config, data.frame(Setting="EuroForMix Version:", Value=getNamespaceVersion("euroformix")[["version"]]))
@@ -49,6 +52,10 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
     config = rbind(config, data.frame(Setting="Path to references:", Value=refs))
   }
   config = rbind(config, data.frame(Setting="Path to mixtures:", Value=kinpath))
+  config = rbind(config, data.frame(Setting="Run Ancestry Prediction Step:", Value=!skipancestry))
+  if (!isTruthy(skipancestry)) {
+    config = rbind(config, data.frame(Setting="SNPs Used for PCA (Ancestry Prediction):", Value=pcasnps))
+    config = rbind(config, data.frame(Setting="Groups Used for PCA (Ancestry Prediction):", Value=pcagroups))
   if (isTruthy(run_mixdeconv)) {
     if (isTruthy(twofreqs)) {
       config = rbind(config, data.frame(Setting="Frequency data Major Contributor:", Value=freq_major))
@@ -66,9 +73,9 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
   config = rbind(config, data.frame(Setting="Running mixture deconvolution:", Value=run_mixdeconv))
   config = rbind(config, data.frame(Setting="Running unconditioned deconvolution:", Value=unconditioned))
   if (isTruthy(cond)) {
-    config = rbind(config, data.frame(Setting="Running conditioned deconvolution on references:", Value=cond))
+    config = rbind(config, data.frame(Setting="Running conditioned deconvolution on reference:", Value=cond))
   } else {
-    config = rbind(config, data.frame(Setting="Running conditioned deconvolution on references:", Value=FALSE))
+    config = rbind(config, data.frame(Setting="Running conditioned deconvolution on reference:", Value=FALSE))
   }
   if (method == "") {
     config = rbind(config, data.frame(Setting="Method run post deconvolution:", Value="None"))
@@ -77,8 +84,8 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
     config = rbind(config, data.frame(Setting="Filtering SNPs if allele 2 is missing?", Value=filter_missing))
   }
   if (method == "Create GEDmatch PRO Report"){
-    config = rbind(config, data.frame(Setting="Allele 1 probability threshold (for GEDmatch PRO reports):", Value=A1_threshold))
-    config = rbind(config, data.frame(Setting="Allele 2 probability threshold (for GEDmatch PRO reports:", Value=A2_threshold))
+    config = rbind(config, data.frame(Setting="Allele 1 probability threshold (for GEDmatch PRO reports or ancestry prediction):", Value=A1_threshold))
+    config = rbind(config, data.frame(Setting="Allele 2 probability threshold (for GEDmatch PRO reports or ancestry prediction):", Value=A2_threshold))
   } else if (method == "Calculate Metrics") {
     config = rbind(config, data.frame(Setting="Allele 1 probability range for validation metric calculations:", Value=glue("{A1min}-{A1max}")))
     config = rbind(config, data.frame(Setting="Allele 2 probability range for validation metric calculations:", Value=glue("{A2min}-{A2max}")))

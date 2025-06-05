@@ -35,7 +35,10 @@ run_workflow(
   minor,
   minor_threshold,
   keep_bins,
-  filter_missing
+  filter_missing,
+  skipancestry,
+  ancestrysnps,
+  pcagroups
 )
 }
 \arguments{
@@ -100,6 +103,12 @@ run_workflow(
 \item{keep_bins}{To use existing SNP bins or create new bins (and files)}
 
 \item{filter_missing}{TRUE/FALSE whether to filter SNPs with either allele missing}
+
+\item{skipancestry}{TRUE/FALSE whether to skip ancestry prediction}
+
+\item{ancestrysnps}{SNPs to use for ancestry prediction (either ancestry only or all SNPs)}
+
+\item{pcagroups}{How to color PCA plots (superpopulations and/or subpopulations)}
 }
 \description{
 Runs workflow

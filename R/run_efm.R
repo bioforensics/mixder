@@ -25,15 +25,22 @@
 #'
 #' @export
 #'
-run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, attable, nsets, cond = NULL, uncond=TRUE, keep_bins=TRUE) {
+#' @import parallel
+#'
+run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, attable, nsets, ancestry, cond = NULL, uncond=TRUE, keep_bins=TRUE) {
+  if (!ancestry) {
+    new_path = glue("{out_path}/ancestry_prediction/")
+  } else {
+    new_path = out_path
+  }
   if (replicate_id == "") {
     create_evid_all(inpath, id, nsets, keep_bins)
-    write_path = glue("{out_path}Single/{id}")
+    write_path = glue("{new_path}Single/{id}")
     log_name = id
   } else {
     create_evid_all(inpath, id, nsets, keep_bins)
     create_evid_all(inpath, replicate_id, nsets, keep_bins)
-    write_path = glue("{out_path}Replicates/{id}")
+    write_path = glue("{new_path}Replicates/{id}")
     log_name = glue("{id}_{replicate_id}")
   }
   snps_input = glue("{inpath}/snp_sets/")

@@ -50,9 +50,84 @@
 #'      \item{Probability}{Allele Probability}
 #'      }
 #'
-#' @source gnomAD v4 genomes (https://gnomad.broadinstitute.org/downloads#v4)
+#' @source 1000 Genomes (https://www.internationalgenome.org/data)
 #'
 "popFreq_1000G"
+
+#' Allele Frequency file using 1000G Phase 3 dataset for all AFR individuals
+#'
+#' Allele frequencies for 10,039 SNPs
+#'
+#' @format A list containing a 10039 elements (SNPs) with 4 rows:
+#'  \describe{
+#'      \item{SNP}{SNP rsID}
+#'      \item{Allele}{Allele (A/C/G/T)}
+#'      \item{Probability}{Allele Probability}
+#'      }
+#'
+#' @source 1000 Genomes (https://www.internationalgenome.org/data)
+#'
+"popFreq_AFR"
+
+#' Allele Frequency file using 1000G Phase 3 dataset for all AMR individuals
+#'
+#' Allele frequencies for 10,039 SNPs
+#'
+#' @format A list containing a 10039 elements (SNPs) with 4 rows:
+#'  \describe{
+#'      \item{SNP}{SNP rsID}
+#'      \item{Allele}{Allele (A/C/G/T)}
+#'      \item{Probability}{Allele Probability}
+#'      }
+#'
+#' @source 1000 Genomes (https://www.internationalgenome.org/data)
+#'
+"popFreq_AMR"
+
+#' Allele Frequency file using 1000G Phase 3 dataset for all EAS individuals
+#'
+#' Allele frequencies for 10,039 SNPs
+#'
+#' @format A list containing a 10039 elements (SNPs) with 4 rows:
+#'  \describe{
+#'      \item{SNP}{SNP rsID}
+#'      \item{Allele}{Allele (A/C/G/T)}
+#'      \item{Probability}{Allele Probability}
+#'      }
+#'
+#' @source 1000 Genomes (https://www.internationalgenome.org/data)
+#'
+"popFreq_EAS"
+
+#' Allele Frequency file using 1000G Phase 3 dataset for all EUR individuals
+#'
+#' Allele frequencies for 10,039 SNPs
+#'
+#' @format A list containing a 10039 elements (SNPs) with 4 rows:
+#'  \describe{
+#'      \item{SNP}{SNP rsID}
+#'      \item{Allele}{Allele (A/C/G/T)}
+#'      \item{Probability}{Allele Probability}
+#'      }
+#'
+#' @source 1000 Genomes (https://www.internationalgenome.org/data)
+#'
+"popFreq_EUR"
+
+#' Allele Frequency file using 1000G Phase 3 dataset for all SAS individuals
+#'
+#' Allele frequencies for 10,039 SNPs
+#'
+#' @format A list containing a 10039 elements (SNPs) with 4 rows:
+#'  \describe{
+#'      \item{SNP}{SNP rsID}
+#'      \item{Allele}{Allele (A/C/G/T)}
+#'      \item{Probability}{Allele Probability}
+#'      }
+#'
+#' @source 1000 Genomes (https://www.internationalgenome.org/data)
+#'
+"popFreq_SAS"
 
 #' SNP information json file
 #'
@@ -70,3 +145,33 @@
 #' @source lusSTR Python package (https://github.com/bioforensics/lusSTR)
 #'
 "snpinfo"
+
+
+#' 1000 Genomes genotypes for 10,030 autosomal SNPs for all 2,504 1000G samples
+#'
+#' Used to run PCA for ancestry prediction
+#'
+#' @format A dataframe containing 10,030 columns (each SNP) and 2,504 rows (each individual):
+#'  \describe{
+#'      \item{SNP}{SNP rsID with reference allele}
+#'      \item{ID}{Sample ID of individual}
+#'      }
+#'
+#' @source 1000 Genomes (https://www.internationalgenome.org/data)
+#'
+"ancestry_1000G_allsamples"
+
+
+#' 1000 Genomes genotypes for 54 ancestry SNPs for all 2,504 1000G samples
+#'
+#' Used to run PCA for ancestry prediction
+#'
+#' @format A dataframe containing 54 columns (each SNP) and 2,504 rows (each individual):
+#'  \describe{
+#'      \item{SNP}{SNP rsID with reference allele}
+#'      \item{ID}{Sample ID of individual}
+#'      }
+#'
+#' @source 1000 Genomes (https://www.internationalgenome.org/data)
+#'
+"ancestrysnps_1000G_allsamples"

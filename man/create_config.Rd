@@ -30,7 +30,8 @@ create_config(
   A2max,
   major,
   minor,
-  filter_missing
+  filter_missing,
+  skipancestry
 )
 }
 \arguments{
@@ -85,6 +86,8 @@ create_config(
 \item{minor}{assumed minor contributor of mixture}
 
 \item{filter_missing}{TRUE/FALSE whether to filter SNPs if second allele is missing (99)}
+
+\item{skipancestry}{TRUE/FALSE whether to skip ancestry prediction step}
 }
 \description{
 Create configuration file containing all settings for a specific run
