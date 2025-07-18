@@ -14,6 +14,4 @@ test_that("ancestry prediction", {
   exp_centroids_pcaplot_all = glue("{outpath}/PCA_plots/Centroids_Plots/Sample01c_major_uncond_AllSNPs_Superpopulations_centroids.html")
   expect_true(file.exists(exp_pcaplot_all))
   expect_true(file.exists(exp_centroids_pcaplot_all))
-  #outpath = "~/Desktop"
-  #ancestry_prediction(kin, outpath, "Sample01c", "uncond", "major", "AncestrySNPsOnly", "Superpopulations (AFR/AMR/EAS/EUR/SAS Only)")
 })

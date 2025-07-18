@@ -72,7 +72,10 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status, 
   newcol2=ncols+4
   PCs_anc = cbind(geno_ancestry[,c(newcol:newcol2)], data.frame(PCs[,c(1:10)]))
 
+
   centroids(groups, PCs_anc, glue("{path}/PCA_plots"), glue("{id}_{contrib_status}_{analysis_type}_{plotid}"))
+
+  dir.create(file.path(path, "PCA_plots"), showWarnings = FALSE, recursive=TRUE)
 
   if ("Superpopulations (AFR/AMR/EAS/EUR/SAS Only)" %in% groups) {
     pal = unique(geno_ancestry$superpop_color)

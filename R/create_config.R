@@ -56,6 +56,7 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
   if (!isTruthy(skipancestry)) {
     config = rbind(config, data.frame(Setting="SNPs Used for PCA (Ancestry Prediction):", Value=pcasnps))
     config = rbind(config, data.frame(Setting="Groups Used for PCA (Ancestry Prediction):", Value=pcagroups))
+  }
   if (isTruthy(run_mixdeconv)) {
     if (isTruthy(twofreqs)) {
       config = rbind(config, data.frame(Setting="Frequency data Major Contributor:", Value=freq_major))

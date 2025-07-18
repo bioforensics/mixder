@@ -31,7 +31,9 @@ create_config(
   major,
   minor,
   filter_missing,
-  skipancestry
+  skipancestry,
+  pcasnps,
+  pcagroups
 )
 }
 \arguments{
@@ -88,6 +90,10 @@ create_config(
 \item{filter_missing}{TRUE/FALSE whether to filter SNPs if second allele is missing (99)}
 
 \item{skipancestry}{TRUE/FALSE whether to skip ancestry prediction step}
+
+\item{pcasnps}{SNPs used for PCA (ancestry prediction)}
+
+\item{pcagroups}{Groups used for PCA (ancestry prediction), either Superpopulations or Subpopulations}
 }
 \description{
 Create configuration file containing all settings for a specific run
