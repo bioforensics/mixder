@@ -1,4 +1,3 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # MixDeR - Current Version: 0.7.4
@@ -25,11 +24,8 @@ with a large mixture ratio (i.e. \> 1:100 ratio between contributors).
 In these scenarios, the user is warned to be cautious with the minor
 contributor inferred genotyping results.*
 
-Please cite the following paper if utilizing MixDeR:
-
-    Mitchell, R., Peck, M., Gorden, E., & Just, R. (2025). MixDeR: A SNP mixture 
-    deconvolution workflow for forensic genetic genealogy. Forensic Science 
-    International: Genetics, 76, 103224, doi: 10.1016/j.fsigen.2025.103224
+The preprint of the manuscript on MixDeR is available
+[here](https://www.preprints.org/manuscript/202407.1705/v1).
 
 ## Installation
 
