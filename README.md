@@ -25,8 +25,15 @@ with a large mixture ratio (i.e. \> 1:100 ratio between contributors).
 In these scenarios, the user is warned to be cautious with the minor
 contributor inferred genotyping results.*
 
-The preprint of the manuscript on MixDeR is available
-[here](https://www.preprints.org/manuscript/202407.1705/v1).
+Please cite the following paper if utilizing MixDeR:
+
+    Mitchell, R., Peck, M., Gorden, E., & Just, R. (2025). MixDeR: A SNP mixture 
+    deconvolution workflow for forensic genetic genealogy. Forensic Science 
+    International: Genetics, 76, 103224, doi: 10.1016/j.fsigen.2025.103224
+
+MixDeR version 1.0 and later provides the option to perform ancestry
+prediction using principal component analysis (PCA). Additional
+information can be found below in the **Ancestry Prediction** section.
 
 ## Installation
 
@@ -117,12 +124,12 @@ create new SNP sets files, overwriting any previously made files.
 MixDeR provides general population allele frequencies for Kintelligence
 SNPs from either [1000 Genomes Phase 3
 dataset](https://www.internationalgenome.org/home) or the [gnomAD v4
-dataset](https://gnomad.broadinstitute.org/downloads#v4). However, it is
-ideal to use allele frequencies derived from the population that closely
-matches the contributor(s) of interest. Therefore, MixDeR provides the
-user the opportunity to upload a different allele frequency file.
-EuroForMix requires the below format for allele frequency files, for all
-SNPs with each SNP as its own column:
+dataset](https://gnomad.broadinstitute.org/downloads#v4). In addition,
+MixDeR provides 1000 Genomes population-specific allele frequencies from
+the five major superpopulations: AFR, AMR, EAS, EUR, and SAS. Finally,
+MixDeR provides the user the opportunity to upload a different allele
+frequency file. EuroForMix requires the below format for allele
+frequency files, for all SNPs with each SNP as its own column:
 
 | Allele | rs6690515 | rs424079 | rs2055204 |
 |:------:|:---------:|:--------:|:---------:|
@@ -178,10 +185,11 @@ folder.
 
 ## Details
 
-MixDeR has three modules:  
-1. EFM mixture deconvolution  
-2. Calculate validation metrics  
-3. Create GEDmatch PRO reports
+MixDeR has four modules:  
+1. Ancestry prediction  
+2. EFM mixture deconvolution  
+3. Calculate validation metrics  
+4. Create GEDmatch PRO reports
 
 EFM mixture deconvolution must be run at least once. If it’s been run
 previously, the other modules can be run using the existing
@@ -204,6 +212,17 @@ allele 2 probability is below the threshold, the SNP genotype will be
 reported as C,C. If it is above the threshold, the SNP genotype will be
 reported as C,T.
 
+## Ancestry Prediction
+
+When first launching the Shiny app, the ancestry prediction tool first
+appears. This tool can be skipped by checking the
+`Skip Ancestry Prediction Step` box.
+
+The ancestry prediction tool will first perform mixture deconvolution
+using the 1000 Genomes Global allele frequency data and perform genotype
+filtering using the specified settings. The user can select whether to
+use the 94 ancestry SNPs or all autosomal SNPs.
+
 ## Running mixture deconvolution using EuroForMix
 
 There are several options/settings to run EFM mixture deconvolution:  
@@ -212,7 +231,7 @@ be selected at once):
 \* Unconditioned analysis  
 \* Conditioned analysis  
 **Allele Frequency Data**: The user must choose which allele frequency
-data to use: 1000Genomes Phase 3 data, gnomAD v4 data, or upload a
+data to use: 1000 Genomes Phase 3 data, gnomAD v4 data, or upload a
 custom file. See above for more details about the format for uploading a
 custom AF file.  
 **References to Condition on**: IF running a conditioned analysis, once
