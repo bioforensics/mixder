@@ -1,0 +1,35 @@
+---
+title: "Calculating Validation Metrics"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Valmetrics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+There are several options/settings to calculate the validation metrics:   
+**Minimum Allele 1 Probability Threshold** and **Maximum Allele 1 Probability Threshold**: The range of allele 1 probability thresholds for calculating the validation metrics, increasing in increments of 0.01 (i.e. if minimum is set to 0.5 and maximum is set to 1, will calculate metrics using a threshold of 0.5, 0.51, 0.52, 0.53, up to 1).   
+**Minimum Allele 2 Probability Threshold** and **Maximum Allele 2 Probability Threshold**: The range of allele 2 probability thresholds for calculating the validation metrics, increasing in increments of 0.01 (i.e. if minimum is set to 0.5 and maximum is set to 1, will calculate metrics using a threshold of 0.5, 0.51, 0.52, 0.53, up to 1).   
+**Major Contributor Sample ID**: The ID of the major contributor of the mixture. Once the reference folder is uploaded, this dropdown menu will auto-populate with the reference sample IDs.   
+**Minor Contributor Sample ID**: The ID of the minor contributor of the mixture. Once the reference folder is uploaded, this dropdown menu will auto-populate with the reference sample IDs.    
+**Remove SNPs If Missing Either Allele?**: If an allele 1 is inferred to be missing (reported as ```99```), that SNP will be automatically dropped from the final dataset. By default, if an allele 2 is inferred to be missing and the allele 2 probability is above the allele 2 probability threshold, the SNP is reported as homozygous for allele 1. However, selecting this option will result in dropping the SNP if the allele 2 probability of the missing allele 2 is above the allele 2 probability threshold, instead of reporting the SNP as homozygous for allele 1.   
+
+If calculating validation metrics, reference genotypes are required to calculate genotype accuracy. MixDerR will calculate the metrics for the range of allele 1 probability thresholds and allele 2 probability thresholds specified by the user. The final output file looks as such:
+
+```{r table6, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
+tabl = "
+| A1 cutoff | A2 cutoff    | Total SNPs | N No Ref | N SNPs tested | N Genotypes Correct | Genotype Accuracy | Heterozygosity |
+|:-----------:|:---------:|:--------:|:--------:|:--------:|:--------:|:--------:|:--------:|
+| 0.99    | 0.01 | 9735 | 8 | 9727 | 9549 | 0.9817 | 0.456 |
+| 0.99    | 0.02 | 9735 | 8 | 9727 | 9548 | 0.9815 | 0.456 |
+| 0.99    | 0.03 | 9735 | 8 | 9727 | 9548 | 0.9815 | 0.456 |
+"
+cat(tabl)
+```

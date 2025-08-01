@@ -1,0 +1,33 @@
+---
+title: "Generating GEDmatch PRO Report"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{gedmatch}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Required settings for generating a GEDmatch PRO-compatible report:  
+**Allele 1 Probability Threshold to create GEDmatch PRO Report** and **Allele 2 Probability Threshold to create GEDmatch PRO Report**:
+The allele 1 and allele 2 probability thresholds. If the contributor is the major contributor to the mixture, MixDeR will apply the allele 1 and allele 2 probability thresholds UNLESS this results in a profile with fewer SNPs than the specified minimum (6000 is the default). If it does not meet this minimum, the top 6,000 SNPs (or whatever the user specifies as the minimum) with the highest allele 1 probabilities are used and then the allele 2 probability threshold is applied. For minor contributors, the default setting is that the minimum number of SNPs is automatically used and then the allele 2 probability threshold is applied. The option to apply the allele 1 probability threshold (similar in manner to the major contributor) can be applied.  
+**Remove SNPs If Missing Either Allele?**: If an allele 1 is inferred to be missing (reported as ```99```), that SNP will be automatically dropped from the final dataset. By default, if an allele 2 is inferred to be missing and the allele 2 probability is above the allele 2 probability threshold, the SNP is reported as homozygous for allele 1. However, selecting this option will result in dropping the SNP if the allele 2 probability of the missing allele 2 is above the allele 2 probability threshold, instead of reporting the SNP as homozygous for allele 1.  
+
+As a way to assist the analyst in evaluating the inferred genotypes of a mixture of unknown contributors, several metrics are calculated in this step for three different scenarios: (1) only the allele 2 probability threshold applied; (2) the allele 1 and allele 2 probability thresholds applied; and (3) the minimum number of SNPs used and the allele 2 probability threshold applied. For each dataset, the follow metrics are calculated: number of SNPs, mean allele 1 probabilities, median allele 1 probabilities, standard deviation (SD) of the allele 1 probabilities and heterozygosity. Below is an example of the table created by MixDeR in this step. A density plot of allele 1 probability thresholds is also created. In general, the more SNPs with higher allele 1 probabilities, the higher the accuracy of the inferred genotypes. However, determining exactly what qualifies as acceptable should be determined by individual labs.  
+
+```{r table7, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
+tabl = "
+| Allele1 Threshold Applied | Allele2 Threshold Applied   | Total SNPs | Mean A1 Prob | Median A1 Prob | SD A1 Prob | Heterozygosity |
+|:-----------:|:---------:|:--------:|:--------:|:--------:|:--------:|:--------:|
+| No   | Yes | 10024 | 0.9984 | 1 | 0.0096 | 0.4626 |
+| Yes   | Yes | 9718 | 0.9998 | 1  | 9.00E-04 | 0.4569 |
+| Minimum # of SNPs | Yes | 6000 | 1 | 1 | 0 | 0.4495 |
+"
+cat(tabl)
+```

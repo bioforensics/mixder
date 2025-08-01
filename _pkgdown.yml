@@ -1,0 +1,14 @@
+url: https://bioforensics.github.io/mixder/
+template:
+  bootstrap: 5
+
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - Introduction
+  - Installation
+  - Required_Files
+  - Running_MixDecon
+  - Valmetrics
+  - gedmatch
