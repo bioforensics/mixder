@@ -1,4 +1,4 @@
-## Version 0.7.5: August 1, 2025
+## Version 0.7.5: September 24, 2025
 - Updated documentation
 
 ## Version 0.7.4: March 11, 2025
