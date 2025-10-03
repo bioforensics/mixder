@@ -14,16 +14,33 @@ knitr::opts_chunk$set(
 )
 ```
 
-Mixture deconvolution utilizes EuroForMix (EFM).  
+Mixture deconvolution utilizes [EuroForMix (EFM)](https://github.com/oyvble/euroformix).  
+
 There are several options/settings to run EFM mixture deconvolution:   
+
 The type of mixture deconvolution analysis to perform (one or both can be selected at once):   
 - Unconditioned analysis  
 - Conditioned analysis   
-**Allele Frequency Data**: The user must choose which allele frequency data to use: 1000Genomes Phase 3 data, gnomAD v4 data, or upload a custom file. See above for more details about the format for uploading a custom AF file.  
+
+**Allele Frequency Data**: The user must choose which allele frequency data to use:   
+  - 1000 Genomes Phase 3 data  
+  - gnomAD v4 data  
+  - AFR 1000G data  
+  - AMR 1000G data  
+  - EAS 1000G data  
+  - EUR 1000G data  
+  - SAS 1000G data  
+The user may also upload a custom file. See ```Required Files``` page for more details about the format for uploading a custom AF file.  
+  
 **References to Condition on**: IF running a conditioned analysis, once the reference folder has been uploaded, this dropdown menu will auto-populate containing the reference sample IDs. The user must select which references to condition on. **As of now, MixDeR can only condition on a single reference sample**. However, multiple references can be selected for conditioning; the conditioned analyses will be run separately.  
+
 **Number of SNP Bins**: The number of SNP sets for each sample. The default is 10.  
+
 **Static Analytical Threshold**: The minimum number of reads required for a SNP to be included (default = 10).  
-**Dynamic Analytical Threshold**: The percent of total SNP reads required for a SNP to. be included (default = 0.015 or 1.5%). 
-(A quick note on the ATs: both the static and dynamic ATs are applied and the one producing the higher AT will be used in the EFM software).   
+
+**Dynamic Analytical Threshold**: The percent of total SNP reads required for a SNP to. be included (default = 0.015 or 1.5%).  
+_A quick note on the ATs: both the static and dynamic ATs are applied and the one producing the higher AT will be used in the EFM software._    
+
 **Output Folder Name**: The name of the folder created within the folder containing the original SNP files to store the generated output for the entire workflow.   
+
 **Minimum Number of SNPs**: The minimum number of SNPs   
