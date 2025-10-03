@@ -4,3 +4,6 @@
 .Ruserdata
 .DS_Store
 inst/doc
+.RDataTmp
+docs/_build/html/.buildinfo
+.github

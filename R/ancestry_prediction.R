@@ -35,7 +35,7 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status, 
   geno_filt=geno[,c(7:ncols)]
   snps = data.frame("snp_id"=colnames(geno_filt))
   snps = snps %>%
-    separate(snp_id, c("rsid", "ref_allele"), remove=F)
+    separate(.data$snp_id, c("rsid", "ref_allele"), remove=F)
   snps$order = seq(1:nrow(snps))
   merged_alleles = merge(snps, report, by="rsid", all.x=T) %>%
     arrange(order)
@@ -44,8 +44,8 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status, 
 
   ## re-format to match 1000G samples
   formatted_sample = merged_alleles %>%
-    select(snp_id, num_alt) %>%
-    pivot_wider(names_from=snp_id, values_from=num_alt)
+    select(.data$snp_id, .data$num_alt) %>%
+    pivot_wider(names_from=.data$snp_id, values_from=.data$num_alt)
 
   ## add unknown to 1000G genotypes
   geno_filt_unk = rbind(geno_filt, formatted_sample)
@@ -56,7 +56,7 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status, 
     select_if(~ !any(is.na(.)))
 
   ##perform PCA
-  pcaRed <- prcomp(betaRedNAOmit, center=TRUE, scale=FALSE)
+  pcaRed <- stats::prcomp(betaRedNAOmit, center=TRUE, scale=FALSE)
 
   ## create data table of PCs
   PCs = data.frame(pcaRed$x)

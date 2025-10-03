@@ -6,6 +6,7 @@
 #' @param inpath input path
 #' @param ID ID for creating file name(s)
 #'
+#'
 #' @export
 #'
 centroids = function(groups, pca, inpath, ID) {
@@ -21,17 +22,17 @@ centroids = function(groups, pca, inpath, ID) {
     superpop_dist=data.frame()
     for (pop in unique(pca.centroids.pop$Type)){
       if (pop != "Unk"){
-        superpop_dist_calc=dist(rbind(pca.centroids.pop[pca.centroids.pop$Type == "Unk",2:4],pca.centroids.pop[pca.centroids.pop$Type == pop,2:4]), method = "euclidean")
+        superpop_dist_calc=stats::dist(rbind(pca.centroids.pop[pca.centroids.pop$Type == "Unk",2:4],pca.centroids.pop[pca.centroids.pop$Type == pop,2:4]), method = "euclidean")
         superpop_dist=rbind(superpop_dist, data.frame(Superpopulation=pop, Distance=superpop_dist_calc))
       }
     }
     superpop_dist_final = superpop_dist %>%
-      arrange(Distance)
+      arrange(.data$Distance)
 
     write.table(superpop_dist_final, glue("{inpath}/Centroids_Plots/{ID}_Superpopulations_centroids_Calculations.txt"), row.names=F, quote=F, col.names=T, sep="\t")
 
     plot_df_super = pca.centroids.pop %>%
-      filter(Type!="Unk")
+      filter(.data$Type!="Unk")
 
     pal = unique(mixder::ancestry_colors$superpop_color)
     pal = setNames(pal, unique(mixder::ancestry_colors$reg))
@@ -55,18 +56,18 @@ centroids = function(groups, pca, inpath, ID) {
   subpop_dist=data.frame()
   for (pop in unique(pca.centroids.subpop$Type)){
     if (pop != "Unk"){
-      subpop_dist_calc=dist(rbind(pca.centroids.subpop[pca.centroids.subpop$Type == "Unk",2:4],pca.centroids.subpop[pca.centroids.subpop$Type == pop,2:4]), method = "euclidean")
+      subpop_dist_calc=stats::dist(rbind(pca.centroids.subpop[pca.centroids.subpop$Type == "Unk",2:4],pca.centroids.subpop[pca.centroids.subpop$Type == pop,2:4]), method = "euclidean")
       subpop_dist=rbind(subpop_dist, data.frame(Subpopulation=pop, Distance=subpop_dist_calc))
     }
   }
   subpop_dist_final = subpop_dist %>%
-    arrange(Distance)
+    arrange(.data$Distance)
 
   write.table(subpop_dist_final, glue("{inpath}/Centroids_Plots/{ID}_Subpopulations_centroids_Calculations.txt"), row.names=F, quote=F, col.names=T, sep="\t")
   ## subpopulation plot
 
   plot_df_sub = pca.centroids.subpop %>%
-    filter(Type!="Unk")
+    filter(.data$Type!="Unk")
 
   pal = unique(mixder::ancestry_colors$color)
   #pal = append(pal, "black")
