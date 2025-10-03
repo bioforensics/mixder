@@ -33,8 +33,8 @@ centroids = function(groups, pca, inpath, ID) {
     plot_df_super = pca.centroids.pop %>%
       filter(Type!="Unk")
 
-    pal = unique(ancestry_colors$superpop_color)
-    pal = setNames(pal, unique(ancestry_colors$reg))
+    pal = unique(mixder::ancestry_colors$superpop_color)
+    pal = setNames(pal, unique(mixder::ancestry_colors$reg))
 
     fig_super = plot_ly()
 
@@ -68,9 +68,9 @@ centroids = function(groups, pca, inpath, ID) {
   plot_df_sub = pca.centroids.subpop %>%
     filter(Type!="Unk")
 
-  pal = unique(ancestry_colors$color)
+  pal = unique(mixder::ancestry_colors$color)
   #pal = append(pal, "black")
-  pal = setNames(pal, unique(ancestry_colors$population))
+  pal = setNames(pal, unique(mixder::ancestry_colors$population))
 
   fig_sub = plot_ly()
 
