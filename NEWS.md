@@ -1,5 +1,5 @@
 
-## 1.0: October 3, 2025
+## 0.8: March 24, 2026
 - Implemented ancestry prediction tool
 - Additional population-specific population allele frequency data included in package. 
 

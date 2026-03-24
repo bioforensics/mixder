@@ -12,9 +12,7 @@
 centroids = function(groups, pca, inpath, ID) {
   dir.create(file.path(inpath, "Centroids_Plots"), showWarnings = FALSE, recursive=TRUE)
 
-  ancestry_colors = read.table("/Users/rebecca.mitchell/Desktop/ancestry_colors.txt", header=T, sep="\t") %>%
-    add_row(id = "Unk", reg = "Unk", population = "Unk", color="red", superpop_color="red") %>%
-    add_row(id= "Centroid", reg = "Centroid", population = "Centroid", color = "black", superpop_color="black")
+  ancestry_colors = mixder::ancestry_colors
 
   if ("Superpopulations (AFR/AMR/EAS/EUR/SAS Only)" %in% groups) {
     pca.centroids.pop = aggregate(pca[,5:14], list(Type = pca$reg), mean)

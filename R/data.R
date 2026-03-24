@@ -175,3 +175,21 @@
 #' @source 1000 Genomes (https://www.internationalgenome.org/data)
 #'
 "ancestrysnps_1000G_allsamples"
+
+#' Colors for creating 3D PCA plots
+#'
+#' Used to run PCA for ancestry prediction
+#'
+#' @format A dataframe containing 5 columns and 2,506 rows:
+#'  \describe{
+#'      \item{id}{1000 Genome Sample ID}
+#'      \item{reg}{Superpopulation of Sample}
+#'      \item{population}{Subpopulation of Sample}
+#'      \item{color}{color for subpopulation}
+#'      \item{superpop_color}{color for superpopulation}
+#'      }
+#'
+#' @source 1000 Genomes (https://www.internationalgenome.org/data)
+#'
+"ancestry_colors"
+

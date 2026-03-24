@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# MixDeR - Current Version: 1.0
+# MixDeR - Current Version: 0.8
 
 
 <!-- badges: start -->

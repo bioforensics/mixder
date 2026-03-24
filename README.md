@@ -1,9 +1,10 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# MixDeR - Current Version: 1.0
+# MixDeR - Current Version: 0.8
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 MixDeR (**Mix**ture **De**convolution in **R**) is a workflow (with a

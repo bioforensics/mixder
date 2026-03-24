@@ -65,8 +65,6 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
   if (method=="Calculate Metrics" & unconditioned & (!isTruthy(major) | !isTruthy(minor))) {
     stop("No major/minor contributor IDs provided but calculating metrics for an unconditioned analysis. Please re-run!")
   }
-  message("Loading Frequency Data<br/>")
-  popFreq = load_freq(out_path, twofreqs, freq_both, freq_major, freq_minor)
   if (!isTruthy(sample_path)) {
     stop("No Sample Manifest provided. Please re-run!")
   }
@@ -79,7 +77,9 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
   message(glue("Sample: {id}<br/>"))
   message(glue("Replicate Sample: {replicate_id}<br/>"))
     ## run EFM
-  if (run_mixdeconv | !skipancestry) {
+  if (run_mixdeconv | !skipancestry) { 
+    message("Loading Frequency Data<br/>")
+    popFreq = load_freq(out_path, twofreqs, freq_both, freq_major, freq_minor)
     attable = process_kinreport(id, replicate_id, kinpath, dynamicAT, staticAT)
     if (!skipancestry) {
       efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, skipancestry, cond, uncond=unconditioned, keep_bins)
@@ -143,7 +143,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
     }
     if (method == "Create GEDmatch PRO Report" | !skipancestry) {
       message("Creating GEDmatch PRO report for major contributor in unconditioned analysis.<br/>")
-      major_report = create_gedmatchpro_report(write_path, uncond_table_major, "C1", "major", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
+      major_report = create_gedmatchpro_report(write_path, uncond_table_major, major_c, "major", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
       message("Creating GEDmatch PRO report for minor contributor in unconditioned analysis.<br/>")
       minor_report = create_gedmatchpro_report(write_path, uncond_table_minor, "C2", "minor", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
       if (method == "Create GEDmatch PRO Report") {
