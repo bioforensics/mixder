@@ -6,5 +6,3 @@
 inst/doc
 .RDataTmp
 .github
-docs/
-_pkgdown.yml
