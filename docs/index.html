@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">mixder</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,7 @@
     <li><a class="dropdown-item" href="articles/Installation.html">Installation</a></li>
     <li><a class="dropdown-item" href="articles/Required_Files.html">Required Files</a></li>
     <li><a class="dropdown-item" href="articles/Running_MixDecon.html">Running Mixture Deconvolution</a></li>
+    <li><a class="dropdown-item" href="articles/Ancestry_Prediction_Tool.html">Ancestry Prediction Tool</a></li>
     <li><a class="dropdown-item" href="articles/Valmetrics.html">Calculating Validation Metrics</a></li>
     <li><a class="dropdown-item" href="articles/gedmatch.html">Generating GEDmatch PRO Report</a></li>
   </ul>
@@ -57,13 +58,14 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="mixder---current-version-075">MixDeR - Current Version: 0.7.5<a class="anchor" aria-label="anchor" href="#mixder---current-version-075"></a>
+<div class="page-header"><h1 id="mixder---current-version-10">MixDeR - Current Version: 1.0<a class="anchor" aria-label="anchor" href="#mixder---current-version-10"></a>
 </h1></div>
 <!-- badges: start -->
 <!-- badges: end -->
 <p>MixDeR (<strong>Mix</strong>ture <strong>De</strong>convolution in <strong>R</strong>) is a workflow (with a Shiny app) for performing mixture deconvolution of ForenSeq Kintelligence SNP data for two-person mixtures using <a href="https://github.com/oyvble/euroformix/" class="external-link">EuroForMix</a> and creating GEDmatch PRO reports for the individual contributor SNP profiles.</p>
 <p>This method requires extensive validation of the settings. MixDeR provides the option of calculating various metrics for evaluating the accuracy of the deduced SNP genotypes. This is extremely useful when determining settings, specifically the allele 1 probability threshold, the allele 2 probability threshold, and the minimum number of SNPs.</p>
 <p><em>Note: MixDeR (and EFM) assume the mixture samples are composed of two contributors. MixDeR is able to identify and alert the user to samples that may be potentially either single source or consist of a mixture with a large mixture ratio (i.e. &gt; 1:100 ratio between contributors). In these scenarios, the user is warned to be cautious with the minor contributor inferred genotyping results.</em></p>
+<p>MixDeR version 1.0 and later provides the option to perform ancestry prediction using principal component analysis (PCA). Additional information can be found below in the <strong>Ancestry Prediction</strong> section.</p>
 <p>The MixDeR paper can be cited with the following:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>Mitchell, R., Peck, M., Gorden, E., <span class="sc">&amp;</span> Just, <span class="fu">R.</span> (<span class="dv">2025</span>). MixDeR<span class="sc">:</span> A SNP mixture </span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>deconvolution workflow <span class="cf">for</span> forensic genetic genealogy. Forensic Science </span>
@@ -74,6 +76,7 @@
 <p>To launch the shiny app:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(mixder)</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">mixder</span>()</span></code></pre></div>
+<p>Please see <a href="bioforensics.github.io/mixder/">MixDeR documentation</a> for further information.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">

@@ -1,3 +1,8 @@
+
+## 0.8: March 24, 2026
+- Implemented ancestry prediction tool
+- Additional population-specific population allele frequency data included in package. 
+
 ## Version 0.7.5: September 24, 2025
 - Updated documentation
 

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixder</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,6 +22,7 @@
     <li><a class="dropdown-item" href="../articles/Installation.html">Installation</a></li>
     <li><a class="dropdown-item" href="../articles/Required_Files.html">Required Files</a></li>
     <li><a class="dropdown-item" href="../articles/Running_MixDecon.html">Running Mixture Deconvolution</a></li>
+    <li><a class="dropdown-item" href="../articles/Ancestry_Prediction_Tool.html">Ancestry Prediction Tool</a></li>
     <li><a class="dropdown-item" href="../articles/Valmetrics.html">Calculating Validation Metrics</a></li>
     <li><a class="dropdown-item" href="../articles/gedmatch.html">Generating GEDmatch PRO Report</a></li>
   </ul></li>
@@ -78,7 +79,10 @@
 <span>  <span class="va">minor</span>,</span>
 <span>  <span class="va">minor_threshold</span>,</span>
 <span>  <span class="va">keep_bins</span>,</span>
-<span>  <span class="va">filter_missing</span></span>
+<span>  <span class="va">filter_missing</span>,</span>
+<span>  <span class="va">skipancestry</span>,</span>
+<span>  <span class="va">ancestrysnps</span>,</span>
+<span>  <span class="va">pcagroups</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -208,6 +212,18 @@
 
 <dt id="arg-filter-missing">filter_missing<a class="anchor" aria-label="anchor" href="#arg-filter-missing"></a></dt>
 <dd><p>TRUE/FALSE whether to filter SNPs with either allele missing</p></dd>
+
+
+<dt id="arg-skipancestry">skipancestry<a class="anchor" aria-label="anchor" href="#arg-skipancestry"></a></dt>
+<dd><p>TRUE/FALSE whether to skip ancestry prediction</p></dd>
+
+
+<dt id="arg-ancestrysnps">ancestrysnps<a class="anchor" aria-label="anchor" href="#arg-ancestrysnps"></a></dt>
+<dd><p>SNPs to use for ancestry prediction (either ancestry only or all SNPs)</p></dd>
+
+
+<dt id="arg-pcagroups">pcagroups<a class="anchor" aria-label="anchor" href="#arg-pcagroups"></a></dt>
+<dd><p>How to color PCA plots (superpopulations and/or subpopulations)</p></dd>
 
 </dl></div>
 

@@ -14,6 +14,7 @@ run_efm(
   out_path,
   attable,
   nsets,
+  ancestry,
   cond = NULL,
   uncond = TRUE,
   keep_bins = TRUE

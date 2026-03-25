@@ -1,6 +1,12 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://bioforensics.github.io/mixder/404.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/LICENSE-text.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/_build/html/ancestry.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/_build/html/genindex.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/_build/html/index.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/_build/html/mixder.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/_build/html/search.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/articles/Ancestry_Prediction_Tool.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/articles/Installation.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/articles/Introduction.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/articles/Required_Files.html</loc></url>
@@ -13,9 +19,13 @@
 <url><loc>https://bioforensics.github.io/mixder/news/index.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/This.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/add_rows.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/reference/ancestry_1000G_allsamples.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/reference/ancestry_prediction.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/reference/ancestrysnps_1000G_allsamples.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/assigned_A2.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/calc_metrics.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/calculate_at.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/reference/centroids.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/check_3_or_4_col.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/check_allele_calls.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/check_nas.html</loc></url>
@@ -43,6 +53,11 @@
 <url><loc>https://bioforensics.github.io/mixder/reference/load_kin_uas25.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/mixder.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/popFreq_1000G.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/reference/popFreq_AFR.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/reference/popFreq_AMR.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/reference/popFreq_EAS.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/reference/popFreq_EUR.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/reference/popFreq_SAS.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/popFreq_gnomad.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/process_efm_files.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/process_kinreport.html</loc></url>

@@ -18,80 +18,77 @@
 #'
 mixder = function() {
   ui = fluidPage(
+    use_prompt(),
+    tags$head(
+      tags$style(
+        HTML("[class*=hint--][aria-label]:after {
+      white-space: pre;
+    }")
+        )
+    ),
     # App title
-    titlePanel("Running Mixture Deconvolution using EFM"),
+    titlePanel("MixDeR: A Mixture Deconvolution Workflow for FGG"),
     sidebarPanel(width=6,
       use_prompt(),
-      checkboxInput("run_mixdeconv", tags$span("Run EFM Mixture Deconvolution", tags$span(
+      checkboxInput("skip_ancestry", tags$span("Skip Ancestry Prediction Step", tags$span(
         icon(
           name = "question-circle",
         )
       ) |>
-        add_prompt(message = "Check box to run mixture deconvolution using EuroForMix. Not required if run previously using MixDeR.", position = "right")
-      ), value = TRUE),
+        add_prompt(message = "Check box to skip ancestry prediction\nstep and move to mixture deconvolution.", position = "right")
+      ), value = FALSE),
+      conditionalPanel(condition = "input.skip_ancestry == 0", uiOutput("ancestry_text"), uiOutput("pcagroups"), uiOutput("ancestry_snps")),
       checkboxInput("uncond", tags$span("Unconditioned Analysis", tags$span(icon(
         name = "question-circle",
       )
       ) |>
-        add_prompt(message = "An unconditioned analysis assumes no known contributor to the mixture and therefore does not require known genotypes to be provided.", position = "right")
+        add_prompt(message = "An unconditioned analysis assumes no known contributor to the mixture and therefore\ndoes not require known genotypes to be provided.", position = "right")
       ), value = FALSE),
       checkboxInput("cond", tags$span("Conditioned Analysis", tags$span(icon(
         name = "question-circle",
       )
       ) |>
-        add_prompt(message = "A conditioned analysis assumes a single known contributor to the mixture. User will select which reference sample to condition on after providing the Reference Sample Report Folder.", position = "right")
+        add_prompt(message = "A conditioned analysis assumes a single known contributorto the mixture.\nUser will select which reference sample to condition on after providing\nthe Reference Sample Report Folder.", position = "right")
       ), value = FALSE),
-      selectInput("method", tags$span("Method to run after mixture deconvolution?", tags$span(icon(
-        name = "question-circle",
-      )
-      ) |>
-        add_prompt(message = "Optional- if selecting Calculate Metrics, must include reference genotypes.", position = "right")
-      ), c("", "Calculate Metrics", "Create GEDmatch PRO Report")),
-      conditionalPanel(condition = "input.twofreqs == 0", uiOutput("freqselect")),
-      conditionalPanel(condition = "input.twofreqs == 1", uiOutput("freqselect_major"), uiOutput("freqselect_minor")),
-      checkboxInput("twofreqs", tags$span("Use Different Allele Frequency Files For Each Contributor?", tags$span(icon(
-        name = "question-circle",
-      )
-      ) |>
-        add_prompt(message = "Will allow user to select or upload different allele frequency data for each contributor.", position = "right")
-      ), value = FALSE),
-      conditionalPanel(condition = "input.twofreqs == 0 & input.uploadfreq == 'Upload Custom'", uiOutput("freq_GetFile"), uiOutput("freq_text")),
-      conditionalPanel(condition = "input.twofreqs == 1 & input.uploadfreq_major == 'Upload Custom'", uiOutput("freq_GetFile_major"), uiOutput("freq_text_major")),
-      conditionalPanel(condition = "input.twofreqs == 1 & input.uploadfreq_minor == 'Upload Custom'", uiOutput("freq_GetFile_minor"), uiOutput("freq_text_minor")),
       shinyFilesButton("sample_GetFile", "Select a Sample Manifest File", "Select a sample manifest", multiple = FALSE,
                        buttonType = "default", class = NULL), tags$span(icon(
                          name = "question-circle",
                        )
                        ) |>
-                         add_prompt(message = "A tab-delimited file containing the list of samples to run MixDeR. <br> It must contain two columns (SampleID and ReplicateID). Each row contains the ID of a single sample or the IDs of both the sample and replicate.", position = "right"),
+        add_prompt(message = "A tab-delimited file containing the list of samples to run MixDeR.\nIt must contain two columns (SampleID and ReplicateID).\nEach row contains the ID of a single sample or the IDs of\nboth the sample and replicate.", position = "right"),
       textOutput("sample_file"),
       shinyDirButton("kin_prefix", "Select Folder containing Mixture Sample Reports", "Please select a folder containing Mixture Sample Reports",
                      buttonType = "default", class = NULL), tags$span(icon(
                        name = "question-circle",
-                      )
-                      ) |>
-                        add_prompt(message = "Select a folder containing the Mixture Sample Reports.", position = "right"),
+                     )
+                     ) |>
+        add_prompt(message = "Select a folder containing the Mixture Sample Reports.", position = "right"),
       textOutput("kin_inpath"),
       conditionalPanel(condition = "input.method == 'Calculate Metrics' | input.cond == 1", uiOutput("ref_GetFile"), uiOutput("ref_text")),
       conditionalPanel(condition = "input.cond == 1", uiOutput("ref_selector")),
+      conditionalPanel(condition = "input.skip_ancestry == 1", uiOutput("runmd"), uiOutput("twofreqs"), uiOutput("method")),
+      conditionalPanel(condition = "input.skip_ancestry == 1 & input.twofreqs == 0", uiOutput("freqselect")),
+      conditionalPanel(condition = "input.twofreqs == 1", uiOutput("freqselect_major"), uiOutput("freqselect_minor")),
+      conditionalPanel(condition = "input.skip_ancestry == 1 & input.twofreqs == 0 & input.uploadfreq == 'Upload Custom'", uiOutput("freq_GetFile"), uiOutput("freq_text")),
+      conditionalPanel(condition = "input.twofreqs == 1 & input.uploadfreq_major == 'Upload Custom'", uiOutput("freq_GetFile_major"), uiOutput("freq_text_major")),
+      conditionalPanel(condition = "input.twofreqs == 1 & input.uploadfreq_minor == 'Upload Custom'", uiOutput("freq_GetFile_minor"), uiOutput("freq_text_minor")),
       conditionalPanel(condition = "input.method == 'Calculate Metrics' | input.method == 'Create GEDmatch PRO Report'", uiOutput("filter_missing")),
       conditionalPanel(condition = "input.method == 'Calculate Metrics'", uiOutput("major_selector"), uiOutput("minor_selector"), uiOutput("metrics_A1min"), uiOutput("metrics_A1max"), uiOutput("metrics_A2min"), uiOutput("metrics_A2max")),
-      conditionalPanel(condition = "input.method == 'Create GEDmatch PRO Report'", uiOutput("min_cont_prob"), uiOutput("report_A1"), uiOutput("report_A2")),
-      conditionalPanel(condition = "input.run_mixdeconv == 1", uiOutput("sets"), uiOutput("keep_bins"), uiOutput("staticAT"), uiOutput("dynamicAT")),
-      textInput("output", tags$span("Output Folder Name", tags$span(icon(
-        name = "question-circle",
-      )
-      ) |>
-        add_prompt(message = "This folder will be created in the specified SNP files folder to store generated output.
-                   If not running EFM, it is required to specify the name of the folder containing previously generated EFM output.", position = "right")
-      ), "output"),
+      conditionalPanel(condition = "input.skip_ancestry == 0 | input.method == 'Create GEDmatch PRO Report'", uiOutput("min_cont_prob"), uiOutput("report_A1"), uiOutput("report_A2")),
+      conditionalPanel(condition = "input.skip_ancestry == 0 | input.run_mixdeconv == 1", uiOutput("sets"), uiOutput("keep_bins"), uiOutput("staticAT"), uiOutput("dynamicAT")),
       numericInput("minimum_snps", tags$span("Minimum Number of SNPs",  tags$span(
         icon(
           name = "question-circle",
         )
       ) |>
-        add_prompt(message = "The minimum number of SNPs to retain either for calculating metrics or for creating the GEDmatch PRO report.", position = "right")
+        add_prompt(message = "The minimum number of SNPs to retain either for\ncalculating metrics or for creating the GEDmatch PRO report.", position = "right")
       ), value=6000),
+      textInput("output", tags$span("Output Folder Name", tags$span(icon(
+        name = "question-circle",
+      )
+      ) |>
+        add_prompt(message = "This folder will be created in the specified SNP files folder to store generated output.\nIf not running EFM, it is required to specify the name of the folder containing previously generated EFM output.", position = "right")
+      ), "output"),
     shinyjs::useShinyjs(),
     actionButton("Submit", "Run MixDeR")
     ),
@@ -102,6 +99,63 @@ mixder = function() {
 
 # Define server
 server = function(input, output, session) {
+  output$ref_GetFile = renderUI({
+    fluidRow(
+      column(10,
+             shinyDirButton("ref_GetFile", "Select Folder containing References" ,
+                            title = "Please select a folder containing reference genotypes:", multiple = FALSE,
+                            buttonType = "default", class = NULL),
+             tags$span(
+               icon(
+                 name = "question-circle",
+               )
+             ) |>
+               add_prompt(message = "A folder containing the reference genotypes in either\nthe UAS Sample Report format or in a CSV file (see README for specific formatting).\nIf both are present, MixDeR will use the CSV file.", position = "right")
+      ))
+  })
+  output$ref_text = renderUI({
+    textOutput("refs_file")
+  })
+  output$ref_selector = renderUI({
+    if (isTruthy(refs())) {
+      sampleids = get_ids(refs())
+      selectInput("ref_selector",
+                  label = tags$span("Select Reference(s) to Condition on:", tags$span(
+                    icon(
+                      name = "question-circle",
+                    )
+                  ) |>
+                    add_prompt(message = "Select one or more references to condition on.\nIf more than one selected, the mixture(s) will be\nconditioned on each reference separately.", position = "right")
+                  ),
+                  choices = sampleids, multiple = TRUE)
+    }
+  })
+
+  output$runmd = renderUI({
+    checkboxInput("run_mixdeconv", tags$span("Run EFM Mixture Deconvolution", tags$span(
+      icon(
+        name = "question-circle",
+      )
+    ) |>
+      add_prompt(message = "Check box to run mixture deconvolution using EuroForMix.\nNot required if run previously using MixDeR.", position = "right")
+    ), value = TRUE)
+  })
+  output$method = renderUI({
+    selectInput("method", tags$span("Method to run after mixture deconvolution?", tags$span(icon(
+    name = "question-circle",
+  )
+  ) |>
+    add_prompt(message = "Optional- if selecting Calculate Metrics,\nmust include reference genotypes.", position = "right")
+  ), c("", "Calculate Metrics", "Create GEDmatch PRO Report"))
+  })
+  output$twofreqs = renderUI({
+    checkboxInput("twofreqs", tags$span("Use Different Allele Frequency Files For Each Contributor?", tags$span(icon(
+    name = "question-circle",
+  )
+  ) |>
+    add_prompt(message = "Will allow user to select or upload different\nallele frequency data for each contributor.", position = "right")
+  ), value = FALSE)
+  })
   output$freq_GetFile = renderUI({
                 fluidRow(column(10,shinyFilesButton("freq_GetFile", "Select an Allele Frequency file" ,
                      title = "Please select an allele frequency file:", multiple = FALSE,
@@ -135,37 +189,27 @@ server = function(input, output, session) {
   output$freq_text_minor = renderUI({
     textOutput("freq_file_minor")
   })
+  output$sample_file_text = renderUI({
 
-  output$ref_GetFile = renderUI({
-        fluidRow(
-          column(10,
-                 shinyDirButton("ref_GetFile", "Select Folder containing References" ,
-                     title = "Please select a folder containing reference genotypes:", multiple = FALSE,
-                     buttonType = "default", class = NULL),
-                 tags$span(
-                   icon(
-                     name = "question-circle",
-                   )
-                 ) |>
-                   add_prompt(message = "A folder containing the reference genotypes in either the UAS Sample Report format or in a CSV file (see README for specific formatting). If both are present, MixDeR will use the CSV file.", position = "right")
-          ))
   })
-  output$ref_text = renderUI({
-    textOutput("refs_file")
+  output$ancestry_text = renderUI({
+    HTML("<b>Optional: Ancestry Prediction Tool using PCA</b> <br/> Use this tool to assist in predicting the ancestry of each contributor. The population-specific allele frequency file can then be used in the next mixture deconvolution step. Select the above box to skip this step and move forward to mixture deconvolution.<br/>See the README for more information.<br/><br/>")
   })
-  output$ref_selector = renderUI({
-    if (isTruthy(refs())) {
-      sampleids = get_ids(refs())
-      selectInput("ref_selector",
-                label = tags$span("Select Reference(s) to Condition on:", tags$span(
-                  icon(
-                    name = "question-circle",
-                  )
-                ) |>
-                  add_prompt(message = "Select one or more references to condition on. If more than one selected, the mixture(s) will be conditioned on each reference separately.", position = "right")
-                ),
-                choices = sampleids, multiple = TRUE)
-    }
+  output$ancestry_snps = renderUI({
+    selectInput("ancestry_snps", tags$span("SNPs to Use for Ancestry Prediction:", tags$span(icon(
+      name = "question-circle")
+    ) |>
+      prompter::add_prompt(message = "Select whether to use all autosomal SNPs or only ancestry SNPs for ancestry prediction.\nWarning: using all SNPs may result in longer analysis time!", position = "right")
+    ), c("Ancestry SNPs Only", "All Autosomal SNPs"))
+  })
+  output$pcagroups = renderUI({
+    checkboxGroupInput("pcagroups", tags$span("Select Groups for Ancestry Prediction:", tags$span(
+      icon(
+        name = "question-circle",
+      )
+    ) |>
+      add_prompt(message = "PCA plots are colored by the selected grouping to identify ancestry. Both may be selected.\nSubpopulations include 26 subgroups making up the stated superpopulations.", position = "right")
+    ), choices = list("Superpopulations (AFR/AMR/EAS/EUR/SAS Only)", "Subpopulations"), selected = "Superpopulations (AFR/AMR/EAS/EUR/SAS Only)")
   })
   output$major_selector = renderUI({
     if (isTruthy(refs())) {
@@ -176,7 +220,7 @@ server = function(input, output, session) {
                     name = "question-circle",
                   )
                 ) |>
-                  add_prompt(message = "When calculating metrics for an unconditioned analysis, the major contributor sample ID is required for calculating the genotyping accuracy. Please select the correct sample from the Dropdown menu.", position = "right")
+                  add_prompt(message = "When calculating metrics for an unconditioned analysis, the major contributor sample ID is required for calculating the genotyping accuracy.\nPlease select the correct sample from the Dropdown menu.", position = "right")
                 ),
                 choices = sampleids)
     }
@@ -190,7 +234,7 @@ server = function(input, output, session) {
                     name = "question-circle",
                   )
                 ) |>
-                  add_prompt(message = "When calculating metrics for an unconditioned analysis, the minor contributor sample ID is required for calculating the genotyping accuracy. Please select the correct sample from the Dropdown menu.", position = "right")
+                  add_prompt(message = "When calculating metrics for an unconditioned analysis,\nthe minor contributor sample ID is required for calculating the genotyping accuracy.\nPlease select the correct sample from the Dropdown menu.", position = "right")
                 ),
                 choices = sampleids)
     }
@@ -201,7 +245,7 @@ server = function(input, output, session) {
         name = "question-circle",
       )
     ) |>
-      add_prompt(message = "The number of SNP bins a mixture SNP profile is divided into. This tells MixDeR how many SNP files to process for each mixture. The default is 10.", position = "right")
+      add_prompt(message = "The number of SNP bins a mixture SNP profile is divided into.\nThis tells MixDeR how many SNP files to process for each mixture.\nThe default is 10.", position = "right")
     ), value=10)
   })
   output$keep_bins = renderUI({
@@ -210,7 +254,7 @@ server = function(input, output, session) {
         name = "question-circle",
       )
     ) |>
-      add_prompt(message = "Check to use previously created bins, if detected by MixDeR. Otherwise, will create new SNP bins (and files) and write over any existing files.", position = "right")
+      add_prompt(message = "Check to use previously created bins, if detected by MixDeR.\nOtherwise, will create new SNP bins (and files) and write over any existing files.", position = "right")
     ), value=TRUE)
   })
   output$staticAT = renderUI({
@@ -219,7 +263,7 @@ server = function(input, output, session) {
         name = "question-circle",
       )
     ) |>
-      add_prompt(message = "The static analytical threshold indicates the minimum number of reads required to include a called allele it in the deconvolution at a particular SNP. The default is 10 reads.", position = "right")
+      add_prompt(message = "The static analytical threshold indicates the minimum number of reads\nrequired to include a called allele it in the deconvolution at a particular SNP.\nThe default is 10 reads.", position = "right")
     ), value=10)
   })
   output$dynamicAT = renderUI({
@@ -228,7 +272,7 @@ server = function(input, output, session) {
         name = "question-circle",
       )
     ) |>
-      add_prompt(message = "The dynamic analytical thresholds indicates the percentage of number of total reads to set the minimum number of reads required to include a called allele it in the deconvolution at a particular SNP. For example, if a SNP has 100 total reads, a 10% dynamic AT would require an allele to have at least 10 reads to be included.", position = "right")
+      add_prompt(message = "The dynamic analytical thresholds indicates the percentage of number of total reads\nto set the minimum number of reads required to include a called allele it in\nthe deconvolution at a particular SNP.\nFor example, if a SNP has 100 total reads, a 10% dynamic AT would require an allele\nto have at least 10 reads to be included.", position = "right")
     ), value=0.015)
   })
   output$min_cont_prob = renderUI({
@@ -237,7 +281,7 @@ server = function(input, output, session) {
         name = "question-circle",
       )
     ) |>
-      add_prompt(message = "By default, the SNP profile for the minor contributor contains the specified minimum number of SNPs (i.e. the top 6,000 SNPs ordered by allele 1 probability). This will instead apply the allele 1 probability threshold for the created SNP profile for the minor contributor, assuming a SNP profile can be generated that meets the specified minimum number of SNPs.", position = "right")
+      add_prompt(message = "By default, the SNP profile for the minor contributor contains the\nspecified minimum number of SNPs (i.e. the top 6,000 SNPs ordered by allele 1 probability).\nThis will instead apply the allele 1 probability threshold for the\ncreated SNP profile for the minor contributor, assuming a SNP profile can be generated\nthat meets the specified minimum number of SNPs.", position = "right")
     ))
   })
   output$freqselect = renderUI({
@@ -245,41 +289,41 @@ server = function(input, output, session) {
       name = "question-circle",
     )
     ) |>
-      add_prompt(message = "Select allele frequency data. Options are global population datasets (1000G Phase 3 or gnomAD v4) or upload your own file. See README for more details.", position = "right")
-    ), choices = c("Global - 1000G", "Global - gnomAD", "Upload Custom"))
+      add_prompt(message = "Select allele frequency data.\nOptions are global population datasets (1000G Phase 3 or gnomAD v4),\nindividual superpopulation 1000G (AFR,AMR,EAS,EUR,SAS) datasets\nor upload your own file.\nSee README for more details.", position = "right")
+    ), choices = c("Global - 1000G", "Global - gnomAD", "AFR - 1000G", "AMR - 1000G", "EAS - 1000G", "EUR - 1000G", "SAS - 1000G", "Upload Custom"))
   })
   output$freqselect_major = renderUI({
     selectInput("uploadfreq_major", tags$span("Select Allele Frequency Data for the Major Contributor", tags$span(icon(
       name = "question-circle",
     )
     ) |>
-      add_prompt(message = "Select allele frequency data for the major contributor. Options are global population datasets (1000G Phase 3 or gnomAD v4) or upload your own file. See README for more details.", position = "right")
-    ), choices = c("Global - 1000G", "Global - gnomAD", "Upload Custom"))
+      add_prompt(message = "Select allele frequency data for the major contributor.\nOptions are global population datasets (1000G Phase 3 or gnomAD v4),\nindividual superpopulation 1000G (AFR,AMR,EAS,EUR,SAS) datasets,\nor upload your own file.\nSee README for more details.", position = "right")
+    ), choices = c("Global - 1000G", "Global - gnomAD", "AFR - 1000G", "AMR - 1000G", "EAS - 1000G", "EUR - 1000G", "SAS - 1000G", "Upload Custom"))
   })
   output$freqselect_minor = renderUI({
     selectInput("uploadfreq_minor", tags$span("Select Allele Frequency Data for the Minor Contributor", tags$span(icon(
       name = "question-circle",
     )
     ) |>
-      add_prompt(message = "Select allele frequency data for the minor contributor. Options are global population datasets (1000G Phase 3 or gnomAD v4) or upload your own file. See README for more details.", position = "right")
-    ), choices = c("Global - 1000G", "Global - gnomAD", "Upload Custom"))
+      add_prompt(message = "Select allele frequency data for the minor contributor.\nOptions are global population datasets (1000G Phase 3 or gnomAD v4),\nindividual superpopulation 1000G (AFR,AMR,EAS,EUR,SAS) datasets,\nor upload your own file.\nSee README for more details.", position = "right")
+    ), choices = c("Global - 1000G", "Global - gnomAD", "AFR - 1000G", "AMR - 1000G", "EAS - 1000G", "EUR - 1000G", "SAS - 1000G","Upload Custom"))
   })
   output$report_A1 = renderUI({
-    numericInput("A1_threshold", tags$span("Allele 1 Probability Threshold to create GEDmatch PRO Report", tags$span(
+    numericInput("A1_threshold", tags$span("Allele 1 Probability Threshold", tags$span(
       icon(
         name = "question-circle",
       )
     ) |>
-      add_prompt(message = "This sets the allele 1 probability threshold for creating the GEDmatch PRO report. Any SNP with an allele 1 probability below the threshold will be removed from the report.", position = "right")
+      add_prompt(message = "This sets the allele 1 probability threshold for creating the GEDmatch PRO report.\nAny SNP with an allele 1 probability below the threshold will be removed from the report.", position = "right")
     ), value=0.99, min = 0, max = 1)
   })
   output$report_A2 = renderUI({
-    numericInput("A2_threshold", tags$span("Allele 2 Probability Threshold to create GEDmatch PRO Report", tags$span(
+    numericInput("A2_threshold", tags$span("Allele 2 Probability Threshold", tags$span(
       icon(
         name = "question-circle",
       )
     ) |>
-      add_prompt(message = "This sets the allele 2 probability threshold for creating the GEDmatch PRO report. Any SNP with an allele 2 probability below the threshold will be removed from the report.", position = "right")
+      add_prompt(message = "This sets the allele 2 probability threshold for creating the GEDmatch PRO report.\nAny SNP with an allele 2 probability below the threshold will be removed from the report.", position = "right")
     ), value=0.60, min = 0, max = 1)
   })
   output$filter_missing = renderUI({
@@ -288,7 +332,7 @@ server = function(input, output, session) {
         name = "question-circle",
       )
     ) |>
-      add_prompt(message = "This will remove a SNP if either of its alleles are missing. If not checked, a SNP will be removed if allele 1 is missing or will report the SNP as homozygous for allele 1 if allele 2 is missing.", position = "right")
+      add_prompt(message = "This will remove a SNP if either of its alleles are missing.\nIf not checked, a SNP will be removed if allele 1 is missing\nor will report the SNP as homozygous for allele 1 if allele 2 is missing.", position = "right")
     ))
   })
   output$metrics_A1min = renderUI({
@@ -297,7 +341,7 @@ server = function(input, output, session) {
         name = "question-circle",
       )
     ) |>
-      add_prompt(message = "When calculating metrics, a range of allele 1 probability thresholds can be used to calculate the metrics at each combination of allele 1 and allele 2 probability thresholds. This sets the minimum allele 1 probability threshold. The threshold increases in increments of 0.01.", position = "right")
+      add_prompt(message = "When calculating metrics, a range of allele 1 probability thresholds\ncan be used to calculate the metrics at each combination of\nallele 1 and allele 2 probability thresholds.\nThis sets the minimum allele 1 probability threshold.\nThe threshold increases in increments of 0.01.", position = "right")
     ), value=0, min = 0, max = 1)
   })
   output$metrics_A1max = renderUI({
@@ -306,7 +350,7 @@ server = function(input, output, session) {
         name = "question-circle",
       )
     ) |>
-      add_prompt(message = "When calculating metrics, a range of allele 1 probability thresholds can be used to calculate the metrics at each combination of allele 1 and allele 2 probability thresholds. This sets the maximum allele 1 probability threshold. The threshold increases in increments of 0.01.", position = "right")
+      add_prompt(message = "When calculating metrics, a range of allele 1 probability thresholds\ncan be used to calculate the metrics at each combination of\nallele 1 and allele 2 probability thresholds.\nThis sets the maximum allele 1 probability threshold.\nThe threshold increases in increments of 0.01.", position = "right")
     ), value=1, min = 0, max = 1)
   })
   output$metrics_A2min = renderUI({
@@ -315,7 +359,7 @@ server = function(input, output, session) {
         name = "question-circle",
       )
     ) |>
-      add_prompt(message = "When calculating metrics, a range of allele 2 probability thresholds can be used to calculate the metrics at each combination of allele 1 and allele 2 probability thresholds. This sets the minimum allele 2 probability threshold. The threshold increases in increments of 0.01.", position = "right")
+      add_prompt(message = "When calculating metrics, a range of allele 2 probability thresholds\ncan be used to calculate the metrics at each combination of allele 1 and allele 2 probability thresholds.\nThis sets the minimum allele 2 probability threshold.\nThe threshold increases in increments of 0.01.", position = "right")
     ), value=0, min = 0, max = 1)
   })
   output$metrics_A2max = renderUI({
@@ -324,7 +368,7 @@ server = function(input, output, session) {
         name = "question-circle",
       )
     ) |>
-      add_prompt(message = "When calculating metrics, a range of allele 2 probability thresholds can be used to calculate the metrics at each combination of allele 1 and allele 2 probability thresholds. This sets the maximum allele 2 probability threshold. The threshold increases in increments of 0.01.", position = "right")
+      add_prompt(message = "When calculating metrics, a range of allele 2 probability thresholds\ncan be used to calculate the metrics at each combination of allele 1 and allele 2 probability thresholds.\nThis sets the maximum allele 2 probability threshold.\nThe threshold increases in increments of 0.01.", position = "right")
     ), value=1, min = 0, max = 1)
   })
   volumes = getVolumes()
@@ -384,7 +428,7 @@ server = function(input, output, session) {
   observeEvent(input$Submit, {
     sample_list = read.table(samplefile()$datapath, sep="\t", header=T)
     date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
-    create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing)
+    create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups)
     if (isTruthy(refs())) {
       withProgress(message = "Loading References", value = 0, {
         if (!file.exists(glue("{refs()}/EFM_references.csv"))) {
@@ -406,7 +450,7 @@ server = function(input, output, session) {
         incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
           withCallingHandlers({
             shinyjs::html(id = "text", html = "")
-            run_workflow(date, id, replicate_id, input$twofreqs, ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath),ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refData, refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing)
+            run_workflow(date, id, replicate_id, input$twofreqs, ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath),ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refData, refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups)
           },
           message = function(m) {
             shinyjs::html(id = "text", html = m$message, add = TRUE)
