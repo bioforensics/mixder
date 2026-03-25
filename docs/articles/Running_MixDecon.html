@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixder</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,29 +70,46 @@
 
     
     
-<p>Mixture deconvolution utilizes EuroForMix (EFM).<br>
-There are several options/settings to run EFM mixture
-deconvolution:<br>
-The type of mixture deconvolution analysis to perform (one or both can
-be selected at once):<br>
+<p>Mixture deconvolution utilizes <a href="https://github.com/oyvble/euroformix" class="external-link">EuroForMix (EFM)</a>.</p>
+<p>There are several options/settings to run EFM mixture
+deconvolution:</p>
+<p>The type of mixture deconvolution analysis to perform (one or both
+can be selected at once):<br>
 - Unconditioned analysis<br>
-- Conditioned analysis<br><strong>Allele Frequency Data</strong>: The user must choose which
-allele frequency data to use: 1000Genomes Phase 3 data, gnomAD v4 data,
-or upload a custom file. See above for more details about the format for
-uploading a custom AF file.<br><strong>References to Condition on</strong>: IF running a conditioned
+- Conditioned analysis</p>
+<p><strong>Allele Frequency Data</strong>: The user must choose which
+allele frequency data to use:<br>
+- 1000 Genomes Phase 3 data<br>
+- gnomAD v4 data<br>
+- AFR 1000G data<br>
+- AMR 1000G data<br>
+- EAS 1000G data<br>
+- EUR 1000G data<br>
+- SAS 1000G data<br>
+The user may also upload a custom file. See <code>Required Files</code>
+page for more details about the format for uploading a custom AF
+file.</p>
+<p><strong>References to Condition on</strong>: IF running a conditioned
 analysis, once the reference folder has been uploaded, this dropdown
 menu will auto-populate containing the reference sample IDs. The user
 must select which references to condition on. <strong>As of now, MixDeR
 can only condition on a single reference sample</strong>. However,
 multiple references can be selected for conditioning; the conditioned
-analyses will be run separately.<br><strong>Number of SNP Bins</strong>: The number of SNP sets for each
-sample. The default is 10.<br><strong>Static Analytical Threshold</strong>: The minimum number of
-reads required for a SNP to be included (default = 10).<br><strong>Dynamic Analytical Threshold</strong>: The percent of total SNP
-reads required for a SNP to. be included (default = 0.015 or 1.5%). (A
-quick note on the ATs: both the static and dynamic ATs are applied and
-the one producing the higher AT will be used in the EFM software).<br><strong>Output Folder Name</strong>: The name of the folder created
+analyses will be run separately.</p>
+<p><strong>Number of SNP Bins</strong>: The number of SNP sets for each
+sample. The default is 10.</p>
+<p><strong>Static Analytical Threshold</strong>: The minimum number of
+reads required for a SNP to be included (default = 10).</p>
+<p><strong>Dynamic Analytical Threshold</strong>: The percent of total
+SNP reads required for a SNP to. be included (default = 0.015 or
+1.5%).<br><em>A quick note on the ATs: both the static and dynamic ATs are applied
+and the one producing the higher AT will be used in the EFM
+software.</em></p>
+<p><strong>Output Folder Name</strong>: The name of the folder created
 within the folder containing the original SNP files to store the
-generated output for the entire workflow.<br><strong>Minimum Number of SNPs</strong>: The minimum number of SNPs</p>
+generated output for the entire workflow.</p>
+<p><strong>Minimum Number of SNPs</strong>: The minimum number of
+SNPs</p>
   </main>
 </div>
 
