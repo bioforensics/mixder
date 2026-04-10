@@ -36,7 +36,8 @@ run_workflow(
   filter_missing,
   skipancestry,
   ancestrysnps,
-  pcagroups
+  pcagroups,
+  positions
 )
 }
 \arguments{
@@ -103,6 +104,8 @@ run_workflow(
 \item{ancestrysnps}{SNPs to use for ancestry prediction (either ancestry only or all SNPs)}
 
 \item{pcagroups}{How to color PCA plots (superpopulations and/or subpopulations)}
+
+\item{positions}{SNP chromosomal positions}
 }
 \description{
 Runs workflow

@@ -66,7 +66,8 @@ mixder = function() {
       textOutput("kin_inpath"),
       conditionalPanel(condition = "input.method == 'Calculate Metrics' | input.cond == 1", uiOutput("ref_GetFile"), uiOutput("ref_text")),
       conditionalPanel(condition = "input.cond == 1", uiOutput("ref_selector")),
-      conditionalPanel(condition = "input.skip_ancestry == 1", uiOutput("runmd"), uiOutput("twofreqs"), uiOutput("method")),
+      conditionalPanel(condition = "input.skip_ancestry == 1", uiOutput("runmd"), uiOutput("twofreqs"), uiOutput("method"), uiOutput("assay_choice")),
+      conditionalPanel(condition = "input.assay_choice == 'Custom'", uiOutput("assay_GetFile"), uiOutput("assay_text")),
       conditionalPanel(condition = "input.skip_ancestry == 1 & input.twofreqs == 0", uiOutput("freqselect")),
       conditionalPanel(condition = "input.twofreqs == 1", uiOutput("freqselect_major"), uiOutput("freqselect_minor")),
       conditionalPanel(condition = "input.skip_ancestry == 1 & input.twofreqs == 0 & input.uploadfreq == 'Upload Custom'", uiOutput("freq_GetFile"), uiOutput("freq_text")),
@@ -147,6 +148,29 @@ server = function(input, output, session) {
   ) |>
     add_prompt(message = "Optional- if selecting Calculate Metrics,\nmust include reference genotypes.", position = "right")
   ), c("", "Calculate Metrics", "Create GEDmatch PRO Report"))
+  })
+  output$assay_choice = renderUI({
+    selectInput("assay_choice", tags$span("Select Assay", tags$span(icon(
+      name = "question-circle",
+    )
+    ) |>
+      add_prompt(message = "Select assay used to develop genotypes", position = "right")
+    ), c("Kintelligence", "Custom"))
+  })
+  output$assay_GetFile = renderUI({
+    fluidRow(column(10,shinyFilesButton("assay_GetFile", "Select a custom SNP positions file" ,
+                                        title = "Select a custom SNP positions file", multiple = FALSE,
+                                        buttonType = "default", class = NULL),
+                    tags$span(
+                      icon(
+                        name = "question-circle",
+                      )
+                    ) |>
+                      add_prompt(message = "File containing chromosomal locations for custom SNP panels.\nThis is not required if using the Kintelligence assay.\nColumns required: rsID, chromosome (e.g. 1, 2, 3,), and position (GRCh37).", position = "right")
+    ))
+  })
+  output$assay_text = renderUI({
+    textOutput("assay_file")
   })
   output$twofreqs = renderUI({
     checkboxInput("twofreqs", tags$span("Use Different Allele Frequency Files For Each Contributor?", tags$span(icon(
@@ -406,6 +430,14 @@ server = function(input, output, session) {
     })
   }
 
+  shinyFileChoose(input, "assay_GetFile", roots=volumes, session=session)
+  assay = reactive({parseFilePaths(volumes, input$assay_GetFile)})
+  if (!is.null(assay)) {
+    observe({
+      output$assay_file = renderText({if(input$Submit==0){as.character(assay()$datapath)} else {return()}})
+    })
+  }
+
   ## refs
   shinyDirChoose(input, "ref_GetFile", roots=volumes(), session=session)
   refs = reactive({parseDirPath(volumes, input$ref_GetFile)})
@@ -452,6 +484,11 @@ server = function(input, output, session) {
       freq_minor = ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath)
       popFreq = load_freq(input$twofreqs, freq_both, freq_major, freq_minor)
     })
+    snp_positions = if (isTruthy(assay()$datapath)) {
+      snp_positions = read.table(assay()$datapath, sep="\t", header=T)
+    } else {
+      snp_positions = mixder::kintelligence_snp_positions
+    }
     withProgress(message = "Running Samples", value = 0, {
       n = nrow(sample_list)
       for (row in 1:n) {
@@ -460,7 +497,7 @@ server = function(input, output, session) {
         incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
           withCallingHandlers({
             shinyjs::html(id = "text", html = "")
-            run_workflow(date, id, replicate_id, input$twofreqs, popFreq, refData, refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups)
+            run_workflow(date, id, replicate_id, input$twofreqs, popFreq, refData, refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups, snp_positions)
           },
           message = function(m) {
             shinyjs::html(id = "text", html = m$message, add = TRUE)

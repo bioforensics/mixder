@@ -18,10 +18,11 @@
 #' @param A2_threshold Allele 2 probability threshold
 #' @param minor_threshold If apply allele 1 probability threshold to minor contributor
 #' @param filter_missing TRUE/FALSE to filter SNPs with missing allele 2 values
+#' @param pos SNP position data frame
 #'
 #' @return Data frame with filtered allele calls
 #' @export
-filter_alleles = function(all_files, contrib_status, minimum_snps, A1_threshold, A2_threshold, minor_threshold, filter_missing) {
+filter_alleles = function(all_files, contrib_status, minimum_snps, A1_threshold, A2_threshold, minor_threshold, filter_missing, pos) {
   . = NULL
   if (filter_missing) {
     all_files = subset(all_files, !(all_files$A2 == 99 & all_files$A2_Prob<A2_threshold))
@@ -34,6 +35,6 @@ filter_alleles = function(all_files, contrib_status, minimum_snps, A1_threshold,
       arrange(desc(.data$A1_Prob)) %>%
       .[c(1:minimum_snps),]
   }
-  final_df = assigned_A2(filt_df, A2_threshold)
+  final_df = assigned_A2(filt_df, A2_threshold, pos)
   return(final_df)
 }
