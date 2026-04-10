@@ -18,13 +18,14 @@
 #' @export
 #'
 #' @importFrom rlang .data
+#' @importFrom data.table fread
 format_ref = function(refData, refid, refs) {
   if (is.numeric(refid)) {
     ref_int = names(refData)[refid]
   } else {
     ref_int = refid
   }
-  ref_profile = euroformix::tableReader(glue("{refs}/EFM_references.csv")) %>%
+  ref_profile = fread(glue("{refs}/EFM_references.csv")) %>%
     filter(.data$Sample.Name == ref_int)
   ref_profile$A1_order = ifelse(ref_profile$`Allele1`>ref_profile$`Allele2`, ref_profile$`Allele1`, ref_profile$`Allele2`)
   ref_profile$A2_order = ifelse(ref_profile$`Allele1`>ref_profile$`Allele2`, ref_profile$`Allele2`, ref_profile$`Allele1`)

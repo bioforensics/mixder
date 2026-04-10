@@ -9,9 +9,7 @@ run_workflow(
   id,
   replicate_id,
   twofreqs,
-  freq_both,
-  freq_major,
-  freq_minor,
+  popFreq,
   refData,
   refs,
   sample_path,
@@ -50,11 +48,7 @@ run_workflow(
 
 \item{twofreqs}{TRUE if using separate AF data for major and minor contributors}
 
-\item{freq_both}{Path (or name) of allele frequency data if using same data for both}
-
-\item{freq_major}{Path (or name) of allele frequency data for major contributor}
-
-\item{freq_minor}{Path (or name) of allele frequency data for minor contributor}
+\item{popFreq}{List of properly formatted allele frequency data}
 
 \item{refData}{Reference data (if available)}
 

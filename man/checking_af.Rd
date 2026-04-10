@@ -4,12 +4,12 @@
 \alias{checking_af}
 \title{Checking AF file for correct format; formatting if necessary}
 \usage{
-checking_af(affile, outpath)
+checking_af(affile, contrib)
 }
 \arguments{
 \item{affile}{Allele Frequency file}
 
-\item{outpath}{Path to write formatted AF file to if necessary}
+\item{contrib}{contributor assigned to AF file}
 }
 \value{
 Frequency file loaded for EFM

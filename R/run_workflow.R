@@ -16,9 +16,7 @@
 #' @param id Sample ID
 #' @param replicate_id Sample ID of replicate, if specified
 #' @param twofreqs TRUE if using separate AF data for major and minor contributors
-#' @param freq_both Path (or name) of allele frequency data if using same data for both
-#' @param freq_major Path (or name) of allele frequency data for major contributor
-#' @param freq_minor Path (or name) of allele frequency data for minor contributor
+#' @param popFreq List of properly formatted allele frequency data
 #' @param refData Reference data (if available)
 #' @param refs Path of reference genotype(s) file
 #' @param sample_path Path of sample manifest
@@ -54,7 +52,7 @@
 #'@importFrom utils write.table write.csv read.table
 #'@importFrom grDevices dev.off png
 #'@importFrom methods show
-run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refs, sample_path, output, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, skipancestry, ancestrysnps, pcagroups) {
+run_workflow = function(date, id, replicate_id, twofreqs, popFreq, refData, refs, sample_path, output, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, skipancestry, ancestrysnps, pcagroups) {
   out_path = glue("{kinpath}/snp_sets/{output}/")
   if (replicate_id == "") {
     logfile = file(glue("{out_path}config_log_files/{date}/run_log_{id}_{date}.txt"), open = "wt")
@@ -77,10 +75,13 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
   message(glue("Sample: {id}<br/>"))
   message(glue("Replicate Sample: {replicate_id}<br/>"))
     ## run EFM
-  if (run_mixdeconv | !skipancestry) { 
-    message("Loading Frequency Data<br/>")
-    popFreq = load_freq(out_path, twofreqs, freq_both, freq_major, freq_minor)
-    attable = process_kinreport(id, replicate_id, kinpath, dynamicAT, staticAT)
+  if (run_mixdeconv | !skipancestry) {
+    if (dynamicAT != 0) {
+      message("creating AT table<br/>")
+      attable = process_kinreport(id, replicate_id, kinpath, dynamicAT, staticAT)
+    } else {
+      attable = staticAT
+    }
     if (!skipancestry) {
       efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, skipancestry, cond, uncond=unconditioned, keep_bins)
       efm_results_minor = efm_results_major

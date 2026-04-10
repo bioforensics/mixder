@@ -2,13 +2,11 @@
 % Please edit documentation in R/load_freq.R
 \name{load_freq}
 \alias{load_freq}
-\title{Title}
+\title{Load frequency data}
 \usage{
-load_freq(out_path, twofreqs, freq_both, freq_major, freq_minor)
+load_freq(twofreqs, freq_both, freq_major, freq_minor)
 }
 \arguments{
-\item{out_path}{outpath directory}
-
 \item{twofreqs}{If two different allele frequency files are to be used}
 
 \item{freq_both}{Allele frequency file, if only using one}
@@ -21,5 +19,5 @@ load_freq(out_path, twofreqs, freq_both, freq_major, freq_minor)
 list of major AF data data frame and minor AF data data frame
 }
 \description{
-Title
+Load frequency data
 }

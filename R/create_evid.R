@@ -22,7 +22,7 @@ create_evid = function(sample, rep_sample, inpath) {
     if (check_reads(evidfn)) {
       evidData = vector()
     } else {
-      evidData = euroformix::sample_tableToList(read_in_table(evidfn))
+      evidData = read_in_table(evidfn)
     }
   } else {
     if (check_reads(evidfn)) {
@@ -45,7 +45,7 @@ create_evid = function(sample, rep_sample, inpath) {
       final_dfs = equalize_samples(corrected_tables[[1]], corrected_tables[[2]])
     }
     merge_table = rbind(final_dfs[[1]], final_dfs[[2]])
-    evidData = euroformix::sample_tableToList(merge_table)
+    evidData = convert_table_to_list(merge_table)
   }
   return(evidData)
 }

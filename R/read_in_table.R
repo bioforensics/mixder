@@ -15,14 +15,16 @@
 #' @return data frame of SNPs
 #' @export
 #'
+#' @importFrom data.table fread
 read_in_table = function(df) {
-  evid_df = read.table(df, header=T, sep="\t")
+  evid_df = data.frame(fread(df, header=T, sep="\t"))
   myColClasses = sapply(evid_df, class)
   needed_cols = c("Allele.1", "Allele.2", "Allele.3", "Allele.4")
   myColClasses =
     ifelse(names(myColClasses) %in% needed_cols,
            "character",
            myColClasses)
-  evid_df_final = read.table(df, header=T, sep="\t", colClasses=myColClasses)
-  return(evid_df_final)
+  evid_df_form = data.frame(fread(df, header=T, sep="\t", colClasses=myColClasses))
+  evid_final = convert_table_to_list(evid_df_form)
+  return(evid_final)
 }
