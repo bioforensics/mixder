@@ -16,9 +16,7 @@
 #' @param id Sample ID
 #' @param replicate_id Sample ID of replicate, if specified
 #' @param twofreqs TRUE if using separate AF data for major and minor contributors
-#' @param freq_both Path (or name) of allele frequency data if using same data for both
-#' @param freq_major Path (or name) of allele frequency data for major contributor
-#' @param freq_minor Path (or name) of allele frequency data for minor contributor
+#' @param popFreq List of properly formatted allele frequency data
 #' @param refData Reference data (if available)
 #' @param refs Path of reference genotype(s) file
 #' @param sample_path Path of sample manifest
@@ -46,6 +44,7 @@
 #' @param skipancestry TRUE/FALSE whether to skip ancestry prediction
 #' @param ancestrysnps SNPs to use for ancestry prediction (either ancestry only or all SNPs)
 #' @param pcagroups How to color PCA plots (superpopulations and/or subpopulations)
+#' @param positions SNP chromosomal positions
 #'
 #' @export
 #'
@@ -54,7 +53,7 @@
 #'@importFrom utils write.table write.csv read.table
 #'@importFrom grDevices dev.off png
 #'@importFrom methods show
-run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refs, sample_path, output, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, skipancestry, ancestrysnps, pcagroups) {
+run_workflow = function(date, id, replicate_id, twofreqs, popFreq, refData, refs, sample_path, output, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, skipancestry, ancestrysnps, pcagroups, positions) {
   out_path = glue("{kinpath}/snp_sets/{output}/")
   if (replicate_id == "") {
     logfile = file(glue("{out_path}config_log_files/{date}/run_log_{id}_{date}.txt"), open = "wt")
@@ -77,10 +76,13 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
   message(glue("Sample: {id}<br/>"))
   message(glue("Replicate Sample: {replicate_id}<br/>"))
     ## run EFM
-  if (run_mixdeconv | !skipancestry) { 
-    message("Loading Frequency Data<br/>")
-    popFreq = load_freq(out_path, twofreqs, freq_both, freq_major, freq_minor)
-    attable = process_kinreport(id, replicate_id, kinpath, dynamicAT, staticAT)
+  if (run_mixdeconv | !skipancestry) {
+    if (dynamicAT != 0) {
+      message("creating AT table<br/>")
+      attable = process_kinreport(id, replicate_id, kinpath, dynamicAT, staticAT)
+    } else {
+      attable = staticAT
+    }
     if (!skipancestry) {
       efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, skipancestry, cond, uncond=unconditioned, keep_bins)
       efm_results_minor = efm_results_major
@@ -107,7 +109,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
     dir.create(file.path(write_path, "GEDMatchPROReports/Metrics"), showWarnings = FALSE, recursive=TRUE)
   }
   if (unconditioned) {
-    if (run_mixdeconv | !skipancestry) {
+    #if (run_mixdeconv | !skipancestry) {
       efm_v = getNamespaceVersion("euroformix")[["version"]]
       if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
         major_c = "C2"
@@ -116,7 +118,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
         major_c = "C1"
         minor_c = "C2"
       }
-    }
+    #}
     if (run_mixdeconv) {
       uncond_table_major = data.frame(efm_results_major[[1]]) %>%
         filter(.data$Locus != "")
@@ -143,9 +145,9 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
     }
     if (method == "Create GEDmatch PRO Report" | !skipancestry) {
       message("Creating GEDmatch PRO report for major contributor in unconditioned analysis.<br/>")
-      major_report = create_gedmatchpro_report(write_path, uncond_table_major, major_c, "major", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
+      major_report = create_gedmatchpro_report(write_path, uncond_table_major, major_c, "major", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing, positions)
       message("Creating GEDmatch PRO report for minor contributor in unconditioned analysis.<br/>")
-      minor_report = create_gedmatchpro_report(write_path, uncond_table_minor, "C2", "minor", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
+      minor_report = create_gedmatchpro_report(write_path, uncond_table_minor, "C2", "minor", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing, positions)
       if (method == "Create GEDmatch PRO Report") {
         write.table(major_report[[1]], glue("{write_path}/GEDMatchPROReports/{id}_uncond_major_{type}_GEDmatchPROReport.txt"), col.names=T, sep="\t", row.names=F, quote=F)
         write.csv(major_report[[2]], glue("{write_path}/GEDMatchPROReports/Metrics/{id}_uncond_major_{type}_GEDmatchPROReport_Metrics.csv"), row.names=F, quote=F)
@@ -163,14 +165,14 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
         write.table(minor_report[[1]], glue("{write_path}/{id}/unconditioned/{id}_uncond_minor_{type}_Inferred_Genotypes.txt"), col.names=T, sep="\t", row.names=F, quote=F)
         ancestry_prediction(minor_report[[1]], glue("{write_path}/{id}/unconditioned/"), id, "unconditioned", "minor", ancestrysnps, pcagroups)
       }
-      major_report = create_gedmatchpro_report(write_path, uncond_table_major, major_c, "major", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
+      major_report = create_gedmatchpro_report(write_path, uncond_table_major, major_c, "major", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing, positions)
       write.table(major_report[[1]], glue("{write_path}/GEDMatchPROReports/{id}_uncond_major_{type}_GEDmatchPROReport.txt"), col.names=T, sep="\t", row.names=F, quote=F)
       write.csv(major_report[[2]], glue("{write_path}/GEDMatchPROReports/Metrics/{id}_uncond_major_{type}_GEDmatchPROReport_Metrics.csv"), row.names=F, quote=F)
       png(glue("{write_path}/GEDMatchPROReports/Metrics/{id}_uncond_major_{type}_GEDmatchPROReport_Allele1_Probabilities_Density_Plot.png"))
       show(major_report[[3]])
       dev.off()
       message("Creating GEDmatch PRO report for minor contributor in unconditioned analysis.<br/>")
-      minor_report = create_gedmatchpro_report(write_path, uncond_table_minor, minor_c, "minor", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
+      minor_report = create_gedmatchpro_report(write_path, uncond_table_minor, minor_c, "minor", minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing, positions)
       write.table(minor_report[[1]], glue("{write_path}/GEDMatchPROReports/{id}_uncond_minor_{type}_GEDmatchPROReport.txt"), col.names=T, sep="\t", row.names=F, quote=F)
       write.csv(minor_report[[2]], glue("{write_path}/GEDMatchPROReports/Metrics/{id}_uncond_minor_{type}_GEDmatchPROReport_metrics.csv"), row.names=F, quote=F)
       png(glue("{write_path}/GEDMatchPROReports/Metrics/{id}_uncond_minor_{type}_GEDmatchPROReport_Allele1_Probabilities_Density_Plot.png"))
@@ -217,7 +219,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
       }
       if (method == "Create GEDmatch PRO Report" | !skipancestry) {
         message(glue("Creating GEDmatch PRO report for {contrib_status} contributor conditioned on {cond_on} in conditioned analysis.<br/>"))
-        cond_report = create_gedmatchpro_report(write_path, get(glue("efm_table_{contrib_status}")), "C2", contrib_status, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing)
+        cond_report = create_gedmatchpro_report(write_path, get(glue("efm_table_{contrib_status}")), "C2", contrib_status, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, minor_threshold, filter_missing, positions)
         if (method == "Create GEDmatch PRO Report") {
           write.table(cond_report[[1]], glue("{write_path}/GEDMatchPROReports/{id}_{contrib_status}_contrib_conditioned_on_{cond_on}_{type}_GEDmatchPROReport.txt"), col.names=T, sep="\t", row.names=F, quote=F)
           write.csv(cond_report[[2]], glue("{write_path}/GEDMatchPROReports/Metrics/{id}_{contrib_status}_contrib_conditioned_on_{cond_on}_{type}_GEDmatchPROReport_Metrics.csv"), row.names=F, quote=F)

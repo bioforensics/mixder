@@ -8,9 +8,8 @@
 # National Biodefense Analysis and Countermeasures Center (NBACC), a Federally Funded Research and
 # Development Center.
 # -------------------------------------------------------------------------------------------------
-#' Title
+#' Load frequency data
 #'
-#'@param out_path outpath directory
 #' @param twofreqs If two different allele frequency files are to be used
 #' @param freq_both Allele frequency file, if only using one
 #' @param freq_major Allele frequency file for major contributor
@@ -18,7 +17,7 @@
 #'
 #' @return list of major AF data data frame and minor AF data data frame
 #' @export
-load_freq = function(out_path, twofreqs, freq_both, freq_major, freq_minor) {
+load_freq = function(twofreqs, freq_both, freq_major, freq_minor) {
   if (!twofreqs) {
     if (freq_both == "Global - 1000G") {
       freq_minor = mixder::popFreq_1000G
@@ -41,13 +40,13 @@ load_freq = function(out_path, twofreqs, freq_both, freq_major, freq_minor) {
     } else if (freq_both == "SAS - 1000G") {
       freq_minor = mixder::popFreq_SAS
       freq_major = mixder::popFreq_SAS
-    } else if (freq_both == "Upload Custom") {
-      freq_minor = checking_af(freq_both, out_path)
+    } else if (file.exists(freq_both)) {
+      freq_minor = checking_af(freq_both, "both")
       freq_major = freq_minor
     }
   } else {
-    if (freq_major == "Upload Custom") {
-      freq_major = checking_af(freq_major, out_path)
+    if (file.exists(freq_major)) {
+      freq_major = checking_af(freq_major, "major")
     } else if (freq_major == "Global - 1000G") {
       freq_major = mixder::popFreq_1000G
     } else if (freq_major == "Global - gnomAD") {
@@ -64,8 +63,8 @@ load_freq = function(out_path, twofreqs, freq_both, freq_major, freq_minor) {
       freq_major = mixder::popFreq_SAS
     }
 
-    if (freq_minor == "Upload Custom") {
-      freq_minor = checking_af(freq_minor, out_path)
+    if (file.exists(freq_minor)) {
+      freq_minor = checking_af(freq_minor, "minor")
     } else if (freq_minor == "Global - 1000G") {
       freq_minor = mixder::popFreq_1000G
     } else if (freq_minor == "Global - gnomAD") {

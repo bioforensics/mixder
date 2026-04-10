@@ -28,7 +28,12 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
   evidData = create_evid(sample, replicate, snps_input)
   if (isTruthy(evidData)) {
     ##create AT vector
-    sample_at = create_at(evidData, sample, replicate, attable)
+    if (length(attable) == 1) {
+      sample_at = attable
+    } else {
+      message(glue("Creating AT Table for sample {sample}<br/>"))
+      sample_at = create_at(evidData, sample, replicate, attable)
+    }
     ratio_row = list()
     ratio_row[glue("Set{i}_C1_Prob_uncond")] = NA
     ratio_row[glue("Set{i}_C2_Prob_uncond")] = NA
@@ -84,6 +89,7 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
         ratio_row[glue("Set{i}_C1_Prob_cond_on_{cond_on}")] = condresults[["fit"]][["thetahat2"]][["Mix-prop. C1"]]
         ratio_row[glue("Set{i}_C2_Prob_cond_on_{cond_on}")] = condresults[["fit"]][["thetahat2"]][["Mix-prop. C2"]]
         write.table(final_condresults[["table4"]], glue("{write_path}/conditioned/cond_on_{cond_on}/unknown_cond_on_{cond_on}_set{i}.tsv"), quote=F, row.names=F, sep="\t")
+        write.table(final_condresults[["table3"]], glue("{write_path}/conditioned/cond_on_{cond_on}/unknown_cond_on_{cond_on}_set{i}_table3.tsv"), quote=F, row.names=F, sep="\t")
         final_list = c(final_list, ratio_row)
       }
     }

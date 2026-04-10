@@ -12,15 +12,21 @@
 #'
 #' @param x Data frame of allele calls
 #' @param thresh Allele 2 probability threshold
+#' @param pos SNP positions data frame
 #'
 #' @return data frame
 #' @export
-assigned_A2 = function(x, thresh) {
+assigned_A2 = function(x, thresh, pos) {
   x$Allele2 = ifelse(x$A2_Prob>=thresh & x$A2!="99", x$A2, x$A1)
   names(x)[names(x) == "A1"] = "Allele1"
   x$Locus = ifelse(x$Locus=="RS201326893_Y152OCH", "rs201326893_Y152OCH", ifelse(x$Locus=="N29INSA", "N29insA", tolower(x$Locus)))
-  rsids = merge(mixder::kintelligence_snp_positions, x, by.x="rsid", by.y="Locus")
-  final_x = rsids[,c("rsid", "chromosome", "position", "Allele1", "Allele2")]
-  final_x_sorted = final_x[order(final_x$chromosome, final_x$position),]
+  colname = colnames(pos)
+  lcol = grep("rsid|marker|locus|snp", colname, ignore.case=TRUE, value=TRUE)
+  chrcol = grep("chr", colname, ignore.case=TRUE, value=TRUE)
+  poscol = grep("pos", colname, ignore.case=TRUE, value=TRUE)
+  rsids = merge(pos, x, by.x=lcol, by.y="Locus")
+  final_x = rsids[,c(lcol, chrcol, poscol, "Allele1", "Allele2")]
+  final_x_sorted = final_x %>%
+    arrange(as.numeric(!!sym(chrcol)), as.numeric(!!sym(poscol)))
   return(final_x_sorted)
 }

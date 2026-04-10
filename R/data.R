@@ -185,7 +185,7 @@
 #'      \item{id}{1000 Genome Sample ID}
 #'      \item{reg}{Superpopulation of Sample}
 #'      \item{population}{Subpopulation of Sample}
-#'      \item{color}{color for subpopulation}
+#'      \ite{color}{color for subpopulation}
 #'      \item{superpop_color}{color for superpopulation}
 #'      }
 #'
