@@ -397,24 +397,23 @@ server = function(input, output, session) {
   })
   volumes = getVolumes()
   ## sample file
-  shinyFileChoose(input, "sample_GetFile", roots=volumes, session=session)
+  shinyFileChoose(input, "sample_GetFile", roots=c(wd=".", home="~/."), session=session, defaultRoot="home")
   samplefile = reactive({parseFilePaths(volumes, input$sample_GetFile)})
   observe({
     if(!is.null(samplefile)){
       output$sample_file = renderText({if(input$Submit==0){as.character(samplefile()$datapath)} else {return()}})
     }
   })
-
   ## freq files
-  shinyFileChoose(input, "freq_GetFile", roots=volumes, session=session)
-  freq = reactive({parseFilePaths(volumes, input$freq_GetFile)})
+  shinyFileChoose(input, "freq_GetFile", roots=c(wd=".", home="~/."), session=session, defaultRoot="home")
+  freq = reactive({parseFilePaths(samplefile()$datapath, input$freq_GetFile)})
   if (!is.null(freq)) {
     observe({
       output$freq_file = renderText({if(input$Submit==0){as.character(freq()$datapath)} else {return()}})
     })
   }
 
-  shinyFileChoose(input, "freq_GetFile_major", roots=volumes, session=session)
+  shinyFileChoose(input, "freq_GetFile_major", roots=c(wd=".", home="~/."), session=session, defaultRoot="home")
   freq_major = reactive({parseFilePaths(volumes, input$freq_GetFile_major)})
   if (!is.null(freq_major)) {
     observe({
@@ -422,7 +421,7 @@ server = function(input, output, session) {
     })
   }
 
-  shinyFileChoose(input, "freq_GetFile_minor", roots=volumes, session=session)
+  shinyFileChoose(input, "freq_GetFile_minor", roots=c(wd=".", home="~/."), session=session, defaultRoot="home")
   freq_minor = reactive({parseFilePaths(volumes, input$freq_GetFile_minor)})
   if (!is.null(freq_minor)) {
     observe({
@@ -430,7 +429,7 @@ server = function(input, output, session) {
     })
   }
 
-  shinyFileChoose(input, "assay_GetFile", roots=volumes, session=session)
+  shinyFileChoose(input, "assay_GetFile", roots=c(wd=".", home="~/."), session=session, defaultRoot="home")
   assay = reactive({parseFilePaths(volumes, input$assay_GetFile)})
   if (!is.null(assay)) {
     observe({
@@ -439,7 +438,7 @@ server = function(input, output, session) {
   }
 
   ## refs
-  shinyDirChoose(input, "ref_GetFile", roots=volumes(), session=session)
+  shinyDirChoose(input, "ref_GetFile", roots=c(wd=".", home="~/."), session=session, defaultRoot="home")
   refs = reactive({parseDirPath(volumes, input$ref_GetFile)})
   if (!is.null(refs)) {
     observe({
@@ -447,7 +446,7 @@ server = function(input, output, session) {
     })
   }
 
-  shinyDirChoose(input, "kin_prefix", roots=volumes(), session=session)
+  shinyDirChoose(input, "kin_prefix", roots=c(wd=".", home="~/."), session=session, defaultRoot="home")
   kin_inpath = reactive({parseDirPath(volumes, input$kin_prefix)})
   observe({
     if(!is.null(kin_inpath)){
