@@ -395,42 +395,43 @@ server = function(input, output, session) {
       add_prompt(message = "When calculating metrics, a range of allele 2 probability thresholds\ncan be used to calculate the metrics at each combination of allele 1 and allele 2 probability thresholds.\nThis sets the maximum allele 2 probability threshold.\nThe threshold increases in increments of 0.01.", position = "right")
     ), value=1, min = 0, max = 1)
   })
-  volumes = getVolumes()
+  #volumes = getVolumes()
   ## sample file
-  shinyFileChoose(input, "sample_GetFile", roots=c(wd=".", home="~/."), session=session, defaultRoot="home")
-  samplefile = reactive({parseFilePaths(volumes, input$sample_GetFile)})
+  roots = c(home="~", wd=".")
+  shinyFileChoose(input, "sample_GetFile", roots=roots, session=session, defaultRoot="home")
+  samplefile = reactive({parseFilePaths(roots, input$sample_GetFile)})
   observe({
     if(!is.null(samplefile)){
       output$sample_file = renderText({if(input$Submit==0){as.character(samplefile()$datapath)} else {return()}})
     }
   })
   ## freq files
-  shinyFileChoose(input, "freq_GetFile", roots=c(wd=".", home="~/."), session=session, defaultRoot="home")
-  freq = reactive({parseFilePaths(samplefile()$datapath, input$freq_GetFile)})
+  shinyFileChoose(input, "freq_GetFile", roots=roots, session=session, defaultRoot="home")
+  freq = reactive({parseFilePaths(roots, input$freq_GetFile)})
   if (!is.null(freq)) {
     observe({
       output$freq_file = renderText({if(input$Submit==0){as.character(freq()$datapath)} else {return()}})
     })
   }
 
-  shinyFileChoose(input, "freq_GetFile_major", roots=c(wd=".", home="~/."), session=session, defaultRoot="home")
-  freq_major = reactive({parseFilePaths(volumes, input$freq_GetFile_major)})
+  shinyFileChoose(input, "freq_GetFile_major", roots=roots, session=session, defaultRoot="home")
+  freq_major = reactive({parseFilePaths(roots, input$freq_GetFile_major)})
   if (!is.null(freq_major)) {
     observe({
       output$freq_file_major = renderText({if(input$Submit==0){as.character(freq_major()$datapath)} else {return()}})
     })
   }
 
-  shinyFileChoose(input, "freq_GetFile_minor", roots=c(wd=".", home="~/."), session=session, defaultRoot="home")
-  freq_minor = reactive({parseFilePaths(volumes, input$freq_GetFile_minor)})
+  shinyFileChoose(input, "freq_GetFile_minor", roots=roots, session=session, defaultRoot="home")
+  freq_minor = reactive({parseFilePaths(roots, input$freq_GetFile_minor)})
   if (!is.null(freq_minor)) {
     observe({
       output$freq_file_minor = renderText({if(input$Submit==0){as.character(freq_minor()$datapath)} else {return()}})
     })
   }
 
-  shinyFileChoose(input, "assay_GetFile", roots=c(wd=".", home="~/."), session=session, defaultRoot="home")
-  assay = reactive({parseFilePaths(volumes, input$assay_GetFile)})
+  shinyFileChoose(input, "assay_GetFile", roots=roots, session=session, defaultRoot="home")
+  assay = reactive({parseFilePaths(roots, input$assay_GetFile)})
   if (!is.null(assay)) {
     observe({
       output$assay_file = renderText({if(input$Submit==0){as.character(assay()$datapath)} else {return()}})
@@ -438,16 +439,16 @@ server = function(input, output, session) {
   }
 
   ## refs
-  shinyDirChoose(input, "ref_GetFile", roots=c(wd=".", home="~/."), session=session, defaultRoot="home")
-  refs = reactive({parseDirPath(volumes, input$ref_GetFile)})
+  shinyDirChoose(input, "ref_GetFile", roots=roots, session=session, defaultRoot="home")
+  refs = reactive({parseDirPath(roots, input$ref_GetFile)})
   if (!is.null(refs)) {
     observe({
       output$refs_file = renderText({if(input$Submit==0){as.character(refs())} else {return()}})
     })
   }
 
-  shinyDirChoose(input, "kin_prefix", roots=c(wd=".", home="~/."), session=session, defaultRoot="home")
-  kin_inpath = reactive({parseDirPath(volumes, input$kin_prefix)})
+  shinyDirChoose(input, "kin_prefix", roots=roots, session=session, defaultRoot="home")
+  kin_inpath = reactive({parseDirPath(roots, input$kin_prefix)})
   observe({
     if(!is.null(kin_inpath)){
       output$kin_inpath = renderText({if(input$Submit==0){as.character(kin_inpath())} else {return()}})
@@ -457,7 +458,7 @@ server = function(input, output, session) {
 
 ## Input the sample manifest and run the workflow on each line (sample)
   observeEvent(input$Submit, {
-    sample_list = read.table(samplefile()$datapath, sep="\t", header=T)
+    sample_list = euroformix::tableReader(samplefile()$datapath)
     date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
     create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups)
     if (isTruthy(refs())) {
@@ -492,7 +493,11 @@ server = function(input, output, session) {
       n = nrow(sample_list)
       for (row in 1:n) {
         id = sample_list[row, 1]
-        replicate_id = ifelse(is.na(sample_list[row, 2]), "", sample_list[row, 2])
+        if (ncol(sample_list)>1) {
+          replicate_id = ifelse(is.na(sample_list[row, 2]), "", sample_list[row, 2])
+        } else {
+          replicate_id = ""
+        }
         incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
           withCallingHandlers({
             shinyjs::html(id = "text", html = "")
