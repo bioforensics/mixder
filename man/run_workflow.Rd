@@ -37,6 +37,7 @@ run_workflow(
   skipancestry,
   ancestrysnps,
   pcagroups,
+  assay,
   positions
 )
 }
@@ -104,6 +105,8 @@ run_workflow(
 \item{ancestrysnps}{SNPs to use for ancestry prediction (either ancestry only or all SNPs)}
 
 \item{pcagroups}{How to color PCA plots (superpopulations and/or subpopulations)}
+
+\item{assay}{assay used (kintelligence or custom)}
 
 \item{positions}{SNP chromosomal positions}
 }

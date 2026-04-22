@@ -15,6 +15,7 @@ run_efm(
   attable,
   nsets,
   ancestry,
+  assay,
   cond = NULL,
   uncond = TRUE,
   keep_bins = TRUE
@@ -38,6 +39,10 @@ run_efm(
 \item{attable}{AT table}
 
 \item{nsets}{Number of SNP sets}
+
+\item{ancestry}{TRUE/FALSE if to skip ancestry}
+
+\item{assay}{assay used (kintelligence or custom)}
 
 \item{cond}{Sample IDs to condition on}
 
