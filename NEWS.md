@@ -1,3 +1,5 @@
+## 0.8.1: April 22, 2026
+- Implemented compatibility with Sample Reports generated using UAS version 2.7.0
 
 ## 0.8: March 24, 2026
 - Implemented ancestry prediction tool
