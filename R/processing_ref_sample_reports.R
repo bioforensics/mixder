@@ -19,8 +19,13 @@ processing_ref_sample_reports = function(inpath){
     filepath = glue("{inpath}/{file}")
     uas_setting = suppressMessages(read_excel(filepath, sheet = "Settings"))
     sampleid = suppressMessages(read_excel(filepath, sheet = "Sample History"))[2,2][[1]]
-    if (grepl("2.5", uas_setting[11,2]) | grepl("2.6", uas_setting[11,2])) {
-      final_snps = load_kin_uas25(filepath)
+    if (uas_setting[[11,1]] == "Software Version") {
+      version = uas_setting[[11,2]]
+      if (compareVersion(version, "2.5.0") == 1 | compareVersion(version, "2.5.0") == 0) {
+        final_snps = load_kin_uas25(filepath)
+      } else {
+        message("Check software version!")
+      }
     } else {
       compiled_snps = load_kin_older(filepath)
       final_snps = reverse_comp(compiled_snps)

@@ -7,6 +7,9 @@
 - Load frequency data only once instead of with each sample
 - Fixed bug with uploading a custom frequency data file(s)
 
+## 0.8.1: April 22, 2026
+- Implemented compatibility with Sample Reports generated using UAS version 2.7.0
+
 ## 0.8: March 24, 2026
 - Implemented ancestry prediction tool
 - Additional population-specific population allele frequency data included in package. 
