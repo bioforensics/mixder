@@ -14,7 +14,6 @@
 #'
 #' @import prompter
 #' @import shiny
-#' @import shinyalert
 #' @import shinyFiles
 #'
 mixder = function() {
