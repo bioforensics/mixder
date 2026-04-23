@@ -4,7 +4,13 @@
 \alias{load_freq}
 \title{Title}
 \usage{
-load_freq(out_path, twofreqs, freq_both, freq_major, freq_minor)
+load_freq(
+  out_path,
+  twofreqs,
+  freq_both_input,
+  freq_major_input,
+  freq_minor_input
+)
 }
 \arguments{
 \item{out_path}{outpath directory}
