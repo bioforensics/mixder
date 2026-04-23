@@ -1,6 +1,6 @@
 ## In process
 - Created more flexibility with file format for sample manifest
-- Implemented support for custom SNP sets
+- Implemented support for custom SNP sets:
   - Drop down menu to select either "Kintelligence" or "Custom" assay; will require SNP positions file if using custom
   - Wrote functions to read in and create EFM-compatible files more efficiently
   - Save large data files (i.e. reference SNP profiles, frequency files, etc.) as .rda files and will auto-detect these to load instead of reading in large file (significantly faster)

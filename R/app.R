@@ -14,6 +14,7 @@
 #'
 #' @import prompter
 #' @import shiny
+#' @import shinyalert
 #' @import shinyFiles
 #'
 mixder = function() {
@@ -458,56 +459,77 @@ server = function(input, output, session) {
 
 ## Input the sample manifest and run the workflow on each line (sample)
   observeEvent(input$Submit, {
-    sample_list = suppressWarnings(euroformix::tableReader(samplefile()$datapath))
-    date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
-    create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups)
-    if (isTruthy(refs())) {
-      withProgress(message = "Loading References", value = 0, {
-        if (file.exists(glue("{refs()}/EFM_references.rda"))) {
-          load(glue("{refs()}/EFM_references.rda"))
-        } else if (!file.exists(glue("{refs()}/EFM_references.csv"))) {
-          refData = convert_table_to_list(data.frame(processing_ref_sample_reports(refs())))
-        } else {
-          refs = data.frame(fread(glue("{refs()}/EFM_references.csv")))
-          refData = convert_table_to_list(refs)
-          save(refData, file=glue("{refs()}/EFM_references.rda"))
+    if (!isTruthy(samplefile()$datapath)) {
+      showModal(modalDialog(
+        title = "Input Error",
+        "Please provide a sample manifest before proceeding.",
+        easyClose = TRUE,
+        footer = modalButton("Dismiss")
+      ))
+    } else if (input$method == "Calculate Metrics" | isTruthy(input$cond)) {
+      refData = NULL
+      if (isTruthy(refs())) {
+        withProgress(message = "Loading References", value = 0, {
+          if (file.exists(glue("{refs()}/EFM_references.rda"))) {
+            load(glue("{refs()}/EFM_references.rda"))
+          } else if (!file.exists(glue("{refs()}/EFM_references.csv"))) {
+            refData = convert_table_to_list(data.frame(processing_ref_sample_reports(refs())))
+          } else {
+            refs = data.frame(fread(glue("{refs()}/EFM_references.csv")))
+            refData = convert_table_to_list(refs)
+            save(refData, file=glue("{refs()}/EFM_references.rda"))
+          }
+        })
+      } else {
+        showModal(modalDialog(
+          title = "Input Error",
+          "Please provide reference genotypes before proceeding.",
+          easyClose = TRUE,
+          footer = modalButton("Dismiss")
+        ))
+      }
+    } else if (!isTruthy(input$cond) & !isTruthy(input$uncond)) {
+      showModal(modalDialog(
+        title = "Input Error",
+        "Please select either an Unconditioned or Conditioned analysis (or both!) before proceeding.",
+        easyClose = TRUE,
+        footer = modalButton("Dismiss")
+      ))
+    } else {
+      sample_list = suppressWarnings(euroformix::tableReader(samplefile()$datapath))
+      date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
+      create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups)
+      withProgress(message = "Loading Allele Frequency Data", value = 0, {
+        freq_both = ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath)
+        freq_major = ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath)
+        freq_minor = ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath)
+        popFreq = load_freq(input$twofreqs, freq_both, freq_major, freq_minor)
+      })
+      snp_positions = if (isTruthy(assay()$datapath)) {
+        snp_positions = read.table(assay()$datapath, sep="\t", header=T)
+      } else {
+        snp_positions = mixder::kintelligence_snp_positions
+      }
+      withProgress(message = "Running Samples", value = 0, {
+        n = nrow(sample_list)
+        for (row in 1:n) {
+          id = sample_list[row, 1]
+          if (ncol(sample_list)>1) {
+            replicate_id = ifelse(is.na(sample_list[row, 2]), "", sample_list[row, 2])
+          } else {
+            replicate_id = ""
+          }
+          incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
+            withCallingHandlers({
+              shinyjs::html(id = "text", html = "")
+              run_workflow(date, id, replicate_id, input$twofreqs, popFreq, refData, refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups, input$assay_choice, snp_positions)
+            },
+            message = function(m) {
+              shinyjs::html(id = "text", html = m$message, add = TRUE)
+            })
         }
       })
-    } else if(input$method == "Calculate Metrics" | isTruthy(input$cond)) {
-      stop("No references provided but selected conditioned analyses or calculating metrics. Please re-run!")
-    } else {
-      refData = NULL
     }
-    withProgress(message = "Loading Allele Frequency Data", value = 0, {
-      freq_both = ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath)
-      freq_major = ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath)
-      freq_minor = ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath)
-      popFreq = load_freq(input$twofreqs, freq_both, freq_major, freq_minor)
-    })
-    snp_positions = if (isTruthy(assay()$datapath)) {
-      snp_positions = read.table(assay()$datapath, sep="\t", header=T)
-    } else {
-      snp_positions = mixder::kintelligence_snp_positions
-    }
-    withProgress(message = "Running Samples", value = 0, {
-      n = nrow(sample_list)
-      for (row in 1:n) {
-        id = sample_list[row, 1]
-        if (ncol(sample_list)>1) {
-          replicate_id = ifelse(is.na(sample_list[row, 2]), "", sample_list[row, 2])
-        } else {
-          replicate_id = ""
-        }
-        incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
-          withCallingHandlers({
-            shinyjs::html(id = "text", html = "")
-            run_workflow(date, id, replicate_id, input$twofreqs, popFreq, refData, refs(), samplefile()$datapath, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups, input$assay_choice, snp_positions)
-          },
-          message = function(m) {
-            shinyjs::html(id = "text", html = m$message, add = TRUE)
-          })
-      }
-    })
   })
 }
 
