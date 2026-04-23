@@ -62,6 +62,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, popFreq, refData, refs
     logfile = file(glue("{out_path}config_log_files/{date}/run_log_{id}_{replicate_id}_{date}.txt"), open = "wt")
   }
   sink(logfile, type = "message", append=T)
+  on.exit(sink(file=NULL, type="message"))
   if (method=="Calculate Metrics" & unconditioned & (!isTruthy(major) | !isTruthy(minor))) {
     stop("No major/minor contributor IDs provided but calculating metrics for an unconditioned analysis. Please re-run!")
   }
