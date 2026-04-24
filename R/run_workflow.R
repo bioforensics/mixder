@@ -62,6 +62,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
     logfile = file(glue("{out_path}config_log_files/{date}/run_log_{id}_{replicate_id}_{date}.txt"), open = "wt")
   }
   sink(logfile, type = "message", append=T)
+  on.exit(sink(file=NULL, type="message"))
   if (method=="Calculate Metrics" & unconditioned & (!isTruthy(major) | !isTruthy(minor))) {
     stop("No major/minor contributor IDs provided but calculating metrics for an unconditioned analysis. Please re-run!")
   }
@@ -77,7 +78,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
   message(glue("Sample: {id}<br/>"))
   message(glue("Replicate Sample: {replicate_id}<br/>"))
     ## run EFM
-  if (run_mixdeconv | !skipancestry) { 
+  if (run_mixdeconv | !skipancestry) {
     message("Loading Frequency Data<br/>")
     popFreq = load_freq(out_path, twofreqs, freq_both, freq_major, freq_minor)
     attable = process_kinreport(id, replicate_id, kinpath, dynamicAT, staticAT)

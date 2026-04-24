@@ -74,7 +74,9 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
   config = rbind(config, data.frame(Setting="Running mixture deconvolution:", Value=run_mixdeconv))
   config = rbind(config, data.frame(Setting="Running unconditioned deconvolution:", Value=unconditioned))
   if (isTruthy(cond)) {
-    config = rbind(config, data.frame(Setting="Running conditioned deconvolution on reference:", Value=cond))
+    for (id in cond) {
+      config = rbind(config, data.frame(Setting="Running conditioned deconvolution on reference:", Value=id))
+    }
   } else {
     config = rbind(config, data.frame(Setting="Running conditioned deconvolution on reference:", Value=FALSE))
   }

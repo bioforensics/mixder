@@ -20,7 +20,7 @@
 #' @param freq_major frequency data for major contributor (default=NULL)
 #' @param freq_minor frequeny data for minor contributor (default=NULL)
 #' @param refpath Path to directory containing reference genotypes (default=NULL)
-#' @param refs list of sample IDs to use as reference (for conditioning) (default=NULL)
+#' @param refs list of sample IDs to use as reference for conditioning, can specify more than one (default=NULL, example: ("Ref1", "Ref2"))
 #' @param mixdeconv whether to run mixture deconvolution (default=TRUE)
 #' @param uncond run (or use) an unconditioned mixture deconvolution (default=TRUE)
 #' @param cond run (or use) a conditioned mixture deconvolution (default=FALSE)
