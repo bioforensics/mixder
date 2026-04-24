@@ -8,9 +8,7 @@
 # National Biodefense Analysis and Countermeasures Center (NBACC), a Federally Funded Research and
 # Development Center.
 # -------------------------------------------------------------------------------------------------
-
-
-#' run MixDeR using the CLI; create GEDmatch PRO report(s)
+#' Title
 #'
 #' @param sample_reports directory of sample reports or CSV file of mixture genotypes (default=current directory)
 #' @param output output directory (default=current directory)
@@ -28,15 +26,19 @@
 #' @param dynamicAT dynamic analytical threshold applied to data (default=0.015)
 #' @param staticAT static analytical threshold applied to data (default=10)
 #' @param minimum_snps minimum number of SNPs used to generate profile (default=6000)
-#' @param A1_threshold Allele 1 probability threshold (default=0.99)
-#' @param A2_threshold Allele 2 probability threshold (default=0.60)
+#' @param A1min when calculating metrics, the start of the range of the allele 1 probability threshold (default=0.95)
+#' @param A1max when calculating metrics, the end of the range of the allele 1 probability threshold (default=0.99)
+#' @param A2min when calculating metrics, the start of the range of the allele 2 probability threshold (default=0.50)
+#' @param A2max when calculating metrics, the end of the range of the allele 2 probability threshold (default=0.65)
+#' @param major for comparing references to generated single source profiles, the assumed major contributor sample ID (default=NULL)
+#' @param minor for comparing references to generated single source profiles, the assumed minor contributor sample ID (default=NULL)
 #' @param filter_missing Whether to remove SNPs with a missing value for the allele 2 (default=FALSE)
 #' @param minor_contrib_threshold Whether to apply the allele 1 probability threshold to the minor contributor, regardless of the minimum number of SNPs (default=FALSE)
 #' @param keep_bins Use existing binned SNP data, if exists (default=TRUE)
 #'
 #' @export
 #'
-run_mixder_report = function(sample_manifest, sample_reports = ".", output = ".", twofreqs=FALSE, freq_both="global_1000g", freq_major=NULL, freq_minor=NULL, refpath=NULL, refs=NULL, mixdeconv=TRUE, uncond=TRUE, cond=FALSE, sets=10, dynamicAT=0.015, staticAT=10, minimum_snps=6000, A1_threshold=0.99, A2_threshold=0.6, filter_missing=FALSE, minor_contrib_threshold=FALSE, keep_bins=TRUE) {
+run_mixder_metrics = function(sample_manifest, sample_reports = ".", output = ".", twofreqs=FALSE, freq_both="global_1000g", freq_major=NULL, freq_minor=NULL, refpath=NULL, refs=NULL, mixdeconv=TRUE, uncond=TRUE, cond=FALSE, sets=10, dynamicAT=0.015, staticAT=10, minimum_snps=6000,A1min=0.95, A1max=0.99, A2min=0.5, A2max=0.65, major=NULL, minor=NULL, filter_missing=FALSE, minor_contrib_threshold=FALSE, keep_bins=TRUE) {
   ## load in references
   if (isTruthy(refpath)) {
     print("loading references")
@@ -45,20 +47,21 @@ run_mixder_report = function(sample_manifest, sample_reports = ".", output = "."
     } else {
       refData = euroformix::sample_tableToList(euroformix::tableReader(glue("{refpath}/EFM_references.csv")))
     }
-  } else if (cond) {
-    stop("No references provided but selected conditioned analyses. Please re-run!")
   } else {
-    refData = NULL
+    stop("No references provided. Please re-run!")
+  }
+  if (!isTruthy(major) | !isTruthy(minor)) {
+    stop("Major and/or minor contributor not specified. Please rerun.")
   }
   ## sample manifest; loop through each sample
   manifest=suppressWarnings(euroformix::tableReader(sample_manifest))
   date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
-  mixder::create_config(date, twofreqs, freq_both, freq_major, freq_minor, refpath, sample_manifest, output, mixdeconv, uncond, refs, "Create GEDmatch PRO Report", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, filter_missing, TRUE, NA, NA)
+  mixder::create_config(date, twofreqs, freq_both, freq_major, freq_minor, refpath, sample_manifest, output, mixdeconv, uncond, refs, "Calculate Metrics", sets, sample_reports, dynamicAT, staticAT, minimum_snps, NA, NA, A1min, A1max, A2min, A2max, major, minor, filter_missing, TRUE, NA, NA)
   for (i in nrow(manifest)) {
     id = manifest[i, 1]
     replicate_id = ifelse(is.na(manifest[i, 2]), "", manifest[i, 2])
     message(glue("Sample ID: {id}"))
     message(glue("Replicate ID: {replicate_id}"))
-    mixder::run_workflow(date, id, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refpath, sample_manifest, output, mixdeconv, uncond, refs, "Create GEDmatch PRO Report", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, filter_missing, TRUE, NA, NA)
+    mixder::run_workflow(date, id, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refpath, sample_manifest, output, mixdeconv, uncond, refs, "Calculate Metrics", sets, sample_reports, dynamicAT, staticAT, minimum_snps, NA, NA, A1min, A1max, A2min, A2max, major, minor, minor_contrib_threshold, keep_bins, filter_missing, TRUE, NA, NA)
   }
 }
