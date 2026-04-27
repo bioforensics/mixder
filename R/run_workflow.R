@@ -108,15 +108,13 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
     dir.create(file.path(write_path, "GEDMatchPROReports/Metrics"), showWarnings = FALSE, recursive=TRUE)
   }
   if (unconditioned) {
-    if (run_mixdeconv | !skipancestry) {
-      efm_v = getNamespaceVersion("euroformix")[["version"]]
-      if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
-        major_c = "C2"
-        minor_c = "C1"
-      } else {
-        major_c = "C1"
-        minor_c = "C2"
-      }
+    efm_v = getNamespaceVersion("euroformix")[["version"]]
+    if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
+      major_c = "C2"
+      minor_c = "C1"
+    } else {
+      major_c = "C1"
+      minor_c = "C2"
     }
     if (run_mixdeconv) {
       uncond_table_major = data.frame(efm_results_major[[1]]) %>%
