@@ -8,7 +8,7 @@
 # National Biodefense Analysis and Countermeasures Center (NBACC), a Federally Funded Research and
 # Development Center.
 # -------------------------------------------------------------------------------------------------
-#' Title
+#' run MixDeR using the CLI; calculate validation metrics
 #'
 #' @param sample_reports directory of sample reports or CSV file of mixture genotypes (default=current directory)
 #' @param output output directory (default=current directory)

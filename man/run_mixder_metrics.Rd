@@ -2,7 +2,7 @@
 % Please edit documentation in R/run_mixder_metrics.R
 \name{run_mixder_metrics}
 \alias{run_mixder_metrics}
-\title{Title}
+\title{run MixDeR using the CLI; calculate validation metrics}
 \usage{
 run_mixder_metrics(
   sample_manifest,
@@ -84,5 +84,5 @@ run_mixder_metrics(
 \item{keep_bins}{Use existing binned SNP data, if exists (default=TRUE)}
 }
 \description{
-Title
+run MixDeR using the CLI; calculate validation metrics
 }
