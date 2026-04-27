@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_in_table.R
 \name{read_in_table}
 \alias{read_in_table}
-\title{Title Read in dataset to run through EFM}
+\title{Read in dataset to run through EFM}
 \usage{
 read_in_table(df)
 }
@@ -13,5 +13,5 @@ read_in_table(df)
 data frame of SNPs
 }
 \description{
-Title Read in dataset to run through EFM
+Read in dataset to run through EFM
 }

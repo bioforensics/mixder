@@ -2,7 +2,7 @@
 % Please edit documentation in R/ancestry_prediction.R
 \name{ancestry_prediction}
 \alias{ancestry_prediction}
-\title{Title Ancestry prediction using PCA}
+\title{Ancestry prediction using PCA}
 \usage{
 ancestry_prediction(
   report,
@@ -29,5 +29,5 @@ ancestry_prediction(
 NA
 }
 \description{
-Title Ancestry prediction using PCA
+Ancestry prediction using PCA
 }

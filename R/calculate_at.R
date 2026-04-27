@@ -8,7 +8,7 @@
 # National Biodefense Analysis and Countermeasures Center (NBACC), a Federally Funded Research and
 # Development Center.
 # -------------------------------------------------------------------------------------------------
-#' Title
+#' Calculate the analytical threshold
 #'
 #' @param sample Sample ID
 #' @param kinreports Path of directory containing Kintelligence Sample Reports

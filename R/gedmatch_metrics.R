@@ -9,7 +9,7 @@
 # Development Center.
 # -------------------------------------------------------------------------------------------------
 
-#' Title Calculate various metrics on the inferred genotype dataset to assist user in evaluating the final dataset
+#' Calculate various metrics on the inferred genotype dataset to assist user in evaluating the final dataset
 #'
 #' @param report data frame of the inferred single source genotypes
 #' @param A1_threshold Allele 1 probability threshold

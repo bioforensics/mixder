@@ -45,7 +45,7 @@ run_mixder_metrics(
 
 \item{freq_major}{frequency data for major contributor (default=NULL)}
 
-\item{freq_minor}{frequeny data for minor contributor (default=NULL)}
+\item{freq_minor}{frequency data for minor contributor (default=NULL)}
 
 \item{refpath}{Path to directory containing reference genotypes (default=NULL)}
 

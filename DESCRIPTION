@@ -18,3 +18,4 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+URL: https://bioforensics.github.io/mixder, https://bioforensics.github.io/mixder/

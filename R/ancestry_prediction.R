@@ -9,7 +9,7 @@
 # Development Center.
 # -------------------------------------------------------------------------------------------------
 
-#' Title Ancestry prediction using PCA
+#' Ancestry prediction using PCA
 #'
 #' @param report inferred genotypes
 #' @param path write path
@@ -54,24 +54,20 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status, 
   ## remove any SNPs with NA values (in unknown sample)
   betaRedNAOmit <- geno_filt_unk %>%
     select_if(~ !any(is.na(.)))
-
   ##perform PCA
   pcaRed <- stats::prcomp(betaRedNAOmit, center=TRUE, scale=FALSE)
-
   ## create data table of PCs
   PCs = data.frame(pcaRed$x)
-
   ## add unknown to ancestry and genotype IDs
   geno_unk = geno %>%
     add_row(IID="Unk")
   ## merge genotypes with ancestry info; need to preserve order to match to PCA data
   geno_ancestry=merge(geno_unk, mixder::ancestry_colors, by.x="IID", by.y="id")
-
+  print("merge with colors")
   ## add ancestry info to PC data
   newcol=ncols+1
   newcol2=ncols+4
   PCs_anc = cbind(geno_ancestry[,c(newcol:newcol2)], data.frame(PCs[,c(1:10)]))
-
 
   centroids(groups, PCs_anc, glue("{path}/PCA_plots"), glue("{id}_{contrib_status}_{analysis_type}_{plotid}"))
 

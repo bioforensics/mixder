@@ -2,7 +2,7 @@
 % Please edit documentation in R/load_freq.R
 \name{load_freq}
 \alias{load_freq}
-\title{Title}
+\title{Load in frequency data}
 \usage{
 load_freq(
   out_path,
@@ -27,5 +27,5 @@ load_freq(
 list of major AF data data frame and minor AF data data frame
 }
 \description{
-Title
+Load in frequency data
 }

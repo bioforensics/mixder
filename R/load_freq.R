@@ -8,7 +8,7 @@
 # National Biodefense Analysis and Countermeasures Center (NBACC), a Federally Funded Research and
 # Development Center.
 # -------------------------------------------------------------------------------------------------
-#' Title
+#' Load in frequency data
 #'
 #'@param out_path outpath directory
 #' @param twofreqs If two different allele frequency files are to be used

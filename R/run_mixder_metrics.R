@@ -16,7 +16,7 @@
 #' @param twofreqs TRUE if using different allele frequency data for each contributor (default=FALSE)
 #' @param freq_both frequency data for both contributors (default=1000G global)
 #' @param freq_major frequency data for major contributor (default=NULL)
-#' @param freq_minor frequeny data for minor contributor (default=NULL)
+#' @param freq_minor frequency data for minor contributor (default=NULL)
 #' @param refpath Path to directory containing reference genotypes (default=NULL)
 #' @param refs list of sample IDs to use as reference for conditioning, can specify more than one (default=NULL, example: ("Ref1", "Ref2"))
 #' @param mixdeconv whether to run mixture deconvolution (default=TRUE)
