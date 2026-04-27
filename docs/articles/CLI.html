@@ -82,16 +82,16 @@
 <p>MixDeR can be run either through the associated Shiny app or through
 the command line.</p>
 <p>There are three main commands with multiple optional arguments:<br>
-- Running ancestry prediction<br>
 - Running mixture deconvolution and creating a GEDmatch PRO report<br>
 - Running mixture deconvolution and calculating metrics for a range of
-allele probability thresholds</p>
+allele probability thresholds<br>
+- Running ancestry prediction</p>
 <div class="section level2">
 <h2 id="running-mixture-deconvolution-and-creating-gedmatch-pro-reports">Running mixture deconvolution and creating GEDmatch PRO
 report(s)<a class="anchor" aria-label="anchor" href="#running-mixture-deconvolution-and-creating-gedmatch-pro-reports"></a>
 </h2>
 <p>The following command runs an unconditioned mixture deconvolution and
-creates a report using the default settings (See the <a href="Running_MixDecon.html">Running Mixture Deconvolution</a> for
+creates a report using the default settings (See <a href="Running_MixDecon.html">Running Mixture Deconvolution</a> for
 defaults), using the 1000 Genomes Global allele frequency data:</p>
 <pre><code><span><span class="fu"><a href="../reference/run_mixder_report.html">run_mixder_report</a></span><span class="op">(</span>sample_manifest<span class="op">=</span><span class="st">"/path/to/samplemanifest.csv"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_dir_name"</span><span class="op">)</span></span></code></pre>
 <p>To run a conditioned mixture deconvolution using the default settings
@@ -118,8 +118,7 @@ metrics<a class="anchor" aria-label="anchor" href="#running-mixture-deconvolutio
 </h2>
 <p>The options are similar as the <code>run_mixder_report</code>
 function. The following command runs an unconditioned mixture
-deconvolution and calculates metrics using the default settings (See the
-<a href="Running_MixDecon.html">Running Mixture Deconvolution</a> for
+deconvolution and calculates metrics using the default settings (See <a href="Running_MixDecon.html">Running Mixture Deconvolution</a> for
 defaults), using the 1000 Genomes Global allele frequency data.
 Specifying the references directory, as well as the assumed major and
 minor contributor, are required for this command:</p>
@@ -130,6 +129,25 @@ deconvolution can be run:</p>
 <p>Changing the range of tested allele 1 and allele 2 probability
 thresholds:</p>
 <pre><code><span><span class="fu"><a href="../reference/run_mixder_metrics.html">run_mixder_metrics</a></span><span class="op">(</span>sample_manifest<span class="op">=</span><span class="st">"/path/to/samplemanifest.csv"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_dir_name"</span>, major<span class="op">=</span><span class="st">"Ref1"</span>, minor<span class="op">=</span><span class="st">"Ref2"</span>, refpath<span class="op">=</span><span class="st">"/path/to/references_dir/"</span>, A1min<span class="op">=</span><span class="fl">0.5</span>, A1max<span class="op">=</span><span class="fl">0.99</span>, A2min<span class="op">=</span><span class="fl">0.4</span>, A2max<span class="op">=</span><span class="fl">0.70</span><span class="op">)</span></span></code></pre>
+</div>
+<div class="section level2">
+<h2 id="running-ancestry-prediction">Running ancestry prediction<a class="anchor" aria-label="anchor" href="#running-ancestry-prediction"></a>
+</h2>
+<p>Again, the options are similar to <code>run_mixder_report</code> and
+<code>run_mixder_metrics</code> with additional required inputs: the set
+of SNPs to use for PCA (either <code>ancestry</code> or
+<code>all</code>) and the population groups to use for PCA (either
+<code>superpopulations</code> or <code>subpopulations</code>). The
+following command runs an unconditioned mixture deconvolution and
+performs PCA using the default settings (See <a href="Running_MixDecon.html">Running Mixture Deconvolution</a> for
+defaults), using the 1000 Genomes Global allele frequency data.</p>
+<pre><code><span><span class="fu"><a href="../reference/run_mixder_ancestry.html">run_mixder_ancestry</a></span><span class="op">(</span>sample_manifest<span class="op">=</span><span class="st">"/path/to/samplemanifest.csv"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_ancestry"</span>, snps<span class="op">=</span><span class="st">"all"</span>, pcagroups<span class="op">=</span><span class="st">"Superpopulations"</span><span class="op">)</span></span></code></pre>
+<p>To run a conditioned deconvolution for ancestry prediction, using
+only ancestry SNPs and subpopulations for PCA:</p>
+<pre><code><span><span class="fu"><a href="../reference/run_mixder_ancestry.html">run_mixder_ancestry</a></span><span class="op">(</span>sample_manifest<span class="op">=</span><span class="st">"/path/to/samplemanifest.csv"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_ancestry"</span>, uncond<span class="op">=</span><span class="cn">FALSE</span>, cond<span class="op">=</span><span class="cn">TRUE</span>, refpath<span class="op">=</span><span class="st">"/path/to/references_dir/"</span>, refs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Ref1"</span><span class="op">)</span>, snps<span class="op">=</span><span class="st">"ancestry"</span>, pcagroups<span class="op">=</span><span class="st">"Subpopulations"</span><span class="op">)</span></span></code></pre>
+<p>Same as above, the mixture deconvolution default settings can be
+changed:</p>
+<pre><code><span><span class="fu"><a href="../reference/run_mixder_ancestry.html">run_mixder_ancestry</a></span><span class="op">(</span>sample_manifest<span class="op">=</span><span class="st">"/path/to/samplemanifest.csv"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_ancestry"</span>, dynamicAT<span class="op">=</span><span class="fl">0.03</span>, staticAT<span class="op">=</span><span class="fl">15</span>, A1_threshold<span class="op">=</span><span class="fl">0.95</span>, A2_threshold<span class="op">=</span><span class="fl">0.50</span>, bins<span class="op">=</span><span class="fl">15</span>, snps<span class="op">=</span><span class="st">"all"</span>, pcagroups<span class="op">=</span><span class="st">"Superpopulations"</span><span class="op">)</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

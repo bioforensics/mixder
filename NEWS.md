@@ -2,6 +2,7 @@
 
 ## Changes in version 0.9.0
 - Implemented CLI for running MixDeR without using the Shiny app
+- Fixed bug with logging (was not closing connection after error or MixDeR finished).
 
 # mixder 0.8.1
 
