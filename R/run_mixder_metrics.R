@@ -39,6 +39,9 @@
 #' @export
 #'
 run_mixder_metrics = function(sample_manifest, sample_reports = ".", output = ".", twofreqs=FALSE, freq_both="global_1000g", freq_major=NULL, freq_minor=NULL, refpath=NULL, refs=NULL, mixdeconv=TRUE, uncond=TRUE, cond=FALSE, sets=10, dynamicAT=0.015, staticAT=10, minimum_snps=6000,A1min=0.95, A1max=0.99, A2min=0.5, A2max=0.65, major=NULL, minor=NULL, filter_missing=FALSE, minor_contrib_threshold=FALSE, keep_bins=TRUE) {
+  if (!isTruthy(major) | !isTruthy(minor)) {
+    stop("Major and/or minor contributor not specified. Please rerun.")
+  }
   ## load in references
   if (isTruthy(refpath)) {
     print("loading references")
@@ -49,9 +52,6 @@ run_mixder_metrics = function(sample_manifest, sample_reports = ".", output = ".
     }
   } else {
     stop("No references provided. Please re-run!")
-  }
-  if (!isTruthy(major) | !isTruthy(minor)) {
-    stop("Major and/or minor contributor not specified. Please rerun.")
   }
   ## sample manifest; loop through each sample
   manifest=suppressWarnings(euroformix::tableReader(sample_manifest))

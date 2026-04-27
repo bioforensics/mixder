@@ -63,7 +63,6 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status, 
     add_row(IID="Unk")
   ## merge genotypes with ancestry info; need to preserve order to match to PCA data
   geno_ancestry=merge(geno_unk, mixder::ancestry_colors, by.x="IID", by.y="id")
-  print("merge with colors")
   ## add ancestry info to PC data
   newcol=ncols+1
   newcol2=ncols+4

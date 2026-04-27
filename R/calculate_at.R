@@ -25,8 +25,13 @@ calculate_at = function(sample, kinreports, dynamicAT, staticAT) {
     if (grepl(sampleid, file, fixed=TRUE) & grepl("Report", file, fixed=TRUE)) {
       filename = paste(kinreports, file, sep="/")
       uas_setting = suppressMessages(read_excel(filename, sheet = "Settings"))
-      if (grepl("2.5", uas_setting[11,2], fixed=TRUE) | grepl("2.6", uas_setting[11,2], fixed=TRUE)) {
-        compiled_snps = load_kin_uas25(filename)
+      if (uas_setting[[11,1]] == "Software Version") {
+        version = uas_setting[[11,2]]
+        if (compareVersion(version, "2.5.0") == 1 | compareVersion(version, "2.5.0") == 0) {
+          final_snps = load_kin_uas25(filename)
+        } else {
+          message("Check software version!")
+        }
       } else {
         compiled_snps = load_kin_older(filename)
       }
