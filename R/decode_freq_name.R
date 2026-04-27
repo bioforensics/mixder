@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2024, DHS.
+# Copyright (c) 2026, DHS.
 #
 # This file is part of MixDeR and is licensed under the BSD license: see LICENSE.
 #

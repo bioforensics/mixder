@@ -6,6 +6,5 @@
 inst/doc
 .RDataTmp
 .github
-docs
 R/.Rapp.history
 tests/testthat/.Rapp.history
