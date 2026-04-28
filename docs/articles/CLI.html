@@ -86,13 +86,35 @@ the command line.</p>
 - Running mixture deconvolution and calculating metrics for a range of
 allele probability thresholds<br>
 - Running ancestry prediction</p>
+<hr>
+<p><strong>NOTE</strong>: There are several allele frequency data files
+stored within MixDeR for your use. 1000G global is the default when
+using the same frequency file for both contributors
+(<code>twofreqs=FALSE</code>). The following datasets are available for
+the <code>freq_both</code>, <code>freq_major</code> and
+<code>freq_minor</code> arguments and should be referenced as
+indicated:<br>
+- 1000 Genomes global (<code>1000g_global</code>)<br>
+- gnomAD global (<code>gnomad</code>)<br>
+- 1000 Genomes AFR (<code>afr</code>)<br>
+- 1000 Genomes AMR (<code>amr</code>)<br>
+- 1000 Genomes EAS (<code>eas</code>)<br>
+- 1000 Genomes EUR (<code>eur</code>)<br>
+- 1000 Genomes SAS (<code>sas</code>)<br>
+Of course, a custom allele frequency file is allowed, requiring only the
+Path to the file.</p>
+<hr>
 <div class="section level2">
 <h2 id="running-mixture-deconvolution-and-creating-gedmatch-pro-reports">Running mixture deconvolution and creating GEDmatch PRO
 report(s)<a class="anchor" aria-label="anchor" href="#running-mixture-deconvolution-and-creating-gedmatch-pro-reports"></a>
 </h2>
+<p><strong>Full reference for this command, including default settings,
+<a href="../reference/run_mixder_report.html">can be found
+here</a>.</strong></p>
 <p>The following command runs an unconditioned mixture deconvolution and
-creates a report using the default settings (See <a href="Running_MixDecon.html">Running Mixture Deconvolution</a> for
-defaults), using the 1000 Genomes Global allele frequency data:</p>
+creates a report using the default settings (See <a href="Running_MixDecon.html">Running Mixture Deconvolution</a> for more
+information about the defaults), using the 1000 Genomes Global allele
+frequency data:</p>
 <pre><code><span><span class="fu"><a href="../reference/run_mixder_report.html">run_mixder_report</a></span><span class="op">(</span>sample_manifest<span class="op">=</span><span class="st">"/path/to/samplemanifest.csv"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_dir_name"</span><span class="op">)</span></span></code></pre>
 <p>To run a conditioned mixture deconvolution using the default settings
 and the 1000 Genomes Global allele frequency data, conditioning on both
@@ -111,17 +133,21 @@ probability thresholds and the dynamic and static ATs:</p>
 report for a previously run deconvolution stored in the
 <code>run_decon_output</code> directory:</p>
 <pre><code><span><span class="fu"><a href="../reference/run_mixder_report.html">run_mixder_report</a></span><span class="op">(</span>sample_manifest<span class="op">=</span><span class="st">"/path/to/samplemanifest.csv"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"run_decon_output"</span>, mixdeconv<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre>
+<hr>
 </div>
 <div class="section level2">
 <h2 id="running-mixture-deconvolution-and-calculating-validation-metrics">Running mixture deconvolution and calculating validation
 metrics<a class="anchor" aria-label="anchor" href="#running-mixture-deconvolution-and-calculating-validation-metrics"></a>
 </h2>
+<p><strong>Full reference for this command, including default settings,
+<a href="../reference/run_mixder_metrics.html">can be found
+here</a>.</strong></p>
 <p>The options are similar as the <code>run_mixder_report</code>
 function. The following command runs an unconditioned mixture
-deconvolution and calculates metrics using the default settings (See <a href="Running_MixDecon.html">Running Mixture Deconvolution</a> for
-defaults), using the 1000 Genomes Global allele frequency data.
-Specifying the references directory, as well as the assumed major and
-minor contributor, are required for this command:</p>
+deconvolution and calculates metrics using the default settings (See <a href="Running_MixDecon.html">Running Mixture Deconvolution</a> for more
+information about the defaults), using the 1000 Genomes Global allele
+frequency data. Specifying the references directory, as well as the
+assumed major and minor contributor, are required for this command:</p>
 <pre><code><span><span class="fu"><a href="../reference/run_mixder_metrics.html">run_mixder_metrics</a></span><span class="op">(</span>sample_manifest<span class="op">=</span><span class="st">"/path/to/samplemanifest.csv"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_dir_name"</span>, major<span class="op">=</span><span class="st">"Ref1"</span>, minor<span class="op">=</span><span class="st">"Ref2"</span>, refpath<span class="op">=</span><span class="st">"/path/to/references_dir/"</span><span class="op">)</span></span></code></pre>
 <p>Similar as the <code>run_mixder_report</code> function, a conditioned
 deconvolution can be run:</p>
@@ -129,18 +155,23 @@ deconvolution can be run:</p>
 <p>Changing the range of tested allele 1 and allele 2 probability
 thresholds:</p>
 <pre><code><span><span class="fu"><a href="../reference/run_mixder_metrics.html">run_mixder_metrics</a></span><span class="op">(</span>sample_manifest<span class="op">=</span><span class="st">"/path/to/samplemanifest.csv"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_dir_name"</span>, major<span class="op">=</span><span class="st">"Ref1"</span>, minor<span class="op">=</span><span class="st">"Ref2"</span>, refpath<span class="op">=</span><span class="st">"/path/to/references_dir/"</span>, A1min<span class="op">=</span><span class="fl">0.5</span>, A1max<span class="op">=</span><span class="fl">0.99</span>, A2min<span class="op">=</span><span class="fl">0.4</span>, A2max<span class="op">=</span><span class="fl">0.70</span><span class="op">)</span></span></code></pre>
+<hr>
 </div>
 <div class="section level2">
 <h2 id="running-ancestry-prediction">Running ancestry prediction<a class="anchor" aria-label="anchor" href="#running-ancestry-prediction"></a>
 </h2>
+<p><strong>Full reference for this command, including default settings,
+<a href="../reference/run_mixder_ancestry.html">can be found
+here</a>.</strong></p>
 <p>Again, the options are similar to <code>run_mixder_report</code> and
 <code>run_mixder_metrics</code> with additional required inputs: the set
 of SNPs to use for PCA (either <code>ancestry</code> or
 <code>all</code>) and the population groups to use for PCA (either
 <code>superpopulations</code> or <code>subpopulations</code>). The
 following command runs an unconditioned mixture deconvolution and
-performs PCA using the default settings (See <a href="Running_MixDecon.html">Running Mixture Deconvolution</a> for
-defaults), using the 1000 Genomes Global allele frequency data.</p>
+performs PCA using the default settings (See <a href="Running_MixDecon.html">Running Mixture Deconvolution</a> for more
+information about the defaults), using the 1000 Genomes Global allele
+frequency data.</p>
 <pre><code><span><span class="fu"><a href="../reference/run_mixder_ancestry.html">run_mixder_ancestry</a></span><span class="op">(</span>sample_manifest<span class="op">=</span><span class="st">"/path/to/samplemanifest.csv"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_ancestry"</span>, snps<span class="op">=</span><span class="st">"all"</span>, pcagroups<span class="op">=</span><span class="st">"Superpopulations"</span><span class="op">)</span></span></code></pre>
 <p>To run a conditioned deconvolution for ancestry prediction, using
 only ancestry SNPs and subpopulations for PCA:</p>
