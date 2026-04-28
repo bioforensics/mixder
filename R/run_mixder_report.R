@@ -8,8 +8,6 @@
 # National Biodefense Analysis and Countermeasures Center (NBACC), a Federally Funded Research and
 # Development Center.
 # -------------------------------------------------------------------------------------------------
-
-
 #' run MixDeR using the CLI; create GEDmatch PRO report(s)
 #'
 #' @param sample_reports directory of sample reports or CSV file of mixture genotypes (default=current directory)
