@@ -68,14 +68,6 @@ run_mixder_ancestry(
 
 \item{pcagroups}{How to color PCA plots (superpopulations and/or subpopulations)}
 
-\item{twofreqs}{TRUE if using different allele frequency data for each contributor (default=FALSE)}
-
-\item{freq_both}{frequency data for both contributors; requires twofreqs=FALSE (default=1000G global)}
-
-\item{freq_major}{frequency data for major contributor; requires twofreqs=TRUE (default=NULL)}
-
-\item{freq_minor}{frequency data for minor contributor; requires twofreqs=TRUE (default=NULL)}
-
 \item{filter_missing}{Whether to remove SNPs with a missing value for the allele 2 (default=FALSE)}
 }
 \description{

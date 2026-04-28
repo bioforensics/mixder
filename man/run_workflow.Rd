@@ -106,8 +106,6 @@ run_workflow(
 \item{ancestrysnps}{SNPs to use for ancestry prediction (either ancestry only or all SNPs)}
 
 \item{pcagroups}{How to color PCA plots (superpopulations and/or subpopulations)}
-
-\item{sample_path}{Path of sample manifest}
 }
 \description{
 Runs workflow

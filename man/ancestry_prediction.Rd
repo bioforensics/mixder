@@ -23,6 +23,10 @@ ancestry_prediction(
 
 \item{analysis_type}{mixure deconvolution type (conditioned vs. unconditioned)}
 
+\item{contrib_status}{contributor status (major vs. minor)}
+
+\item{testsnps}{SNP set to use for PCA (All autosomal SNPs or only ancestry SNPs)}
+
 \item{groups}{How to color PCA plots (superpopulations and/or subpopulations)}
 }
 \value{

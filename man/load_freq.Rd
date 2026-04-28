@@ -17,11 +17,11 @@ load_freq(
 
 \item{twofreqs}{If two different allele frequency files are to be used}
 
-\item{freq_both}{Allele frequency file, if only using one}
+\item{freq_both_input}{Allele frequency file, if only using one}
 
-\item{freq_major}{Allele frequency file for major contributor}
+\item{freq_major_input}{Allele frequency file for major contributor}
 
-\item{freq_minor}{Allele frequency file for minor contributor}
+\item{freq_minor_input}{Allele frequency file for minor contributor}
 }
 \value{
 list of major AF data data frame and minor AF data data frame
