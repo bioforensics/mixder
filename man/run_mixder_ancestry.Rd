@@ -2,7 +2,7 @@
 % Please edit documentation in R/run_mixder_ancestry.R
 \name{run_mixder_ancestry}
 \alias{run_mixder_ancestry}
-\title{run MixDeR using the CLI; create GEDmatch PRO report(s)}
+\title{run MixDeR using the CLI; ancestry prediction}
 \usage{
 run_mixder_ancestry(
   sample_manifest,
@@ -73,5 +73,5 @@ run_mixder_ancestry(
 \item{filter_missing}{Whether to remove SNPs with a missing value for the allele 2 (default=FALSE)}
 }
 \description{
-run MixDeR using the CLI; create GEDmatch PRO report(s)
+run MixDeR using the CLI; ancestry prediction
 }

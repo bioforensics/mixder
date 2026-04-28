@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# MixDeR - Current Version: 0.9
+# MixDeR - Current Version: 0.9.0
 
 <!-- badges: start -->
 
@@ -43,7 +43,7 @@ To launch the shiny app:
     library(mixder)
     mixder()
 
-To use the command line, please see the CLI page in the below
+To use the command line, please see the CLI page in the MixDeR
 documentation.
 
 Please see [MixDeR documentation](bioforensics.github.io/mixder/) for
