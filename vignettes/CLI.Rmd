@@ -36,7 +36,10 @@ Of course, a custom allele frequency file is allowed, requiring only the Path to
 
 ---
 
-**NOTE x 2**: on the command line, a sample manifest can be used (as required by the Shiny app) listing the sample ID in the first column (if applicable, the replicate ID in the second column) for multiple samples to be run consecutively, or a single sample ID (and, if applicable, a replicate ID) can be specified. Please see below for additional details.
+**NOTE x 2**: Using the command line, there are two options to specify samples:  
+1. A sample manifest file can be used (as required by the Shiny app) listing the sample ID in the first column (and, if applicable, the replicate ID in the second column) for multiple samples to be run consecutively (using the `sample_manifest` argument)  
+2. A single sample ID (and, if applicable, a replicate ID) can be specified (using the `sample` and `replicate` arguments)   
+Please see below for examples.
 
 
 ___

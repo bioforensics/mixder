@@ -104,6 +104,17 @@ indicated:<br>
 Of course, a custom allele frequency file is allowed, requiring only the
 Path to the file.</p>
 <hr>
+<p><strong>NOTE x 2</strong>: Using the command line, there are two
+options to specify samples:<br>
+1. A sample manifest file can be used (as required by the Shiny app)
+listing the sample ID in the first column (and, if applicable, the
+replicate ID in the second column) for multiple samples to be run
+consecutively (using the <code>sample_manifest</code> argument)<br>
+2. A single sample ID (and, if applicable, a replicate ID) can be
+specified (using the <code>sample</code> and <code>replicate</code>
+arguments)<br>
+Please see below for examples.</p>
+<hr>
 <div class="section level2">
 <h2 id="running-mixture-deconvolution-and-creating-gedmatch-pro-reports">Running mixture deconvolution and creating GEDmatch PRO
 report(s)<a class="anchor" aria-label="anchor" href="#running-mixture-deconvolution-and-creating-gedmatch-pro-reports"></a>
@@ -116,6 +127,9 @@ creates a report using the default settings (See <a href="Running_MixDecon.html"
 information about the defaults), using the 1000 Genomes Global allele
 frequency data:</p>
 <pre><code><span><span class="fu"><a href="../reference/run_mixder_report.html">run_mixder_report</a></span><span class="op">(</span>sample_manifest<span class="op">=</span><span class="st">"/path/to/samplemanifest.csv"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_dir_name"</span><span class="op">)</span></span></code></pre>
+<p>As mentioned above, a single sample ID can be specified instead of a
+sample manifest:</p>
+<pre><code><span><span class="fu"><a href="../reference/run_mixder_report.html">run_mixder_report</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="st">"Sample01"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_dir_name"</span><span class="op">)</span></span></code></pre>
 <p>To run a conditioned mixture deconvolution using the default settings
 and the 1000 Genomes Global allele frequency data, conditioning on both
 Ref1 and Ref2, use the following command:</p>
@@ -149,6 +163,9 @@ information about the defaults), using the 1000 Genomes Global allele
 frequency data. Specifying the references directory, as well as the
 assumed major and minor contributor, are required for this command:</p>
 <pre><code><span><span class="fu"><a href="../reference/run_mixder_metrics.html">run_mixder_metrics</a></span><span class="op">(</span>sample_manifest<span class="op">=</span><span class="st">"/path/to/samplemanifest.csv"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_dir_name"</span>, major<span class="op">=</span><span class="st">"Ref1"</span>, minor<span class="op">=</span><span class="st">"Ref2"</span>, refpath<span class="op">=</span><span class="st">"/path/to/references_dir/"</span><span class="op">)</span></span></code></pre>
+<p>As mentioned above, a single sample ID can be specified instead of a
+sample manifest:</p>
+<pre><code><span><span class="fu"><a href="../reference/run_mixder_metrics.html">run_mixder_metrics</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="st">"Sample01"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_dir_name"</span>, major<span class="op">=</span><span class="st">"Ref1"</span>, minor<span class="op">=</span><span class="st">"Ref2"</span>, refpath<span class="op">=</span><span class="st">"/path/to/references_dir/"</span><span class="op">)</span></span></code></pre>
 <p>Similar as the <code>run_mixder_report</code> function, a conditioned
 deconvolution can be run:</p>
 <pre><code><span><span class="fu"><a href="../reference/run_mixder_metrics.html">run_mixder_metrics</a></span><span class="op">(</span>sample_manifest<span class="op">=</span><span class="st">"/path/to/samplemanifest.csv"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_dir_name"</span>, major<span class="op">=</span><span class="st">"Ref1"</span>, minor<span class="op">=</span><span class="st">"Ref2"</span>, refpath<span class="op">=</span><span class="st">"/path/to/references_dir/"</span>, uncond<span class="op">=</span><span class="cn">FALSE</span>, cond<span class="op">=</span><span class="cn">TRUE</span>, refs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Ref1"</span>, <span class="st">"Ref2"</span><span class="op">)</span><span class="op">)</span></span></code></pre>
@@ -173,6 +190,9 @@ performs PCA using the default settings (See <a href="Running_MixDecon.html">Run
 information about the defaults), using the 1000 Genomes Global allele
 frequency data.</p>
 <pre><code><span><span class="fu"><a href="../reference/run_mixder_ancestry.html">run_mixder_ancestry</a></span><span class="op">(</span>sample_manifest<span class="op">=</span><span class="st">"/path/to/samplemanifest.csv"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_ancestry"</span>, snps<span class="op">=</span><span class="st">"all"</span>, pcagroups<span class="op">=</span><span class="st">"Superpopulations"</span><span class="op">)</span></span></code></pre>
+<p>As mentioned above, a single sample ID can be specified instead of a
+sample manifest:</p>
+<pre><code><span><span class="fu"><a href="../reference/run_mixder_ancestry.html">run_mixder_ancestry</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="st">"Sample01"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_ancestry"</span>, snps<span class="op">=</span><span class="st">"all"</span>, pcagroups<span class="op">=</span><span class="st">"Superpopulations"</span><span class="op">)</span></span></code></pre>
 <p>To run a conditioned deconvolution for ancestry prediction, using
 only ancestry SNPs and subpopulations for PCA:</p>
 <pre><code><span><span class="fu"><a href="../reference/run_mixder_ancestry.html">run_mixder_ancestry</a></span><span class="op">(</span>sample_manifest<span class="op">=</span><span class="st">"/path/to/samplemanifest.csv"</span>, sample_reports<span class="op">=</span><span class="st">"/path/to/sample_reports_dir/"</span>, output<span class="op">=</span><span class="st">"output_ancestry"</span>, uncond<span class="op">=</span><span class="cn">FALSE</span>, cond<span class="op">=</span><span class="cn">TRUE</span>, refpath<span class="op">=</span><span class="st">"/path/to/references_dir/"</span>, refs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Ref1"</span><span class="op">)</span>, snps<span class="op">=</span><span class="st">"ancestry"</span>, pcagroups<span class="op">=</span><span class="st">"Subpopulations"</span><span class="op">)</span></span></code></pre>
