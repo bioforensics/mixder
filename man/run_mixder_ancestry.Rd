@@ -5,8 +5,10 @@
 \title{run MixDeR using the CLI; ancestry prediction}
 \usage{
 run_mixder_ancestry(
-  sample_manifest,
-  sample_reports = ".",
+  sample_manifest = NULL,
+  sample = NULL,
+  replicate = NULL,
+  sample_reports = getwd(),
   output = "output",
   refpath = NULL,
   refs = NULL,
@@ -27,6 +29,10 @@ run_mixder_ancestry(
 }
 \arguments{
 \item{sample_manifest}{path to sample manifest file (default=NULL)}
+
+\item{sample}{If running individual sample, specify the sample ID; requires sample_manifest=NULL (default=NULL)}
+
+\item{replicate}{If running individual sample along with a replicate, specify the replicate ID; requires sample_manifest=NULL (default=NULL)}
 
 \item{sample_reports}{Path to directory of Sample Reports or CSV file of mixture genotypes (default=current directory)}
 

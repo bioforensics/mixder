@@ -11,7 +11,9 @@ create_config(
   freq_major,
   freq_minor,
   refs,
-  sample_path,
+  sample_manifest,
+  sample,
+  replicate,
   out_path,
   run_mixdeconv,
   unconditioned,
@@ -49,7 +51,7 @@ create_config(
 
 \item{refs}{path to reference folder}
 
-\item{sample_path}{path to sample manifest}
+\item{sample_manifest}{path to sample manifest}
 
 \item{out_path}{name of output folder}
 

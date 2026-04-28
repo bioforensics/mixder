@@ -11,6 +11,8 @@
 #' run MixDeR using the CLI; ancestry prediction
 #'
 #' @param sample_manifest path to sample manifest file (default=NULL)
+#' @param sample If running individual sample, specify the sample ID; requires sample_manifest=NULL (default=NULL)
+#' @param replicate If running individual sample along with a replicate, specify the replicate ID; requires sample_manifest=NULL (default=NULL)
 #' @param sample_reports Path to directory of Sample Reports or CSV file of mixture genotypes (default=current directory)
 #' @param output name of output directory, will be outputted into the sample reports directory (default="output")
 #' @param twofreqs TRUE if using different allele frequency data for each contributor (default=FALSE)
@@ -36,7 +38,8 @@
 #'
 #' @export
 #'
-run_mixder_ancestry = function(sample_manifest, sample_reports = ".", output = "output", refpath=NULL, refs=NULL, mixdeconv=TRUE, uncond=TRUE, cond=FALSE, sets=10, dynamicAT=0.015, staticAT=10, minimum_snps=6000, A1_threshold=0.99, A2_threshold=0.6, minor_contrib_threshold=FALSE, keep_bins=TRUE, snps, pcagroups) {
+run_mixder_ancestry = function(sample_manifest=NULL, sample=NULL, replicate=NULL, sample_reports = getwd(), output = "output", refpath=NULL, refs=NULL, mixdeconv=TRUE, uncond=TRUE, cond=FALSE, sets=10, dynamicAT=0.015, staticAT=10, minimum_snps=6000, A1_threshold=0.99, A2_threshold=0.6, minor_contrib_threshold=FALSE, keep_bins=TRUE, snps, pcagroups) {
+  date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
   ## load in references
   if (isTruthy(refpath)) {
     print("loading references")
@@ -64,16 +67,25 @@ run_mixder_ancestry = function(sample_manifest, sample_reports = ".", output = "
   } else {
     stop("Please specify either `superpopulations` or `subpopulations` to use for PCA groupings.")
   }
+  if (!isTruthy(sample_manifest) & !isTruthy(sample)){
+    stop("Please provide sample manifest or sample ID!")
+  }
   print("Running ancestry prediction")
+  create_config(date, FALSE, "1000G_global", NA, NA, refpath, sample_manifest, sample, replicate, output, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, FALSE, FALSE, snpset, pcagroupcat)
+  if (isTruthy(sample_manifest)) {
   ## sample manifest; loop through each sample
-  manifest=suppressWarnings(euroformix::tableReader(sample_manifest))
-  date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
-  mixder::create_config(date, FALSE, "1000G_global", NA, NA, refpath, sample_manifest, output, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, FALSE, FALSE, snpset, pcagroupcat)
-  for (i in nrow(manifest)) {
-    id = manifest[i, 1]
-    replicate_id = ifelse(is.na(manifest[i, 2]), "", manifest[i, 2])
-    message(glue("Sample ID: {id}"))
+    manifest=suppressWarnings(euroformix::tableReader(sample_manifest))
+    for (i in nrow(manifest)) {
+      id = manifest[i, 1]
+      replicate_id = ifelse(is.na(manifest[i, 2]), "", manifest[i, 2])
+      message(glue("Sample ID: {id}"))
+      message(glue("Replicate ID: {replicate_id}"))
+      run_workflow(date, id, replicate_id, FALSE, "1000G_global", NA, NA, refData, refpath, output, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, FALSE, FALSE, snpset, pcagroupcat)
+    }
+  } else if (isTruthy(sample)){
+    replicate_id = ifelse(isTruthy(replicate), replicate, "")
+    message(glue("Sample ID: {sample}"))
     message(glue("Replicate ID: {replicate_id}"))
-    mixder::run_workflow(date, id, replicate_id, FALSE, "1000G_global", NA, NA, refData, refpath, sample_manifest, output, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, FALSE, FALSE, snpset, pcagroupcat)
+    run_workflow(date, sample, replicate_id, FALSE, "1000G_global", NA, NA, refData, refpath, output, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, FALSE, FALSE, snpset, pcagroupcat)
   }
 }

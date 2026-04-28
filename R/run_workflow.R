@@ -54,7 +54,7 @@
 #'@importFrom utils write.table write.csv read.table
 #'@importFrom grDevices dev.off png
 #'@importFrom methods show
-run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refs, sample_path, output, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, skipancestry, ancestrysnps, pcagroups) {
+run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refs, output, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, skipancestry, ancestrysnps, pcagroups) {
   out_path = glue("{kinpath}/snp_sets/{output}/")
   if (replicate_id == "") {
     logfile = file(glue("{out_path}config_log_files/{date}/run_log_{id}_{date}.txt"), open = "wt")
@@ -65,9 +65,6 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
   on.exit(sink(file=NULL, type="message"))
   if (method=="Calculate Metrics" & unconditioned & (!isTruthy(major) | !isTruthy(minor))) {
     stop("No major/minor contributor IDs provided but calculating metrics for an unconditioned analysis. Please re-run!")
-  }
-  if (!isTruthy(sample_path)) {
-    stop("No Sample Manifest provided. Please re-run!")
   }
   if (!isTruthy(kinpath)  & method != "Create GEDmatch PRO Report"  & run_mixdeconv) {
     stop("No Kintelligence Sample Reports provided. Please re-run!")

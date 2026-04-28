@@ -14,7 +14,6 @@ run_workflow(
   freq_minor,
   refData,
   refs,
-  sample_path,
   output,
   run_mixdeconv,
   unconditioned,
@@ -59,8 +58,6 @@ run_workflow(
 \item{refData}{Reference data (if available)}
 
 \item{refs}{Path of reference genotype(s) file}
-
-\item{sample_path}{Path of sample manifest}
 
 \item{output}{Name of output directory}
 
@@ -109,6 +106,8 @@ run_workflow(
 \item{ancestrysnps}{SNPs to use for ancestry prediction (either ancestry only or all SNPs)}
 
 \item{pcagroups}{How to color PCA plots (superpopulations and/or subpopulations)}
+
+\item{sample_path}{Path of sample manifest}
 }
 \description{
 Runs workflow

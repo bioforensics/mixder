@@ -5,8 +5,10 @@
 \title{run MixDeR using the CLI; create GEDmatch PRO report(s)}
 \usage{
 run_mixder_report(
-  sample_manifest,
-  sample_reports = ".",
+  sample_manifest = NULL,
+  sample = NULL,
+  replicate = NULL,
+  sample_reports = getwd(),
   output = "output",
   twofreqs = FALSE,
   freq_both = "global_1000g",
@@ -30,6 +32,10 @@ run_mixder_report(
 }
 \arguments{
 \item{sample_manifest}{path to sample manifest file (default=NULL)}
+
+\item{sample}{If running individual sample, specify the sample ID; requires sample_manifest=NULL (default=NULL)}
+
+\item{replicate}{If running individual sample along with a replicate, specify the replicate ID; requires sample_manifest=NULL (default=NULL)}
 
 \item{sample_reports}{Path to directory of Sample Reports or CSV file of mixture genotypes (default=current directory)}
 

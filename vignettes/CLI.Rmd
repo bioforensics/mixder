@@ -36,6 +36,12 @@ Of course, a custom allele frequency file is allowed, requiring only the Path to
 
 ---
 
+**NOTE x 2**: on the command line, a sample manifest can be used (as required by the Shiny app) listing the sample ID in the first column (if applicable, the replicate ID in the second column) for multiple samples to be run consecutively, or a single sample ID (and, if applicable, a replicate ID) can be specified. Please see below for additional details.
+
+
+___
+
+
 ## Running mixture deconvolution and creating GEDmatch PRO report(s) 
 
 __Full reference for this command, including default settings, [can be found here](../reference/run_mixder_report.html).__
@@ -44,6 +50,11 @@ The following command runs an unconditioned mixture deconvolution and creates a 
 
 ```
 run_mixder_report(sample_manifest="/path/to/samplemanifest.csv", sample_reports="/path/to/sample_reports_dir/", output="output_dir_name")
+```
+
+As mentioned above, a single sample ID can be specified instead of a sample manifest:
+```
+run_mixder_report(sample = "Sample01", sample_reports="/path/to/sample_reports_dir/", output="output_dir_name")
 ```
 
 To run a conditioned mixture deconvolution using the default settings and the 1000 Genomes Global allele frequency data, conditioning on both Ref1 and Ref2, use the following command:
@@ -81,6 +92,10 @@ The options are similar as the ```run_mixder_report``` function. The following c
 ```
 run_mixder_metrics(sample_manifest="/path/to/samplemanifest.csv", sample_reports="/path/to/sample_reports_dir/", output="output_dir_name", major="Ref1", minor="Ref2", refpath="/path/to/references_dir/")
 ```
+As mentioned above, a single sample ID can be specified instead of a sample manifest:
+```
+run_mixder_metrics(sample = "Sample01", sample_reports="/path/to/sample_reports_dir/", output="output_dir_name", major="Ref1", minor="Ref2", refpath="/path/to/references_dir/")
+```
 
 Similar as the ```run_mixder_report``` function, a conditioned deconvolution can be run:
 ```
@@ -101,6 +116,10 @@ __Full reference for this command, including default settings, [can be found her
 Again, the options are similar to ```run_mixder_report``` and ```run_mixder_metrics``` with additional required inputs: the set of SNPs to use for PCA (either ```ancestry``` or ```all```) and the population groups to use for PCA (either ```superpopulations``` or ```subpopulations```). The following command runs an unconditioned mixture deconvolution and performs PCA using the default settings (See [Running Mixture Deconvolution](Running_MixDecon.html) for more information about the defaults), using the 1000 Genomes Global allele frequency data.
 ```
 run_mixder_ancestry(sample_manifest="/path/to/samplemanifest.csv", sample_reports="/path/to/sample_reports_dir/", output="output_ancestry", snps="all", pcagroups="Superpopulations")
+```
+As mentioned above, a single sample ID can be specified instead of a sample manifest:
+```
+run_mixder_ancestry(sample = "Sample01", sample_reports="/path/to/sample_reports_dir/", output="output_ancestry", snps="all", pcagroups="Superpopulations")
 ```
 
 To run a conditioned deconvolution for ancestry prediction, using only ancestry SNPs and subpopulations for PCA:
