@@ -12,9 +12,9 @@
 #'
 #'@param out_path outpath directory
 #' @param twofreqs If two different allele frequency files are to be used
-#' @param freq_both Allele frequency file, if only using one
-#' @param freq_major Allele frequency file for major contributor
-#' @param freq_minor Allele frequency file for minor contributor
+#' @param freq_both_input Allele frequency file, if only using one
+#' @param freq_major_input Allele frequency file for major contributor
+#' @param freq_minor_input Allele frequency file for minor contributor
 #'
 #' @return list of major AF data data frame and minor AF data data frame
 #' @export

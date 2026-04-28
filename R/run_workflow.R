@@ -21,7 +21,6 @@
 #' @param freq_minor Path (or name) of allele frequency data for minor contributor
 #' @param refData Reference data (if available)
 #' @param refs Path of reference genotype(s) file
-#' @param sample_path Path of sample manifest
 #' @param output Name of output directory
 #' @param run_mixdeconv TRUE if running EFM mixture deconvolution
 #' @param unconditioned TRUE if running unconditioned mixture deconvolution

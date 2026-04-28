@@ -18,6 +18,8 @@
 #' @param freq_minor Path (or name) of allele frequency data for minor contributor
 #' @param refs path to reference folder
 #' @param sample_manifest path to sample manifest
+#' @param sample sample ID if sample_manifest=NULL
+#' @param replicate replicate ID for running a single sample if sample_manifest=NULL
 #' @param out_path name of output folder
 #' @param run_mixdeconv if running mixture deconvolution
 #' @param unconditioned if running an unconditioned deconvolution

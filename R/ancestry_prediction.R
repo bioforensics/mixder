@@ -15,6 +15,8 @@
 #' @param path write path
 #' @param id sample ID
 #' @param analysis_type mixure deconvolution type (conditioned vs. unconditioned)
+#' @param contrib_status contributor status (major vs. minor)
+#' @param testsnps SNP set to use for PCA (All autosomal SNPs or only ancestry SNPs)
 #' @param groups How to color PCA plots (superpopulations and/or subpopulations)
 #'
 #' @import kgp
