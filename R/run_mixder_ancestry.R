@@ -26,7 +26,6 @@
 #' @param minimum_snps minimum number of SNPs used to generate profile (default=6000)
 #' @param A1_threshold Allele 1 probability threshold (default=0.99)
 #' @param A2_threshold Allele 2 probability threshold (default=0.60)
-#' @param filter_missing Whether to remove SNPs with a missing value for the allele 2 (default=FALSE)
 #' @param minor_contrib_threshold Whether to apply the allele 1 probability threshold to the minor contributor, regardless of the minimum number of SNPs (default=FALSE)
 #' @param keep_bins Use existing binned SNP data, if exists (default=TRUE)
 #' @param snps SNPs to use for ancestry prediction (either ancestry only or all SNPs)

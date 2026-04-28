@@ -67,8 +67,6 @@ run_mixder_ancestry(
 \item{snps}{SNPs to use for ancestry prediction (either ancestry only or all SNPs)}
 
 \item{pcagroups}{How to color PCA plots (superpopulations and/or subpopulations)}
-
-\item{filter_missing}{Whether to remove SNPs with a missing value for the allele 2 (default=FALSE)}
 }
 \description{
 run MixDeR using the CLI; ancestry prediction
