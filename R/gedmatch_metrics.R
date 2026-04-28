@@ -27,7 +27,7 @@ gedmatch_metrics = function(report, A1_threshold, A2_threshold, min_num, path){
   . = NULL
   report$A2_thresh = ifelse(report$A2_Prob >= A2_threshold & report$A2 != 99, report$A2, report$A1)
   report$het = ifelse(report$A1==report$A2_thresh, 0, 1)
-  report_A1applied = subset(report, A1_Prob>=A1_threshold)
+  report_A1applied = subset(report, report$A1_Prob>=A1_threshold)
   report_minsnps = report %>%
     arrange(desc(.data$A1_Prob)) %>%
     .[c(1:min_num),]

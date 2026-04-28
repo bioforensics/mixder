@@ -19,6 +19,8 @@
 #' @export
 #'
 #' @importFrom readxl read_excel
+#' @importFrom utils compareVersion
+#'
 calculate_at = function(sample, kinreports, dynamicAT, staticAT) {
   for (file in list.files(kinreports, pattern = "^[^~]")) {
     sampleid = ifelse(grepl("rep", sample, fixed=TRUE), gsub("_rep","", sample), sample)
