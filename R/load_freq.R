@@ -19,12 +19,16 @@
 #' @return list of major AF data data frame and minor AF data data frame
 #' @export
 load_freq = function(out_path, twofreqs, freq_both_input, freq_major_input, freq_minor_input) {
+  freqs_allowed = c("Global - 1000G", "Global - gnomAD", "AFR - 1000G", "AMR - 1000G", "EAS - 1000G", "EUR - 1000G", "SAS - 1000G")
   if (!twofreqs) {
     if (file.exists(freq_both_input)) {
       freq_minor = checking_af(freq_both_input, out_path)
       freq_major = freq_minor
     } else {
       freq_both = decode_freq_name(tolower(freq_both_input))
+      if (!freq_both %in% freqs_allowed) {
+        stop("Please check allele frequency file specified!")
+      }
       if (freq_both == "Global - 1000G") {
         freq_minor = mixder::popFreq_1000G
         freq_major = mixder::popFreq_1000G
@@ -55,6 +59,9 @@ load_freq = function(out_path, twofreqs, freq_both_input, freq_major_input, freq
       freq_major = checking_af(freq_major_input, out_path)
     } else {
       freq_major = decode_freq_name(tolower(freq_major_input))
+      if (!freq_major %in% freqs_allowed) {
+        stop("Please check allele frequency file specified!")
+      }
       if (freq_major == "Global - 1000G") {
         freq_major = mixder::popFreq_1000G
       } else if (freq_major == "Global - gnomAD") {
@@ -77,6 +84,9 @@ load_freq = function(out_path, twofreqs, freq_both_input, freq_major_input, freq
       freq_minor = checking_af(freq_minor_input, out_path)
     } else {
       freq_minor = decode_freq_name(tolower(freq_minor_input))
+      if (!freq_minor %in% freqs_allowed) {
+        stop("Please check allele frequency file specified!")
+      }
        if (freq_minor == "Global - 1000G") {
         freq_minor = mixder::popFreq_1000G
       } else if (freq_minor == "Global - gnomAD") {
