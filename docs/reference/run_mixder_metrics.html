@@ -58,7 +58,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run_mixder_metrics</span><span class="op">(</span></span>
 <span>  <span class="va">sample_manifest</span>,</span>
 <span>  sample_reports <span class="op">=</span> <span class="st">"."</span>,</span>
-<span>  output <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  output <span class="op">=</span> <span class="st">"output"</span>,</span>
 <span>  twofreqs <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  freq_both <span class="op">=</span> <span class="st">"global_1000g"</span>,</span>
 <span>  freq_major <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -89,15 +89,15 @@
 
 
 <dl><dt id="arg-sample-manifest">sample_manifest<a class="anchor" aria-label="anchor" href="#arg-sample-manifest"></a></dt>
-<dd><p>path to sample manifest (default=NULL)</p></dd>
+<dd><p>path to sample manifest file (default=NULL)</p></dd>
 
 
 <dt id="arg-sample-reports">sample_reports<a class="anchor" aria-label="anchor" href="#arg-sample-reports"></a></dt>
-<dd><p>directory of sample reports or CSV file of mixture genotypes (default=current directory)</p></dd>
+<dd><p>Path to directory of Sample Reports or CSV file of mixture genotypes (default=current directory)</p></dd>
 
 
 <dt id="arg-output">output<a class="anchor" aria-label="anchor" href="#arg-output"></a></dt>
-<dd><p>output directory (default=current directory)</p></dd>
+<dd><p>name of output directory, will be outputted into the sample reports directory (default="output")</p></dd>
 
 
 <dt id="arg-twofreqs">twofreqs<a class="anchor" aria-label="anchor" href="#arg-twofreqs"></a></dt>
@@ -105,15 +105,15 @@
 
 
 <dt id="arg-freq-both">freq_both<a class="anchor" aria-label="anchor" href="#arg-freq-both"></a></dt>
-<dd><p>frequency data for both contributors (default=1000G global)</p></dd>
+<dd><p>frequency data for both contributors; requires twofreqs=FALSE (default=1000G global)</p></dd>
 
 
 <dt id="arg-freq-major">freq_major<a class="anchor" aria-label="anchor" href="#arg-freq-major"></a></dt>
-<dd><p>frequency data for major contributor (default=NULL)</p></dd>
+<dd><p>frequency data for major contributor; requires twofreqs=TRUE (default=NULL)</p></dd>
 
 
 <dt id="arg-freq-minor">freq_minor<a class="anchor" aria-label="anchor" href="#arg-freq-minor"></a></dt>
-<dd><p>frequency data for minor contributor (default=NULL)</p></dd>
+<dd><p>frequency data for minor contributor; requires twofreqs=TRUE (default=NULL)</p></dd>
 
 
 <dt id="arg-refpath">refpath<a class="anchor" aria-label="anchor" href="#arg-refpath"></a></dt>
@@ -121,7 +121,7 @@
 
 
 <dt id="arg-refs">refs<a class="anchor" aria-label="anchor" href="#arg-refs"></a></dt>
-<dd><p>list of sample IDs to use as reference for conditioning, can specify more than one (default=NULL, example: ("Ref1", "Ref2"))</p></dd>
+<dd><p>list of sample IDs to use as reference for conditioning, can specify more than one (default=NULL, example: list("Ref1", "Ref2"))</p></dd>
 
 
 <dt id="arg-mixdeconv">mixdeconv<a class="anchor" aria-label="anchor" href="#arg-mixdeconv"></a></dt>

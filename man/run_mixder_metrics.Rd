@@ -7,7 +7,7 @@
 run_mixder_metrics(
   sample_manifest,
   sample_reports = ".",
-  output = ".",
+  output = "output",
   twofreqs = FALSE,
   freq_both = "global_1000g",
   freq_major = NULL,
@@ -33,23 +33,23 @@ run_mixder_metrics(
 )
 }
 \arguments{
-\item{sample_manifest}{path to sample manifest (default=NULL)}
+\item{sample_manifest}{path to sample manifest file (default=NULL)}
 
-\item{sample_reports}{directory of sample reports or CSV file of mixture genotypes (default=current directory)}
+\item{sample_reports}{Path to directory of Sample Reports or CSV file of mixture genotypes (default=current directory)}
 
-\item{output}{output directory (default=current directory)}
+\item{output}{name of output directory, will be outputted into the sample reports directory (default="output")}
 
 \item{twofreqs}{TRUE if using different allele frequency data for each contributor (default=FALSE)}
 
-\item{freq_both}{frequency data for both contributors (default=1000G global)}
+\item{freq_both}{frequency data for both contributors; requires twofreqs=FALSE (default=1000G global)}
 
-\item{freq_major}{frequency data for major contributor (default=NULL)}
+\item{freq_major}{frequency data for major contributor; requires twofreqs=TRUE (default=NULL)}
 
-\item{freq_minor}{frequency data for minor contributor (default=NULL)}
+\item{freq_minor}{frequency data for minor contributor; requires twofreqs=TRUE (default=NULL)}
 
 \item{refpath}{Path to directory containing reference genotypes (default=NULL)}
 
-\item{refs}{list of sample IDs to use as reference for conditioning, can specify more than one (default=NULL, example: ("Ref1", "Ref2"))}
+\item{refs}{list of sample IDs to use as reference for conditioning, can specify more than one (default=NULL, example: list("Ref1", "Ref2"))}
 
 \item{mixdeconv}{whether to run mixture deconvolution (default=TRUE)}
 
