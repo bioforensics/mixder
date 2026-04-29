@@ -9,7 +9,7 @@
 # Development Center.
 # -------------------------------------------------------------------------------------------------
 
-#' Title Check the mixture ratios for potentially single source samples (or samples with very high mixture ratios)
+#' Check the mixture ratios for potentially single source samples (or samples with very high mixture ratios)
 #'
 #' @param df dataframe of mixture ratios computed by EFM
 #' @param uncond TRUE/FALSE if unconditioned analysis

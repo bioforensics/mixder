@@ -17,7 +17,9 @@
 #' @param freq_major Path (or name) of allele frequency data for major contributor
 #' @param freq_minor Path (or name) of allele frequency data for minor contributor
 #' @param refs path to reference folder
-#' @param sample_path path to sample manifest
+#' @param sample_manifest path to sample manifest
+#' @param sample sample ID if sample_manifest=NULL
+#' @param replicate replicate ID for running a single sample if sample_manifest=NULL
 #' @param out_path name of output folder
 #' @param run_mixdeconv if running mixture deconvolution
 #' @param unconditioned if running an unconditioned deconvolution
@@ -43,11 +45,16 @@
 #'
 #' @export
 #'
-create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs, sample_path, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, filter_missing, skipancestry, pcasnps, pcagroups){
+create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs, sample_manifest, sample, replicate, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, filter_missing, skipancestry, pcasnps, pcagroups){
   config = setNames(data.frame(matrix(ncol=2, nrow=0)), c("Setting", "Value"))
   config = rbind(config, data.frame(Setting="MixDeR Version:", Value=getNamespaceVersion("mixder")[["version"]]))
   config = rbind(config, data.frame(Setting="EuroForMix Version:", Value=getNamespaceVersion("euroformix")[["version"]]))
-  config = rbind(config, data.frame(Setting="Path to sample manifest:", Value=sample_path))
+  if (isTruthy(sample_manifest)) {
+    config = rbind(config, data.frame(Setting="Path to sample manifest:", Value=sample_manifest))
+  } else if (isTruthy(sample)) {
+    config = rbind(config, data.frame(Setting="Sample:", Value=sample))
+    config = rbind(config, data.frame(Setting="Replicate Sample:", Value=ifelse(isTruthy(replicate), replicate, "")))
+  }
   if (isTruthy(refs)){
     config = rbind(config, data.frame(Setting="Path to references:", Value=refs))
   }
@@ -74,7 +81,9 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
   config = rbind(config, data.frame(Setting="Running mixture deconvolution:", Value=run_mixdeconv))
   config = rbind(config, data.frame(Setting="Running unconditioned deconvolution:", Value=unconditioned))
   if (isTruthy(cond)) {
-    config = rbind(config, data.frame(Setting="Running conditioned deconvolution on reference:", Value=cond))
+    for (id in cond) {
+      config = rbind(config, data.frame(Setting="Running conditioned deconvolution on reference:", Value=id))
+    }
   } else {
     config = rbind(config, data.frame(Setting="Running conditioned deconvolution on reference:", Value=FALSE))
   }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/check_ratios.R
 \name{check_ratios}
 \alias{check_ratios}
-\title{Title Check the mixture ratios for potentially single source samples (or samples with very high mixture ratios)}
+\title{Check the mixture ratios for potentially single source samples (or samples with very high mixture ratios)}
 \usage{
 check_ratios(df, uncond = FALSE)
 }
@@ -15,5 +15,5 @@ check_ratios(df, uncond = FALSE)
 message
 }
 \description{
-Title Check the mixture ratios for potentially single source samples (or samples with very high mixture ratios)
+Check the mixture ratios for potentially single source samples (or samples with very high mixture ratios)
 }

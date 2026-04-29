@@ -9,7 +9,7 @@
 # Development Center.
 # -------------------------------------------------------------------------------------------------
 
-#' Title Calculate various metrics on the inferred genotype dataset to assist user in evaluating the final dataset
+#' Calculate various metrics on the inferred genotype dataset to assist user in evaluating the final dataset
 #'
 #' @param report data frame of the inferred single source genotypes
 #' @param A1_threshold Allele 1 probability threshold
@@ -46,7 +46,7 @@ gedmatch_metrics = function(report, A1_threshold, A2_threshold, min_num, path){
   het_A1 = round(sum(report_A1applied$het==1)/n_snps_A1applied, 4)
   het_min = round(sum(report_minsnps$het==1)/min_num, 4)
   compiled_metrics = data.frame(Allele1_Threshold_Applied=c("No", "Yes", "Minimum # of SNPs Used"), Allele2_Threshold_Applied=c("Yes", "Yes", "Yes"), Total_SNPs=c(n_snps_total, n_snps_A1applied, min_num), Mean_A1_Prob=c(mean_all, mean_A1, mean_min), Median_A1_Prob=c(median_all, median_A1, median_min), SD_A1_Prob=c(sd_all, sd_A1, sd_min), Heterozygosity=c(het_all, het_A1, het_min))
-  plot = ggplot(data=report, aes(x=report$A1_Prob))+
+  plot = ggplot(data=report, aes(x=A1_Prob))+
     geom_density(fill="grey60", color="grey60")+
     xlab("Allele 1 Probabilities for all Inferred Genotypes")
   return(list(compiled_metrics, plot))

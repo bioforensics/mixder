@@ -2,7 +2,7 @@
 % Please edit documentation in R/ancestry_prediction.R
 \name{ancestry_prediction}
 \alias{ancestry_prediction}
-\title{Title Ancestry prediction using PCA}
+\title{Ancestry prediction using PCA}
 \usage{
 ancestry_prediction(
   report,
@@ -23,11 +23,15 @@ ancestry_prediction(
 
 \item{analysis_type}{mixure deconvolution type (conditioned vs. unconditioned)}
 
+\item{contrib_status}{contributor status (major vs. minor)}
+
+\item{testsnps}{SNP set to use for PCA (All autosomal SNPs or only ancestry SNPs)}
+
 \item{groups}{How to color PCA plots (superpopulations and/or subpopulations)}
 }
 \value{
 NA
 }
 \description{
-Title Ancestry prediction using PCA
+Ancestry prediction using PCA
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/check_reads.R
 \name{check_reads}
 \alias{check_reads}
-\title{Title Check SNP sets if all SNPs have 0 reads}
+\title{Check SNP sets if all SNPs have 0 reads}
 \usage{
 check_reads(sample)
 }
@@ -13,5 +13,5 @@ check_reads(sample)
 TRUE/FALSE
 }
 \description{
-Title Check SNP sets if all SNPs have 0 reads
+Check SNP sets if all SNPs have 0 reads
 }

@@ -1,7 +1,7 @@
 url: https://bioforensics.github.io/mixder/
 template:
   bootstrap: 5
-
+  light-switch: yes
 articles:
 - title: Articles
   navbar: ~
@@ -13,3 +13,5 @@ articles:
   - Ancestry_Prediction_Tool
   - Valmetrics
   - gedmatch
+  - R_api
+

@@ -12,7 +12,6 @@ run_workflow(
   popFreq,
   refData,
   refs,
-  sample_path,
   output,
   run_mixdeconv,
   unconditioned,
@@ -55,8 +54,6 @@ run_workflow(
 \item{refData}{Reference data (if available)}
 
 \item{refs}{Path of reference genotype(s) file}
-
-\item{sample_path}{Path of sample manifest}
 
 \item{output}{Name of output directory}
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/run_indiv_efm_set.R
 \name{run_indiv_efm_set}
 \alias{run_indiv_efm_set}
-\title{Title Running individual EFM SNP sets in parallel}
+\title{Running individual EFM SNP sets in parallel}
 \usage{
 run_indiv_efm_set(
   i,
@@ -45,5 +45,5 @@ run_indiv_efm_set(
 list of mixture ratios for each analysis
 }
 \description{
-Title Running individual EFM SNP sets in parallel
+Running individual EFM SNP sets in parallel
 }
