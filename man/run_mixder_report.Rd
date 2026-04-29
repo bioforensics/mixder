@@ -7,9 +7,11 @@
 run_mixder_report(
   sample_manifest = NULL,
   sample = NULL,
-  replicate = NULL,
+  replicate = "",
   sample_reports = getwd(),
   output = "output",
+  assay = "kintelligence",
+  snp_pos = NULL,
   twofreqs = FALSE,
   freq_both = "global_1000g",
   freq_major = NULL,
@@ -40,6 +42,10 @@ run_mixder_report(
 \item{sample_reports}{Path to directory of Sample Reports or CSV file of mixture genotypes (default=current directory)}
 
 \item{output}{name of output directory, will be outputted into the sample reports directory (default="output")}
+
+\item{assay}{name of sequencing assay, either `kintelligence` or `custom` (default=kintelligence)}
+
+\item{snp_pos}{Path to file containing SNP positions of custom assay, required if assay==`custom` (default=NULL)}
 
 \item{twofreqs}{TRUE if using different allele frequency data for each contributor (default=FALSE)}
 

@@ -45,6 +45,18 @@ run_mixder_metrics = function(sample_manifest=NULL, sample=NULL, replicate=NULL,
   if (!isTruthy(major) | !isTruthy(minor)) {
     stop("Major and/or minor contributor not specified. Please rerun.")
   }
+  popFreq = load_freq(twofreqs, freq_both, freq_major, freq_minor)
+  if (tolower(assay)=="kintelligence") {
+    snp_positions = mixder::kintelligence_snp_positions
+  } else if (tolower(assay)=="custom") {
+    if (file.exists(snp_pos)) {
+      snp_positions = euroformix::tableReader(snp_pos)
+    } else {
+      stop("Custom assay specified but no SNP positions file provided.")
+    }
+  } else {
+    stop("Problem with assay name. Please specify either 'kintelligence' or 'custom'.")
+  }
   ## load in references
   if (isTruthy(refpath)) {
     print("loading references")

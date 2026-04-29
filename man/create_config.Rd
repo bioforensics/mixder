@@ -35,7 +35,9 @@ create_config(
   filter_missing,
   skipancestry,
   pcasnps,
-  pcagroups
+  pcagroups,
+  assay,
+  pos
 )
 }
 \arguments{
@@ -100,6 +102,10 @@ create_config(
 \item{pcasnps}{SNPs used for PCA (ancestry prediction)}
 
 \item{pcagroups}{Groups used for PCA (ancestry prediction), either Superpopulations or Subpopulations}
+
+\item{assay}{name of sequencing assay, either `kintelligence` or `custom`}
+
+\item{pos}{Path to file containing SNP positions of custom assay, required if assay==`custom`}
 }
 \description{
 Create configuration file containing all settings for a specific run
