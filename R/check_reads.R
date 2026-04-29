@@ -10,7 +10,7 @@
 # -------------------------------------------------------------------------------------------------
 
 
-#' Title Check SNP sets if all SNPs have 0 reads
+#' Check SNP sets if all SNPs have 0 reads
 #'
 #' @param sample path of input SNP set
 #'

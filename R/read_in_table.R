@@ -8,7 +8,7 @@
 # National Biodefense Analysis and Countermeasures Center (NBACC), a Federally Funded Research and
 # Development Center.
 # -------------------------------------------------------------------------------------------------
-#' Title Read in dataset to run through EFM
+#' Read in dataset to run through EFM
 #'
 #' @param df data table of SNPs
 #'

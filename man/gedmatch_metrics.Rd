@@ -2,7 +2,7 @@
 % Please edit documentation in R/gedmatch_metrics.R
 \name{gedmatch_metrics}
 \alias{gedmatch_metrics}
-\title{Title Calculate various metrics on the inferred genotype dataset to assist user in evaluating the final dataset}
+\title{Calculate various metrics on the inferred genotype dataset to assist user in evaluating the final dataset}
 \usage{
 gedmatch_metrics(report, A1_threshold, A2_threshold, min_num, path)
 }
@@ -21,5 +21,5 @@ gedmatch_metrics(report, A1_threshold, A2_threshold, min_num, path)
 data frame of compiled metrics
 }
 \description{
-Title Calculate various metrics on the inferred genotype dataset to assist user in evaluating the final dataset
+Calculate various metrics on the inferred genotype dataset to assist user in evaluating the final dataset
 }

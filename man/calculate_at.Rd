@@ -2,7 +2,7 @@
 % Please edit documentation in R/calculate_at.R
 \name{calculate_at}
 \alias{calculate_at}
-\title{Title}
+\title{Calculate the analytical threshold}
 \usage{
 calculate_at(sample, kinreports, dynamicAT, staticAT)
 }
@@ -19,5 +19,5 @@ calculate_at(sample, kinreports, dynamicAT, staticAT)
 data frame containing SNPs and AT values
 }
 \description{
-Title
+Calculate the analytical threshold
 }

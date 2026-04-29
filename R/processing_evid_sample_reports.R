@@ -32,12 +32,12 @@ processing_evid_sample_reports = function(inpath, id) {
         final_snps = reverse_comp(compiled_snps)
       }
       final_snps$Typed = NULL
+      break
     } else if (grepl(id, file, fixed=TRUE) & grepl(".tsv", file, fixed=TRUE)) {
       filename = paste(inpath, file, sep="/")
       final_snps = read.table(filename, header=T, sep="\t")
     }
   }
-
   evid_formatted = final_snps %>%
     group_by(.data$Marker) %>%
     rename(Height = "Reads") %>%

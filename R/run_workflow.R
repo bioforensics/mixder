@@ -21,7 +21,6 @@
 #' @param freq_minor Path (or name) of allele frequency data for minor contributor
 #' @param refData Reference data (if available)
 #' @param refs Path of reference genotype(s) file
-#' @param sample_path Path of sample manifest
 #' @param output Name of output directory
 #' @param run_mixdeconv TRUE if running EFM mixture deconvolution
 #' @param unconditioned TRUE if running unconditioned mixture deconvolution
@@ -54,7 +53,7 @@
 #'@importFrom utils write.table write.csv read.table
 #'@importFrom grDevices dev.off png
 #'@importFrom methods show
-run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refs, sample_path, output, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, skipancestry, ancestrysnps, pcagroups) {
+run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refs, output, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, skipancestry, ancestrysnps, pcagroups) {
   out_path = glue("{kinpath}/snp_sets/{output}/")
   if (replicate_id == "") {
     logfile = file(glue("{out_path}config_log_files/{date}/run_log_{id}_{date}.txt"), open = "wt")
@@ -62,11 +61,9 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
     logfile = file(glue("{out_path}config_log_files/{date}/run_log_{id}_{replicate_id}_{date}.txt"), open = "wt")
   }
   sink(logfile, type = "message", append=T)
+  on.exit(sink(file=NULL, type="message"))
   if (method=="Calculate Metrics" & unconditioned & (!isTruthy(major) | !isTruthy(minor))) {
     stop("No major/minor contributor IDs provided but calculating metrics for an unconditioned analysis. Please re-run!")
-  }
-  if (!isTruthy(sample_path)) {
-    stop("No Sample Manifest provided. Please re-run!")
   }
   if (!isTruthy(kinpath)  & method != "Create GEDmatch PRO Report"  & run_mixdeconv) {
     stop("No Kintelligence Sample Reports provided. Please re-run!")
@@ -77,7 +74,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
   message(glue("Sample: {id}<br/>"))
   message(glue("Replicate Sample: {replicate_id}<br/>"))
     ## run EFM
-  if (run_mixdeconv | !skipancestry) { 
+  if (run_mixdeconv | !skipancestry) {
     message("Loading Frequency Data<br/>")
     popFreq = load_freq(out_path, twofreqs, freq_both, freq_major, freq_minor)
     attable = process_kinreport(id, replicate_id, kinpath, dynamicAT, staticAT)
@@ -107,15 +104,13 @@ run_workflow = function(date, id, replicate_id, twofreqs, freq_both, freq_major,
     dir.create(file.path(write_path, "GEDMatchPROReports/Metrics"), showWarnings = FALSE, recursive=TRUE)
   }
   if (unconditioned) {
-    if (run_mixdeconv | !skipancestry) {
-      efm_v = getNamespaceVersion("euroformix")[["version"]]
-      if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
-        major_c = "C2"
-        minor_c = "C1"
-      } else {
-        major_c = "C1"
-        minor_c = "C2"
-      }
+    efm_v = getNamespaceVersion("euroformix")[["version"]]
+    if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
+      major_c = "C2"
+      minor_c = "C1"
+    } else {
+      major_c = "C1"
+      minor_c = "C2"
     }
     if (run_mixdeconv) {
       uncond_table_major = data.frame(efm_results_major[[1]]) %>%

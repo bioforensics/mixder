@@ -19,6 +19,7 @@
 #' @param out_path Output path
 #' @param attable AT table
 #' @param nsets Number of SNP sets
+#' @param ancestry if not skipping ancestry prediction
 #' @param cond Sample IDs to condition on
 #' @param uncond TRUE/FALSE if performing unconditioned analysis
 #' @param keep_bins To use existing SNP bins or create new bins (and files)

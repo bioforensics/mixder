@@ -6,10 +6,11 @@ articles:
   gedmatch: gedmatch.html
   Installation: Installation.html
   Introduction: Introduction.html
+  R_api: R_api.html
   Required_Files: Required_Files.html
   Running_MixDecon: Running_MixDecon.html
   Valmetrics: Valmetrics.html
-last_built: 2026-04-22T17:36Z
+last_built: 2026-04-29T15:16Z
 urls:
   reference: https://bioforensics.github.io/mixder/reference
   article: https://bioforensics.github.io/mixder/articles

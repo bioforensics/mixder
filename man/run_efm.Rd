@@ -39,6 +39,8 @@ run_efm(
 
 \item{nsets}{Number of SNP sets}
 
+\item{ancestry}{if not skipping ancestry prediction}
+
 \item{cond}{Sample IDs to condition on}
 
 \item{uncond}{TRUE/FALSE if performing unconditioned analysis}

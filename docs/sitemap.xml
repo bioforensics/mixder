@@ -9,6 +9,7 @@
 <url><loc>https://bioforensics.github.io/mixder/articles/Ancestry_Prediction_Tool.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/articles/Installation.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/articles/Introduction.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/articles/R_api.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/articles/Required_Files.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/articles/Running_MixDecon.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/articles/Valmetrics.html</loc></url>
@@ -40,6 +41,7 @@
 <url><loc>https://bioforensics.github.io/mixder/reference/create_evid_all.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/create_gedmatchpro_report.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/create_replicatedf.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/reference/decode_freq_name.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/equalize_samples.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/filter_alleles.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/fix_columns.html</loc></url>
@@ -68,6 +70,9 @@
 <url><loc>https://bioforensics.github.io/mixder/reference/reverse_comp.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/run_efm.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/run_indiv_efm_set.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/reference/run_mixder_ancestry.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/reference/run_mixder_metrics.html</loc></url>
+<url><loc>https://bioforensics.github.io/mixder/reference/run_mixder_report.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/run_workflow.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/snpinfo.html</loc></url>
 <url><loc>https://bioforensics.github.io/mixder/reference/write_tables.html</loc></url>
