@@ -1,7 +1,7 @@
 # mixder 0.9.0
 
 ## Changes in version 0.9.0
-- Implemented CLI for running MixDeR without using the Shiny app
+- Implemented an R API for running MixDeR without using the Shiny app
 - Fixed bug with logging (was not closing connection after error or MixDeR finished)  
 - Fixed bug with calculating AT using Sample Reports generated using version 2.7
 
