@@ -79,7 +79,7 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
       config = rbind(config, data.frame(Setting="Frequency data for Minor Contributor:", Value=freq_all))
     }
   }
-  config = rbind(config, data.frame(Setting="Output path:", Value=glue("{kinpath}/snp_sets/{out_path}/")))
+  config = rbind(config, data.frame(Setting="Output path:", Value=out_path))
   config = rbind(config, data.frame(Setting="Number of SNP sets:", Value=sets))
   config = rbind(config, data.frame(Setting="Minimum number of SNPs:", Value=minimum_snps))
   config = rbind(config, data.frame(Setting="Static AT:", Value=staticAT))

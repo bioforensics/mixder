@@ -66,7 +66,7 @@ run_mixder_ancestry = function(sample_manifest=NULL, sample=NULL, replicate=NULL
     stop("Please provide sample manifest or sample ID!")
   }
   print("Running ancestry prediction")
-  create_config(date, FALSE, "1000G_global", NA, NA, refpath, sample_manifest, sample, replicate, output, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, FALSE, FALSE, snpset, pcagroupcat)
+  create_config(date, FALSE, "1000G_global", NA, NA, refpath, sample_manifest, sample, replicate, out_path, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, FALSE, FALSE, snpset, pcagroupcat)
   if (isTruthy(sample_manifest)) {
   ## sample manifest; loop through each sample
     manifest=suppressWarnings(euroformix::tableReader(sample_manifest))

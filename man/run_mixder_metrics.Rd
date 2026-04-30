@@ -7,9 +7,10 @@
 run_mixder_metrics(
   sample_manifest = NULL,
   sample = NULL,
-  replicate = NULL,
+  replicate = "",
   sample_reports = getwd(),
   output = "output",
+  assay = "kintelligence",
   twofreqs = FALSE,
   freq_both = "global_1000g",
   freq_major = NULL,

@@ -12,7 +12,7 @@ run_workflow(
   popFreq,
   refData,
   refs,
-  output,
+  out_path,
   run_mixdeconv,
   unconditioned,
   cond,
@@ -54,8 +54,6 @@ run_workflow(
 \item{refData}{Reference data (if available)}
 
 \item{refs}{Path of reference genotype(s) file}
-
-\item{output}{Name of output directory}
 
 \item{run_mixdeconv}{TRUE if running EFM mixture deconvolution}
 
@@ -106,6 +104,8 @@ run_workflow(
 \item{assay}{assay used (kintelligence or custom)}
 
 \item{positions}{SNP chromosomal positions}
+
+\item{output}{Name of output directory}
 }
 \description{
 Runs workflow
