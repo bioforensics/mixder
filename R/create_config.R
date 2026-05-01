@@ -108,6 +108,6 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
     config = rbind(config, data.frame(Setting="Assumed major contributor:", Value=major))
     config = rbind(config, data.frame(Setting="Assumed minor contributor:", Value=minor))
   }
-  dir.create(file.path(kinpath, "snp_sets", out_path, "config_log_files", date), showWarnings = FALSE, recursive=TRUE)
-  write.table(config, glue("{kinpath}/snp_sets/{out_path}/config_log_files/{date}/config_settings_run_{date}.txt"), row.names=F, quote=F, col.names=T, sep="\t")
+  dir.create(file.path(out_path, "config_log_files", date), showWarnings = FALSE, recursive=TRUE)
+  write.table(config, glue("{out_path}/config_log_files/{date}/config_settings_run_{date}.txt"), row.names=F, quote=F, col.names=T, sep="\t")
 }
