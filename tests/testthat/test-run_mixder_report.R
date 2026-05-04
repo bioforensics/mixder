@@ -10,7 +10,7 @@ test_that("Run MixDeR Report", {
   dir.create(refdir)
   file.copy(test_path("testdata", "EFM_references.csv"), refdir)
   exp_cond_report = read.csv(test_path("testdata", "Sample01a_major_contrib_conditioned_on_Ref2_Single_GEDmatchPROReport.txt"), header=T, sep="\t")
-  run_mixder_report(sample="Sample01a", sample_reports=tmpdir, cond=TRUE, uncond=FALSE, refpath=refdir, refs="Ref2")
+  run_mixder_report(sample="Sample01a", sample_reports=tmpdir, refpath=refdir, refs="Ref2", uncond=FALSE, cond=TRUE)
   obs_cond_report = read.csv(glue("{outpath}/Sample01a_major_contrib_conditioned_on_Ref2_Single_GEDmatchPROReport.txt"), header=T, sep="\t")
   expect_equal(exp_cond_report, obs_cond_report)
 })

@@ -26,13 +26,16 @@
 #' @export
 #'
 ancestry_prediction = function(report, path, id, analysis_type, contrib_status, testsnps, groups) {
+  print(testsnps)
   if (testsnps == "All Autosomal SNPs") {
     plotid="AllSNPs"
     geno=mixder::ancestry_1000G_allsamples
+
   } else {
     plotid="AncestrySNPsOnly"
     geno=mixder::ancestrysnps_1000G_allsamples
   }
+  print(geno[1:5,1:10])
   ncols=ncol(geno)
   geno_filt=geno[,c(7:ncols)]
   snps = data.frame("snp_id"=colnames(geno_filt))

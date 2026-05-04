@@ -62,8 +62,8 @@ run_mixder_report = function(sample_manifest=NULL, sample=NULL, replicate="", sa
       refData = convert_table_to_list(data.frame(processing_ref_sample_reports(refpath)))
       save(refData, file=glue("{refpath}/EFM_references.rda"))
     } else {
-      refs = data.frame(fread(glue("{refpath}/EFM_references.csv")))
-      refData = convert_table_to_list(refs)
+      refsdf = data.frame(fread(glue("{refpath}/EFM_references.csv")))
+      refData = convert_table_to_list(refsdf)
       save(refData, file=glue("{refpath}/EFM_references.rda"))
     }
   } else if (cond) {
