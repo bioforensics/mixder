@@ -4,7 +4,7 @@
 \alias{checking_af}
 \title{Checking AF file for correct format; formatting if necessary}
 \usage{
-checking_af(affile, contrib)
+checking_af(affile)
 }
 \arguments{
 \item{affile}{Allele Frequency file}

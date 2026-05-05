@@ -18,8 +18,8 @@
 #' @importFrom data.table fread
 #'
 read_in_freq = function(freq){
-  efmaf=fread(freq, header=T, sep=",")
-  tab=data.frame(efmaf)
+  #efmaf=fread(freq, header=T, sep=",")
+  tab=data.frame(freq)
   Anames = tab[,1] #first column is allele frequeneies
   tab = tab[,-1,drop=FALSE]
   freqlist = vector("list", ncol(tab))

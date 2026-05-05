@@ -17,17 +17,21 @@
 #' @export
 #'
 #' @importFrom data.table fread
-checking_af = function(affile, contrib) {
-  af=data.frame(fread(affile, header=T, sep=","))
-  if (isTruthy(af[c(1:4),1] == c("A", "C", "G", "T"))) {
-    #finalfreq = euroformix::freqImport(affile)[[1]]
-    finalfreq = read_in_freq(affile)
+checking_af = function(affile) {
+  if (grepl(".rda", affile, ignore.case = TRUE)) {
+    finalfreq=load(affile)
   } else {
-    af_formatted = format_af(af)
-    outpath = dirname(af)
-    utils::write.csv(af_formatted, glue("{outpath}/custom_AF_{contrib}_formatted.csv"), row.names=F, quote=F)
-    #finalfreq = euroformix::freqImport(glue("{outpath}/custom_AF_{contrib}_formatted.csv"))[[1]]
-    finalfreq = read_in_freq(glue("{outpath}/custom_AF_{contrib}_formatted.csv"))
+    af=data.frame(fread(affile, header=T, sep=","))
+    outpath = dirname(affile)
+    filename = gsub(".csv","", basename(affile))
+    if (!isTruthy(af[c(1:4),1] == c("A", "C", "G", "T"))) {
+      af_formatted = format_af(af)
+      finalfreq=read_in_freq(af_formatted)
+      utils::write.csv(finalfreq, glue("{outpath}/{filename}_formatted.csv"), row.names=F, quote=F)
+    } else {
+      finalfreq = af
+    }
+    save(finalfreq, file=glue("{outpath}/{filename}.rda"))
   }
   return(finalfreq)
 }
