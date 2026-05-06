@@ -35,7 +35,14 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
     sample = glue("{id}_set{i}")
     replicate = replicate_id
   }
-  evidData = create_evid(sample, replicate, snps_input)
+  if (!file.exists(glue("{write_path}/rda_files/{sample}.rda"))) {
+    print("creating evid")
+    evidData = create_evid(sample, replicate, snps_input)
+    dir.create(file.path(write_path, "rda_files"), showWarnings = FALSE, recursive=TRUE)
+    save(evidData, file=glue("{write_path}/rda_files/{sample}.rda"))
+  } else {
+    load(glue("{write_path}/rda_files/{sample}.rda"))
+  }
   if (isTruthy(evidData)) {
     ##create AT vector
     if (length(attable) == 1) {
@@ -55,11 +62,13 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
       repeat {
         message(glue("Running unconditioned analysis for set {i}, attempt #{repeat_num+1}<br/>"))
         if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
-          uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0)
+          uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0, verbose=TRUE)
         } else {
-          uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01)
+          uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01,  verbose=TRUE)
         }
+        print('r')
         uncond_finaltable = euroformix::deconvolve(uncond_results)
+        print("1")
         if (check_allele_probabilities(data.frame(uncond_finaltable[["table4"]]), i)) break
         message(glue("Set {i} unconditioned: Mixture proportion = 0.5 or Allele probability flipping detected - will rerun!<br/>"))
         repeat_num = repeat_num + 1

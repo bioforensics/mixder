@@ -16,13 +16,16 @@
 #' @export
 #'
 check_nas = function(df) {
-  if (sum(!is.na(df$Allele.4))==0) {
-    df[,c("Allele.4","Height.4")] = list(NULL)
+  if (isTruthy(df$Allele.4)) {
+    if (sum(!is.na(df$Allele.4))==0) {
+      df[,c("Allele.4","Height.4")] = list(NULL)
+    }
   }
-  if (sum(!is.na(df$Allele.3))==0) {
-    df[,c("Allele.3","Height.3")] = list(NULL)
+  if (isTruthy(df$Allele.3)) {
+    if (sum(!is.na(df$Allele.3))==0) {
+      df[,c("Allele.3","Height.3")] = list(NULL)
+    }
+    df[is.na(df)] = 0
   }
-  df[is.na(df)] = 0
-  #df %>% replace(is.na(.data), 0)
   return(df)
 }

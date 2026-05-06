@@ -19,19 +19,18 @@
 #' @importFrom data.table fread
 checking_af = function(affile) {
   if (grepl(".rda", affile, ignore.case = TRUE)) {
-    finalfreq=load(affile)
+    load(affile)
   } else {
     af=data.frame(fread(affile, header=T, sep=","))
-    outpath = dirname(affile)
-    filename = gsub(".csv","", basename(affile))
+    filename = gsub(".csv","", affile)
     if (!isTruthy(af[c(1:4),1] == c("A", "C", "G", "T"))) {
       af_formatted = format_af(af)
-      finalfreq=read_in_freq(af_formatted)
-      utils::write.csv(finalfreq, glue("{outpath}/{filename}_formatted.csv"), row.names=F, quote=F)
+      utils::write.csv(af_formatted, glue("{filename}_EFMformatted.csv"), row.names=F, quote=F)
     } else {
-      finalfreq = af
+      af_formatted = af
     }
-    save(finalfreq, file=glue("{outpath}/{filename}.rda"))
+    popFreq=read_in_freq(af_formatted)
+    save(popFreq, file=glue("{filename}.rda"))
   }
-  return(finalfreq)
+  return(popFreq)
 }
