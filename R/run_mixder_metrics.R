@@ -48,17 +48,22 @@ run_mixder_metrics = function(sample_manifest=NULL, sample=NULL, replicate="", s
   }
   popFreq = load_freq(out_path, twofreqs, freq_both, freq_major, freq_minor)
   ## load in references
+  print("loading references")
   if (isTruthy(refpath)) {
-    print("loading references")
-    if (file.exists(glue("{refpath}/EFM_references.rda"))) {
-      load(glue("{refpath}/EFM_references.rda"))
-    } else if (!file.exists(glue("{refpath}/EFM_references.csv"))) {
-      refData = convert_table_to_list(data.frame(processing_ref_sample_reports(refpath)))
-      save(refData, file=glue("{refpath}/EFM_references.rda"))
+    if (cond) {
+      if (file.exists(glue("{refpath}/EFM_references.rda"))) {
+        load(glue("{refpath}/EFM_references.rda"))
+      } else {
+        if (!file.exists(glue("{refpath}/EFM_references.csv"))) {
+          refData = convert_table_to_list(data.frame(processing_ref_sample_reports(refpath)))
+        } else {
+          refsdf = data.frame(fread(glue("{refpath}/EFM_references.csv")))
+          refData = convert_table_to_list(refsdf)
+        }
+        save(refData, file=glue("{refpath}/EFM_references.rda"))
+      }
     } else {
-      refsdf = data.frame(fread(glue("{refpath}/EFM_references.csv")))
-      refData = convert_table_to_list(refsdf)
-      save(refData, file=glue("{refpath}/EFM_references.rda"))
+      refData = NULL
     }
   } else {
     stop("No references provided. Please re-run!")

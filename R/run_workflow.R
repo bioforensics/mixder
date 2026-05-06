@@ -174,10 +174,10 @@ run_workflow = function(date, id, replicate_id, twofreqs, popFreq, refData, refs
       show(minor_report[[3]])
       dev.off()
     } else if (method == "Calculate Metrics") {
-      major_ref = format_ref(refData, major, refs)
+      major_ref = format_ref(major, refs)
       major_tables = suppressWarnings(process_efm_files(uncond_table_major, major_c, major_ref, minimum_snps, A1min, A1max, A2min, A2max, metrics=TRUE, filter_missing))
       write_tables(major_tables, glue("{write_path}/{id}/unconditioned/{major}"), minimum_snps)
-      minor_ref = format_ref(refData, minor, refs)
+      minor_ref = format_ref(minor, refs)
       minor_tables = suppressWarnings(process_efm_files(uncond_table_minor, minor_c, minor_ref, minimum_snps, A1min, A1max, A2min, A2max, metrics=TRUE, filter_missing))
       write_tables(minor_tables, glue("{write_path}/{id}/unconditioned/{minor}"), minimum_snps)
     }
@@ -227,7 +227,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, popFreq, refData, refs
         }
       } else if (method == "Calculate Metrics") {
         unk = ifelse(contrib_status == "major", major, minor)
-        ref = format_ref(refData, unk, refs)
+        ref = format_ref(unk, refs)
         geno_correct_tables = suppressWarnings(process_efm_files(get(glue("efm_table_{contrib_status}")), "C2", ref, minimum_snps, A1min, A1max, A2min, A2max, metrics=TRUE, filter_missing))
         write_tables(geno_correct_tables, glue("{write_path}/{id}/conditioned/{unk}"), minimum_snps)
       }
