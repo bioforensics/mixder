@@ -25,6 +25,5 @@ read_in_table = function(df) {
            "character",
            myColClasses)
   evid_df_form = data.frame(fread(df, header=T, sep="\t", colClasses=myColClasses))
-  evid_final = convert_table_to_list(evid_df_form)
-  return(evid_final)
+  return(evid_df_form)
 }

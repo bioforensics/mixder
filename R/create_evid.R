@@ -22,7 +22,8 @@ create_evid = function(sample, rep_sample, inpath) {
     if (check_reads(evidfn)) {
       evidData = vector()
     } else {
-      evidData = read_in_table(evidfn)
+      evid_df_form = read_in_table(evidfn)
+      evidData = convert_table_to_list(evid_df_form)
     }
   } else {
     if (check_reads(evidfn)) {
