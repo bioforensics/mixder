@@ -54,6 +54,7 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
     ratio_row[glue("Set{i}_C1_Prob_uncond")] = NA
     ratio_row[glue("Set{i}_C2_Prob_uncond")] = NA
     if (uncond) {
+      print(glue("Running unconditioned analysis for set {i})"))
       message("Running unconditioned mixture deconvolution<br/>")
       dir.create(file.path(write_path, "unconditioned"), showWarnings = FALSE, recursive=TRUE)
       ##unconditioned analysis
@@ -74,14 +75,10 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
       if (repeat_num < 10) {
         ratio_row[glue("Set{i}_C1_Prob_uncond")] = uncond_results[["fit"]][["thetahat2"]][["Mix-prop. C1"]]
         ratio_row[glue("Set{i}_C2_Prob_uncond")] = uncond_results[["fit"]][["thetahat2"]][["Mix-prop. C2"]]
-        #ratio_row = list(Set_uncond=i, C1_Prob_uncond=uncond_results[["fit"]][["thetahat2"]][["Mix-prop. C1"]], C2_Prob_uncond=uncond_results[["fit"]][["thetahat2"]][["Mix-prop. C2"]])
-        #uncond_ratios = rbind(uncond_ratios, ratio_row)
         write.table(uncond_finaltable[["table4"]], glue("{write_path}/unconditioned/{id}_set{i}_uncond.tsv"), quote=F, row.names=F, sep="\t")
-        #uncond_finaltable_all = rbind(uncond_finaltable_all, uncond_finaltable[["table4"]])
-        #set_results = uncond_finaltable[["table4"]]
+        write.table(uncond_finaltable[["table3"]], glue("{write_path}/unconditioned/{id}_set{i}_uncond_table3.tsv"), quote=F, row.names=F, sep="\t")
       } else {
         message(glue("Repeated unconditioned analysis 10 times unsuccessfully. Will skip set {i}!<br/>"))
-        #set_results = data.frame()
       }
     }
     final_list = c(ratio_row)
@@ -91,8 +88,8 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
       cond_vector = rep.int(0, total_refs)
       for (cond_on in cond) {
         ratio_row = list()
+        print(glue("Running conditioned analysis on {cond_on} for set {i}"))
         message(glue("Running mixture deconvolution conditioned on {cond_on}<br/>"))
-        #nam = glue("df_{cond_on}")
         list_num = match(cond_on, names(refData))
         dir.create(file.path(write_path, glue("/conditioned/cond_on_{cond_on}")), showWarnings = FALSE, recursive=TRUE)
         message(glue("Running conditioned analysis on {cond_on} for set {i}.<br/>"))
