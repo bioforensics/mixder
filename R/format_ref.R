@@ -20,7 +20,7 @@
 #' @importFrom data.table fread
 format_ref = function(refid, refs) {
   ref_profile = data.frame(fread(glue("{refs}/EFM_references.csv"))) %>%
-    filter(.data$Sample.Name == ref_int)
+    filter(.data$Sample.Name == refid)
   ref_profile$A1_order = ifelse(ref_profile$`Allele1`>ref_profile$`Allele2`, ref_profile$`Allele1`, ref_profile$`Allele2`)
   ref_profile$A2_order = ifelse(ref_profile$`Allele1`>ref_profile$`Allele2`, ref_profile$`Allele2`, ref_profile$`Allele1`)
   return(ref_profile)

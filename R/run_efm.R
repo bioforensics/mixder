@@ -54,7 +54,7 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
   }
   results = list()
   for (i in 1:nsets) {
-    results[[i]] = run_indiv_efm_set(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, cond=cond, uncond=uncond)
+    results[[i]] = run_indiv_efm_set(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, keep_bins, cond=cond, uncond=uncond)
   }
   uncond_ratios = data.frame()
   uncond_finaltable_all = data.frame()

@@ -14,6 +14,7 @@ run_indiv_efm_set(
   replicate_id,
   write_path,
   attable,
+  keep_bins,
   cond = NULL,
   uncond = TRUE
 )

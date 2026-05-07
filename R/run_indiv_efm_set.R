@@ -25,7 +25,7 @@
 #' @return list of mixture ratios for each analysis
 #' @export
 #'
-run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, cond = NULL, uncond=TRUE) {
+run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, keep_bins, cond = NULL, uncond=TRUE) {
   efm_v = getNamespaceVersion("euroformix")[["version"]]
   final_list = c()
   if (replicate_id != "") {
@@ -35,7 +35,7 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
     sample = glue("{id}_set{i}")
     replicate = replicate_id
   }
-  if (!file.exists(glue("{write_path}/rda_files/{sample}.rda"))) {
+  if (!file.exists(glue("{write_path}/rda_files/{sample}.rda")) | !(keep_bins)) {
     evidData = create_evid(sample, replicate, snps_input)
     dir.create(file.path(write_path, "rda_files"), showWarnings = FALSE, recursive=TRUE)
     save(evidData, file=glue("{write_path}/rda_files/{sample}.rda"))
