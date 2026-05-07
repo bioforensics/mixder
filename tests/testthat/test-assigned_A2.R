@@ -3,9 +3,9 @@ test_that("Calling allele 2 genotype", {
   snp_pos = mixder::kintelligence_snp_positions
   expect_equal(nrow(assigned_A2(testdf, 0.9, snp_pos)), 4)
   expect_equal(ncol(assigned_A2(testdf, 0.9, snp_pos)), 5)
-  expect_equal(assigned_A2(testdf, 0.9, snp_pos)$Allele2, c("C", "A", "A", "T"))
-  expect_equal(assigned_A2(testdf, 0.5, snp_pos)$Allele2, c("C", "G", "A", "T"))
-  expect_equal(assigned_A2(testdf, 0, snp_pos)$Allele2, c("C", "G", "G", "T"))
+  expect_equal(assigned_A2(testdf, 0.9, snp_pos)$Allele2, c("A", "A", "T", "C"))
+  expect_equal(assigned_A2(testdf, 0.5, snp_pos)$Allele2, c("G", "A", "T", "C"))
+  expect_equal(assigned_A2(testdf, 0, snp_pos)$Allele2, c("G", "G", "T", "C"))
   testdf_missing = data.frame(Locus = c("RS1000022", "RS1000137", "RS10002268", "RS10002917"), A1 = c("T", "C", "A", "A"), A2 = c("C", "T", "G", "99"), A1_Prob = c(1, 1, 1, 0.999), A2_Prob = c(1, 0.99, 0.87, 0.9))
-  expect_equal(assigned_A2(testdf_missing, 0.9, snp_pos)$Allele2, c("C", "A", "A", "T"))
+  expect_equal(assigned_A2(testdf_missing, 0.9, snp_pos)$Allele2, c("A", "A", "T", "C"))
 })

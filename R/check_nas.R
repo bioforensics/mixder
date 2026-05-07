@@ -16,12 +16,12 @@
 #' @export
 #'
 check_nas = function(df) {
-  if (isTruthy(df$Allele.4)) {
+  if ("Allele.4" %in% names(df)) {
     if (sum(!is.na(df$Allele.4))==0) {
       df[,c("Allele.4","Height.4")] = list(NULL)
     }
   }
-  if (isTruthy(df$Allele.3)) {
+  if ("Allele.3" %in% names(df)) {
     if (sum(!is.na(df$Allele.3))==0) {
       df[,c("Allele.3","Height.3")] = list(NULL)
     }
