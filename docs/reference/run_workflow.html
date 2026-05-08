@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixder</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,6 +22,7 @@
     <li><a class="dropdown-item" href="../articles/Installation.html">Installation</a></li>
     <li><a class="dropdown-item" href="../articles/Required_Files.html">Required Files</a></li>
     <li><a class="dropdown-item" href="../articles/Running_MixDecon.html">Running Mixture Deconvolution</a></li>
+    <li><a class="dropdown-item" href="../articles/Custom_SNPs.html">Custom SNP Sets</a></li>
     <li><a class="dropdown-item" href="../articles/Ancestry_Prediction_Tool.html">Ancestry Prediction Tool</a></li>
     <li><a class="dropdown-item" href="../articles/Valmetrics.html">Calculating Validation Metrics</a></li>
     <li><a class="dropdown-item" href="../articles/gedmatch.html">Generating GEDmatch PRO Report</a></li>
@@ -63,7 +64,7 @@
 <span>  <span class="va">popFreq</span>,</span>
 <span>  <span class="va">refData</span>,</span>
 <span>  <span class="va">refs</span>,</span>
-<span>  <span class="va">output</span>,</span>
+<span>  <span class="va">out_path</span>,</span>
 <span>  <span class="va">run_mixdeconv</span>,</span>
 <span>  <span class="va">unconditioned</span>,</span>
 <span>  <span class="va">cond</span>,</span>
@@ -122,10 +123,6 @@
 
 <dt id="arg-refs">refs<a class="anchor" aria-label="anchor" href="#arg-refs"></a></dt>
 <dd><p>Path of reference genotype(s) file</p></dd>
-
-
-<dt id="arg-output">output<a class="anchor" aria-label="anchor" href="#arg-output"></a></dt>
-<dd><p>Name of output directory</p></dd>
 
 
 <dt id="arg-run-mixdeconv">run_mixdeconv<a class="anchor" aria-label="anchor" href="#arg-run-mixdeconv"></a></dt>
@@ -226,6 +223,10 @@
 
 <dt id="arg-positions">positions<a class="anchor" aria-label="anchor" href="#arg-positions"></a></dt>
 <dd><p>SNP chromosomal positions</p></dd>
+
+
+<dt id="arg-output">output<a class="anchor" aria-label="anchor" href="#arg-output"></a></dt>
+<dd><p>Name of output directory</p></dd>
 
 </dl></div>
 

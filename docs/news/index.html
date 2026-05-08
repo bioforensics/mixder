@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixder</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,6 +22,7 @@
     <li><a class="dropdown-item" href="../articles/Installation.html">Installation</a></li>
     <li><a class="dropdown-item" href="../articles/Required_Files.html">Required Files</a></li>
     <li><a class="dropdown-item" href="../articles/Running_MixDecon.html">Running Mixture Deconvolution</a></li>
+    <li><a class="dropdown-item" href="../articles/Custom_SNPs.html">Custom SNP Sets</a></li>
     <li><a class="dropdown-item" href="../articles/Ancestry_Prediction_Tool.html">Ancestry Prediction Tool</a></li>
     <li><a class="dropdown-item" href="../articles/Valmetrics.html">Calculating Validation Metrics</a></li>
     <li><a class="dropdown-item" href="../articles/gedmatch.html">Generating GEDmatch PRO Report</a></li>
@@ -53,14 +54,13 @@
 <div class="section level3">
 <h3 id="changes-in-version-0-10-0">Changes in version 0.10.0<a class="anchor" aria-label="anchor" href="#changes-in-version-0-10-0"></a></h3>
 <ul><li>Created more flexibility with file format for sample manifest</li>
-<li>Implemented support for custom SNP sets:
-<ul><li>Drop down menu to select either “Kintelligence” or “Custom” assay; will require SNP positions file if using custom</li>
+<li>Implemented support for custom SNP panels:
+<ul><li>In GUI, Drop down menu to select either “Kintelligence” or “Custom” assay; will require SNP positions file if using custom</li>
+<li>Using R API, <code>assay</code> and <code>snp_pos</code> arguments used to specify if a custom panel is used</li>
 <li>Wrote functions to read in and create EFM-compatible files more efficiently</li>
-<li>Save large data files (i.e. reference SNP profiles, frequency files, etc.) as .rda files and will auto-detect these to load instead of reading in large file (significantly faster)</li>
+<li>Save large data files (i.e. reference SNP profiles, frequency files, etc.) as <code>.rda</code> files and will auto-detect these to load instead of reading in large file (significantly faster)</li>
 </ul></li>
-<li>Load frequency data only once instead of with each sample</li>
-<li>Fixed bug with uploading custom frequency data file(s)</li>
-<li>Fixed bug with logging not terminating when program exits</li>
+<li>Load frequency data only once instead of with each sample when using Shiny app</li>
 </ul></div>
 </div>
     <div class="section level2">

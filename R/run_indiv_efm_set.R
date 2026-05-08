@@ -54,7 +54,7 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
     ratio_row[glue("Set{i}_C1_Prob_uncond")] = NA
     ratio_row[glue("Set{i}_C2_Prob_uncond")] = NA
     if (uncond) {
-      print(glue("Running unconditioned analysis for set {i})"))
+      print(glue("Running unconditioned analysis for set {i}"))
       message("Running unconditioned mixture deconvolution<br/>")
       dir.create(file.path(write_path, "unconditioned"), showWarnings = FALSE, recursive=TRUE)
       ##unconditioned analysis
