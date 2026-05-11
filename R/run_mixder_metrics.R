@@ -46,7 +46,7 @@ run_mixder_metrics = function(sample_manifest=NULL, sample=NULL, replicate="", s
   if (!isTruthy(major) | !isTruthy(minor)) {
     stop("Major and/or minor contributor not specified. Please rerun.")
   }
-  popFreq = load_freq(out_path, twofreqs, freq_both, freq_major, freq_minor)
+  popFreq = load_freq(twofreqs, freq_both, freq_major, freq_minor)
   ## load in references
   print("loading references")
   if (isTruthy(refpath)) {

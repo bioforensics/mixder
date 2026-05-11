@@ -41,7 +41,7 @@
 run_mixder_report = function(sample_manifest=NULL, sample=NULL, replicate="", sample_reports = getwd(), output = "output", assay="kintelligence", snp_pos=NULL, twofreqs=FALSE, freq_both="global_1000g", freq_major=NULL, freq_minor=NULL, refpath=NULL, refs=NULL, mixdeconv=TRUE, uncond=TRUE, cond=FALSE, sets=10, dynamicAT=0.015, staticAT=10, minimum_snps=6000, A1_threshold=0.99, A2_threshold=0.6, filter_missing=FALSE, minor_contrib_threshold=FALSE, keep_bins=TRUE) {
   date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
   out_path = glue("{sample_reports}/snp_sets/{output}/")
-  popFreq = load_freq(out_path, twofreqs, freq_both, freq_major, freq_minor)
+  popFreq = load_freq(twofreqs, freq_both, freq_major, freq_minor)
   if (tolower(assay)=="kintelligence") {
     snp_positions = mixder::kintelligence_snp_positions
   } else if (tolower(assay)=="custom") {

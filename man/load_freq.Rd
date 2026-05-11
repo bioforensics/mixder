@@ -4,13 +4,7 @@
 \alias{load_freq}
 \title{Load frequency data}
 \usage{
-load_freq(
-  out_path,
-  twofreqs,
-  freq_both_input,
-  freq_major_input,
-  freq_minor_input
-)
+load_freq(twofreqs, freq_both_input, freq_major_input, freq_minor_input)
 }
 \arguments{
 \item{twofreqs}{If two different allele frequency files are to be used}

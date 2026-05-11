@@ -17,7 +17,7 @@
 #'
 #' @return list of major AF data data frame and minor AF data data frame
 #' @export
-load_freq = function(out_path, twofreqs, freq_both_input, freq_major_input, freq_minor_input) {
+load_freq = function(twofreqs, freq_both_input, freq_major_input, freq_minor_input) {
   freqs_allowed = c("Global - 1000G", "Global - gnomAD", "AFR - 1000G", "AMR - 1000G", "EAS - 1000G", "EUR - 1000G", "SAS - 1000G")
   if (!twofreqs) {
     if (file.exists(freq_both_input)) {
