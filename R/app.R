@@ -62,7 +62,7 @@ mixder = function() {
                        name = "question-circle",
                      )
                      ) |>
-        add_prompt(message = "Select a folder containing the Mixture Sample Reports.", position = "right"),
+        add_prompt(message = "Select a folder containing the Mixture Sample Reports or a TSV file containing mixture genotypes.", position = "right"),
       textOutput("kin_inpath"),
       conditionalPanel(condition = "input.method == 'Calculate Metrics' | input.cond == 1", uiOutput("ref_GetFile"), uiOutput("ref_text")),
       conditionalPanel(condition = "input.cond == 1", uiOutput("ref_selector")),
@@ -91,6 +91,7 @@ mixder = function() {
         add_prompt(message = "This folder will be created in the specified SNP files folder to store generated output.\nIf not running EFM, it is required to specify the name of the folder containing previously generated EFM output.", position = "right")
       ), "output"),
     shinyjs::useShinyjs(),
+    id="panel",
     actionButton("Submit", "Run MixDeR")
     ),
     mainPanel(width=15,
@@ -395,22 +396,22 @@ server = function(input, output, session) {
       add_prompt(message = "When calculating metrics, a range of allele 2 probability thresholds\ncan be used to calculate the metrics at each combination of allele 1 and allele 2 probability thresholds.\nThis sets the maximum allele 2 probability threshold.\nThe threshold increases in increments of 0.01.", position = "right")
     ), value=1, min = 0, max = 1)
   })
-  #volumes = getVolumes()
+  ## submit number
   ## sample file
   roots = c(home="~", wd=".")
   shinyFileChoose(input, "sample_GetFile", roots=roots, session=session, defaultRoot="home")
   samplefile = reactive({parseFilePaths(roots, input$sample_GetFile)})
-  observe({
-    if(!is.null(samplefile)){
-      output$sample_file = renderText({if(input$Submit==0){as.character(samplefile()$datapath)} else {return()}})
-    }
-  })
+  if(!is.null(samplefile)){
+    observe({
+      output$sample_file = renderText({as.character(samplefile()$datapath)})
+    })
+  }
   ## freq files
   shinyFileChoose(input, "freq_GetFile", roots=roots, session=session, defaultRoot="home")
   freq = reactive({parseFilePaths(roots, input$freq_GetFile)})
   if (!is.null(freq)) {
     observe({
-      output$freq_file = renderText({if(input$Submit==0){as.character(freq()$datapath)} else {return()}})
+      output$freq_file = renderText({as.character(freq()$datapath)})
     })
   }
 
@@ -418,7 +419,7 @@ server = function(input, output, session) {
   freq_major = reactive({parseFilePaths(roots, input$freq_GetFile_major)})
   if (!is.null(freq_major)) {
     observe({
-      output$freq_file_major = renderText({if(input$Submit==0){as.character(freq_major()$datapath)} else {return()}})
+      output$freq_file_major = renderText({as.character(freq_major()$datapath)})
     })
   }
 
@@ -426,7 +427,7 @@ server = function(input, output, session) {
   freq_minor = reactive({parseFilePaths(roots, input$freq_GetFile_minor)})
   if (!is.null(freq_minor)) {
     observe({
-      output$freq_file_minor = renderText({if(input$Submit==0){as.character(freq_minor()$datapath)} else {return()}})
+      output$freq_file_minor = renderText({as.character(freq_minor()$datapath)})
     })
   }
 
@@ -434,7 +435,7 @@ server = function(input, output, session) {
   assay = reactive({parseFilePaths(roots, input$assay_GetFile)})
   if (!is.null(assay)) {
     observe({
-      output$assay_file = renderText({if(input$Submit==0){as.character(assay()$datapath)} else {return()}})
+      output$assay_file = renderText({as.character(assay()$datapath)})
     })
   }
 
@@ -443,7 +444,7 @@ server = function(input, output, session) {
   refs = reactive({parseDirPath(roots, input$ref_GetFile)})
   if (!is.null(refs)) {
     observe({
-      output$refs_file = renderText({if(input$Submit==0){as.character(refs())} else {return()}})
+      output$refs_file = renderText({as.character(refs())})
     })
   }
 
@@ -451,7 +452,7 @@ server = function(input, output, session) {
   kin_inpath = reactive({parseDirPath(roots, input$kin_prefix)})
   observe({
     if(!is.null(kin_inpath)){
-      output$kin_inpath = renderText({if(input$Submit==0){as.character(kin_inpath())} else {return()}})
+      output$kin_inpath = renderText({as.character(kin_inpath())})
     }
   })
 
@@ -465,8 +466,35 @@ server = function(input, output, session) {
         easyClose = TRUE,
         footer = modalButton("Dismiss")
       ))
-    } else if (input$method == "Calculate Metrics" | isTruthy(input$cond)) {
-      refData = NULL
+    } else if (!isTruthy(kin_inpath())) {
+      showModal(modalDialog(
+        title = "Input Error",
+        "Please provide a folder containing mixture data (Kintelligence Sample Reports or a .tsv file of genotypes).",
+        easyClose = TRUE,
+        footer = modalButton("Dismiss")
+      ))
+    } else if (!isTruthy(input$cond) & !isTruthy(input$uncond)) {
+      showModal(modalDialog(
+        title = "Input Error",
+        "Please select either an Unconditioned or Conditioned analysis (or both!) before proceeding.",
+        easyClose = TRUE,
+        footer = modalButton("Dismiss")
+      ))
+    } else if (input$assay_choice=="Custom" & !isTruthy(assay()$datapath)) {
+      showModal(modalDialog(
+        title = "Input Error",
+        "When running a custom SNP panel, please provide the SNP positions file.",
+        easyClose = TRUE,
+        footer = modalButton("Dismiss")
+      ))
+    } else if ((input$method == "Calculate Metrics" | isTruthy(input$cond)) & !isTruthy(refs())) {
+      showModal(modalDialog(
+        title = "Input Error",
+        "Please provide reference genotypes before proceeding.",
+        easyClose = TRUE,
+        footer = modalButton("Dismiss")
+      ))
+    } else {
       if (isTruthy(refs())) {
         withProgress(message = "Loading References", value = 0, {
           if (file.exists(glue("{refs()}/EFM_references.rda"))) {
@@ -480,25 +508,12 @@ server = function(input, output, session) {
           }
         })
       } else {
-        showModal(modalDialog(
-          title = "Input Error",
-          "Please provide reference genotypes before proceeding.",
-          easyClose = TRUE,
-          footer = modalButton("Dismiss")
-        ))
+        refData=NULL
       }
-    } else if (!isTruthy(input$cond) & !isTruthy(input$uncond)) {
-      showModal(modalDialog(
-        title = "Input Error",
-        "Please select either an Unconditioned or Conditioned analysis (or both!) before proceeding.",
-        easyClose = TRUE,
-        footer = modalButton("Dismiss")
-      ))
-    } else {
       sample_list = suppressWarnings(euroformix::tableReader(samplefile()$datapath))
       date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
       out_path = glue("{kin_inpath()}/snp_sets/{input$output}/")
-      create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, NULL, NULL, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups)
+      create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, NULL, NULL, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups, input$assay_choice, assay()$datapath)
       withProgress(message = "Loading Allele Frequency Data", value = 0, {
         freq_both = ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath)
         freq_major = ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath)
