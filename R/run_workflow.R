@@ -128,12 +128,12 @@ run_workflow = function(date, id, replicate_id, twofreqs, popFreq, refData, refs
       uncond_filename_major = glue("{write_path}/{id}/unconditioned/{id}_efm_output_unconditioned_major.tsv")
       uncond_filename_minor = glue("{write_path}/{id}/unconditioned/{id}_efm_output_unconditioned_minor.tsv")
       if (file.exists(uncond_filename_major)) {
-        uncond_table_major = read.table(uncond_filename_major, header=T, sep="\t")
+        uncond_table_major = fread(uncond_filename_major, header=T, sep="\t")
       } else {
         stop(glue("{uncond_filename_major} does not exist. You may need to run EFM or check the correct SNP file input folder and Output folder are correct!"))
       }
       if (file.exists(uncond_filename_minor)) {
-        uncond_table_minor = read.table(uncond_filename_minor, header=T, sep="\t")
+        uncond_table_minor = fread(uncond_filename_minor, header=T, sep="\t")
       } else {
         stop(glue("{uncond_filename_minor} does not exist. You may need to run EFM or check the correct SNP file input folder and Output folder are correct!"))
       }
