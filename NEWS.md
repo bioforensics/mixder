@@ -8,6 +8,8 @@
   - Wrote functions to read in and create EFM-compatible files more efficiently
   - Save large data files (i.e. reference SNP profiles, frequency files, etc.) as `.rda` files and will auto-detect these to load instead of reading in large file (significantly faster)
 - Load frequency data only once instead of with each sample when using Shiny app
+- Improved error handling in Shiny app (pop-up window will appear if required files or settings are missing)
+- Added option to change number of threads used by EFM; useful if running on a server or grid (default is 0)
 
 
 # mixder 0.9.0
