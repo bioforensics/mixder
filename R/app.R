@@ -91,7 +91,6 @@ mixder = function() {
         add_prompt(message = "This folder will be created in the specified SNP files folder to store generated output.\nIf not running EFM, it is required to specify the name of the folder containing previously generated EFM output.", position = "right")
       ), "output"),
     shinyjs::useShinyjs(),
-    id="panel",
     actionButton("Submit", "Run MixDeR")
     ),
     mainPanel(width=15,
@@ -396,7 +395,6 @@ server = function(input, output, session) {
       add_prompt(message = "When calculating metrics, a range of allele 2 probability thresholds\ncan be used to calculate the metrics at each combination of allele 1 and allele 2 probability thresholds.\nThis sets the maximum allele 2 probability threshold.\nThe threshold increases in increments of 0.01.", position = "right")
     ), value=1, min = 0, max = 1)
   })
-  ## submit number
   ## sample file
   roots = c(home="~", wd=".")
   shinyFileChoose(input, "sample_GetFile", roots=roots, session=session, defaultRoot="home")
@@ -461,14 +459,14 @@ server = function(input, output, session) {
   observeEvent(input$Submit, {
     if (!isTruthy(samplefile()$datapath)) {
       showModal(modalDialog(
-        title = "Input Error",
+        title = "Missing Input",
         "Please provide a sample manifest before proceeding.",
         easyClose = TRUE,
         footer = modalButton("Dismiss")
       ))
     } else if (!isTruthy(kin_inpath())) {
       showModal(modalDialog(
-        title = "Input Error",
+        title = "Missing Input",
         "Please provide a folder containing mixture data (Kintelligence Sample Reports or a .tsv file of genotypes).",
         easyClose = TRUE,
         footer = modalButton("Dismiss")
@@ -482,14 +480,14 @@ server = function(input, output, session) {
       ))
     } else if (input$assay_choice=="Custom" & !isTruthy(assay()$datapath)) {
       showModal(modalDialog(
-        title = "Input Error",
+        title = "Missing Input",
         "When running a custom SNP panel, please provide the SNP positions file.",
         easyClose = TRUE,
         footer = modalButton("Dismiss")
       ))
     } else if ((input$method == "Calculate Metrics" | isTruthy(input$cond)) & !isTruthy(refs())) {
       showModal(modalDialog(
-        title = "Input Error",
+        title = "Missing Input",
         "Please provide reference genotypes before proceeding.",
         easyClose = TRUE,
         footer = modalButton("Dismiss")
