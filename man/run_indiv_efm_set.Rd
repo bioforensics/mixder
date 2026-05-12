@@ -16,7 +16,8 @@ run_indiv_efm_set(
   attable,
   keep_bins,
   cond = NULL,
-  uncond = TRUE
+  uncond = TRUE,
+  threads = 0
 )
 }
 \arguments{
@@ -41,6 +42,8 @@ run_indiv_efm_set(
 \item{cond}{Condition on specific references}
 
 \item{uncond}{TRUE/FALSE if performing unconditioned analyses}
+
+\item{threads}{number of threads to use for EFM}
 }
 \value{
 list of mixture ratios for each analysis

@@ -18,7 +18,8 @@ run_efm(
   assay,
   cond = NULL,
   uncond = TRUE,
-  keep_bins = TRUE
+  keep_bins = TRUE,
+  threads = 0
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ run_efm(
 \item{uncond}{TRUE/FALSE if performing unconditioned analysis}
 
 \item{keep_bins}{To use existing SNP bins or create new bins (and files)}
+
+\item{threads}{number of threads used for EFM}
 }
 \description{
 Running mixture deconvolution in EuroForMix

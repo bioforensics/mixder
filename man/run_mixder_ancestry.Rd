@@ -24,7 +24,8 @@ run_mixder_ancestry(
   minor_contrib_threshold = FALSE,
   keep_bins = TRUE,
   snps = "ancestry",
-  pcagroups = "superpopulations"
+  pcagroups = "superpopulations",
+  threads = 0
 )
 }
 \arguments{
@@ -67,6 +68,8 @@ run_mixder_ancestry(
 \item{snps}{SNPs to use for ancestry prediction (either ancestry only or all SNPs; default="ancestry")}
 
 \item{pcagroups}{How to color PCA plots (superpopulations and/or subpopulations, default="superpopulations")}
+
+\item{threads}{threads for EFM (default=0)}
 }
 \description{
 run MixDeR using the CLI; ancestry prediction

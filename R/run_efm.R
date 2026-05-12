@@ -24,12 +24,13 @@
 #' @param cond Sample IDs to condition on
 #' @param uncond TRUE/FALSE if performing unconditioned analysis
 #' @param keep_bins To use existing SNP bins or create new bins (and files)
+#' @param threads number of threads used for EFM
 #'
 #' @export
 #'
 #' @import parallel
 #'
-run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, attable, nsets, ancestry, assay, cond = NULL, uncond=TRUE, keep_bins=TRUE) {
+run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, attable, nsets, ancestry, assay, cond = NULL, uncond=TRUE, keep_bins=TRUE, threads=0) {
   if (!ancestry) {
     new_path = glue("{out_path}/ancestry_prediction/")
   } else {
@@ -54,7 +55,7 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
   }
   results = list()
   for (i in 1:nsets) {
-    results[[i]] = run_indiv_efm_set(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, keep_bins, cond=cond, uncond=uncond)
+    results[[i]] = run_indiv_efm_set(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, keep_bins, cond=cond, uncond=uncond, threads=threads)
   }
   uncond_ratios = data.frame()
   uncond_finaltable_all = data.frame()

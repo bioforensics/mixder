@@ -29,7 +29,8 @@ run_mixder_report(
   A2_threshold = 0.6,
   filter_missing = FALSE,
   minor_contrib_threshold = FALSE,
-  keep_bins = TRUE
+  keep_bins = TRUE,
+  threads = 0
 )
 }
 \arguments{
@@ -82,6 +83,8 @@ run_mixder_report(
 \item{minor_contrib_threshold}{Whether to apply the allele 1 probability threshold to the minor contributor, regardless of the minimum number of SNPs (default=FALSE)}
 
 \item{keep_bins}{Use existing binned SNP data, if exists (default=TRUE)}
+
+\item{threads}{number of threads for EFM (default=0)}
 }
 \description{
 run MixDeR using the CLI; create GEDmatch PRO report(s)

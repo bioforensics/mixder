@@ -37,7 +37,8 @@ run_workflow(
   ancestrysnps,
   pcagroups,
   assay,
-  positions
+  positions,
+  threads
 )
 }
 \arguments{
@@ -104,6 +105,8 @@ run_workflow(
 \item{assay}{assay used (kintelligence or custom)}
 
 \item{positions}{SNP chromosomal positions}
+
+\item{threads}{number of threads to use for EFM}
 
 \item{output}{Name of output directory}
 }

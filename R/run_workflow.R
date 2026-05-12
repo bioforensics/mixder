@@ -45,6 +45,7 @@
 #' @param pcagroups How to color PCA plots (superpopulations and/or subpopulations)
 #' @param assay assay used (kintelligence or custom)
 #' @param positions SNP chromosomal positions
+#' @param threads number of threads to use for EFM
 #'
 #' @export
 #'
@@ -53,7 +54,7 @@
 #'@importFrom utils write.table write.csv read.table
 #'@importFrom grDevices dev.off png
 #'@importFrom methods show
-run_workflow = function(date, id, replicate_id, twofreqs, popFreq, refData, refs, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, skipancestry, ancestrysnps, pcagroups, assay, positions) {
+run_workflow = function(date, id, replicate_id, twofreqs, popFreq, refData, refs, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, skipancestry, ancestrysnps, pcagroups, assay, positions, threads) {
   if (replicate_id == "") {
     logfile = file(glue("{out_path}config_log_files/{date}/run_log_{id}_{date}.txt"), open = "wt")
   } else {
@@ -81,13 +82,13 @@ run_workflow = function(date, id, replicate_id, twofreqs, popFreq, refData, refs
       attable = staticAT
     }
     if (!skipancestry) {
-      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, skipancestry, assay, cond, uncond=unconditioned, keep_bins)
+      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, skipancestry, assay, cond, uncond=unconditioned, keep_bins, threads=threads)
       efm_results_minor = efm_results_major
     } else if (twofreqs) {
-      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, skipancestry, assay, cond, uncond=unconditioned, keep_bins)
-      efm_results_minor = run_efm(date, popFreq[[2]], refData, id, replicate_id, kinpath, out_path, attable, sets, skipancestry, assay, cond, uncond=unconditioned, keep_bins)
+      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, skipancestry, assay, cond, uncond=unconditioned, keep_bins, threads=threads)
+      efm_results_minor = run_efm(date, popFreq[[2]], refData, id, replicate_id, kinpath, out_path, attable, sets, skipancestry, assay, cond, uncond=unconditioned, keep_bins, threads=threads)
     } else {
-      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, skipancestry, assay, cond, uncond=unconditioned, keep_bins)
+      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, skipancestry, assay, cond, uncond=unconditioned, keep_bins, threads=threads)
       efm_results_minor = efm_results_major
     }
   }
