@@ -63,9 +63,9 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
       repeat {
         message(glue("Running unconditioned analysis for set {i}, attempt #{repeat_num+1}<br/>"))
         if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
-          uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0, verbose=TRUE, maxThreads=threads)
+          uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0, maxThreads=threads)
         } else {
-          uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, verbose=TRUE, maxThreads=threads)
+          uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, maxThreads=threads)
         }
         uncond_finaltable = euroformix::deconvolve(uncond_results)
         if (check_allele_probabilities(data.frame(uncond_finaltable[["table4"]]), i)) break

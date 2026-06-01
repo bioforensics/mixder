@@ -30,7 +30,7 @@
 #'
 #' @import parallel
 #'
-run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, attable, nsets, ancestry, assay, cond = NULL, uncond=TRUE, keep_bins=TRUE, threads=0) {
+run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, attable, nsets, ancestry, assay, cond = NULL, uncond=TRUE, keep_bins=TRUE, threads=0, parallel=FALSE) {
   if (!ancestry) {
     new_path = glue("{out_path}/ancestry_prediction/")
   } else {
@@ -53,9 +53,17 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
   } else {
     ids = NULL
   }
-  results = list()
-  for (i in 1:nsets) {
-    results[[i]] = run_indiv_efm_set(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, keep_bins, cond=cond, uncond=uncond, threads=threads)
+  if (parallel) {
+    numCores = ifelse(detectCores()<nsets, detectCores(), nsets)
+    message(glue("Running EFM mixture deconvolution using {numCores} cores."))
+    cl = makeCluster(numCores, outfile=glue("{out_path}config_log_files/{date}/efm_output_{log_name}_{date}.txt"))
+    results = parLapply(cl, 1:(nsets), run_indiv_efm_set, ids=ids, snps_input=snps_input, popFreq=popFreq, refData=refData, id=id, replicate_id=replicate_id, write_path=write_path, attable=attable, keep_bins=keep_bins, cond=cond, uncond=uncond)
+    stopCluster(cl)
+  } else {
+    results = list()
+    for (i in 1:nsets) {
+      results[[i]] = run_indiv_efm_set(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, keep_bins, cond=cond, uncond=uncond, threads=threads)
+    }
   }
   uncond_ratios = data.frame()
   uncond_finaltable_all = data.frame()

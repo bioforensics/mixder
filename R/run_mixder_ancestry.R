@@ -31,10 +31,11 @@
 #' @param snps SNPs to use for ancestry prediction (either ancestry only or all SNPs; default="ancestry")
 #' @param pcagroups How to color PCA plots (superpopulations and/or subpopulations, default="superpopulations")
 #' @param threads threads for EFM (default=0)
+#' @param parallel parallelize EFM sets, will detect number of cores on machine and use all available (default=FALSE)
 #'
 #' @export
 #'
-run_mixder_ancestry = function(sample_manifest=NULL, sample=NULL, replicate="", sample_reports = getwd(), output = "output", refpath=NULL, refs=NULL, mixdeconv=TRUE, uncond=TRUE, cond=FALSE, sets=10, dynamicAT=0.015, staticAT=10, minimum_snps=6000, A1_threshold=0.99, A2_threshold=0.6, minor_contrib_threshold=FALSE, keep_bins=TRUE, snps="ancestry", pcagroups="superpopulations", threads=0) {
+run_mixder_ancestry = function(sample_manifest=NULL, sample=NULL, replicate="", sample_reports = getwd(), output = "output", refpath=NULL, refs=NULL, mixdeconv=TRUE, uncond=TRUE, cond=FALSE, sets=10, dynamicAT=0.015, staticAT=10, minimum_snps=6000, A1_threshold=0.99, A2_threshold=0.6, minor_contrib_threshold=FALSE, keep_bins=TRUE, snps="ancestry", pcagroups="superpopulations", threads=0, parallel=FALSE) {
   date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
   popFreq = list(mixder::popFreq_1000G, mixder::popFreq_1000G)
   out_path = glue("{sample_reports}/snp_sets/{output}/")
@@ -83,11 +84,11 @@ run_mixder_ancestry = function(sample_manifest=NULL, sample=NULL, replicate="", 
       replicate_id = ifelse(is.na(manifest[i, 2]), "", manifest[i, 2])
       message(glue("Sample ID: {id}"))
       message(glue("Replicate ID: {replicate_id}"))
-      run_workflow(date, id, replicate_id, FALSE, popFreq, refData, refpath, out_path, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, FALSE, FALSE, snpset, pcagroupcat, "kintelligence", snp_positions, threads)
+      run_workflow(date, id, replicate_id, FALSE, popFreq, refData, refpath, out_path, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, FALSE, FALSE, snpset, pcagroupcat, "kintelligence", snp_positions, threads, parallel)
     }
   } else if (isTruthy(sample)){
     message(glue("Sample ID: {sample}"))
     message(glue("Replicate ID: {replicate}"))
-    run_workflow(date, sample, replicate, FALSE, popFreq, refData, refpath, out_path, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, FALSE, FALSE, snpset, pcagroupcat, "kintelligence", snp_positions, threads)
+    run_workflow(date, sample, replicate, FALSE, popFreq, refData, refpath, out_path, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, FALSE, FALSE, snpset, pcagroupcat, "kintelligence", snp_positions, threads, parallel)
   }
 }

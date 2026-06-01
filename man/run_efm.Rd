@@ -19,7 +19,8 @@ run_efm(
   cond = NULL,
   uncond = TRUE,
   keep_bins = TRUE,
-  threads = 0
+  threads = 0,
+  parallel = FALSE
 )
 }
 \arguments{

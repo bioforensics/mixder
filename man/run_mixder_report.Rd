@@ -30,7 +30,8 @@ run_mixder_report(
   filter_missing = FALSE,
   minor_contrib_threshold = FALSE,
   keep_bins = TRUE,
-  threads = 0
+  threads = 0,
+  parallel = FALSE
 )
 }
 \arguments{
@@ -85,6 +86,8 @@ run_mixder_report(
 \item{keep_bins}{Use existing binned SNP data, if exists (default=TRUE)}
 
 \item{threads}{number of threads for EFM (default=0)}
+
+\item{parallel}{parallelize EFM sets, will detect number of cores on machine and use all available (default=FALSE)}
 }
 \description{
 run MixDeR using the CLI; create GEDmatch PRO report(s)

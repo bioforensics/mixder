@@ -25,7 +25,8 @@ run_mixder_ancestry(
   keep_bins = TRUE,
   snps = "ancestry",
   pcagroups = "superpopulations",
-  threads = 0
+  threads = 0,
+  parallel = FALSE
 )
 }
 \arguments{
@@ -70,6 +71,8 @@ run_mixder_ancestry(
 \item{pcagroups}{How to color PCA plots (superpopulations and/or subpopulations, default="superpopulations")}
 
 \item{threads}{threads for EFM (default=0)}
+
+\item{parallel}{parallelize EFM sets, will detect number of cores on machine and use all available (default=FALSE)}
 }
 \description{
 run MixDeR using the CLI; ancestry prediction

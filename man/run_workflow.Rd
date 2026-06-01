@@ -38,7 +38,8 @@ run_workflow(
   pcagroups,
   assay,
   positions,
-  threads
+  threads = 0,
+  parallel = FALSE
 )
 }
 \arguments{
