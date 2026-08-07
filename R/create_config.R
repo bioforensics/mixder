@@ -52,7 +52,7 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
   config = rbind(config, data.frame(Setting="MixDeR Version:", Value=getNamespaceVersion("mixder")[["version"]]))
   config = rbind(config, data.frame(Setting="EuroForMix Version:", Value=getNamespaceVersion("euroformix")[["version"]]))
   onfig = rbind(config, data.frame(Setting="Assay:", Value=assay))
-  if (assay == "custom") {
+  if (assay == "custom" & method == "Create GEDmatch PRO Report") {
     config = rbind(config, data.frame(Setting="SNP hg19 positions file for custom assay:", Value=pos))
   }
   if (isTruthy(sample_manifest)) {
