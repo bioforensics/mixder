@@ -42,13 +42,19 @@
 #' @param skipancestry TRUE/FALSE whether to skip ancestry prediction step
 #' @param pcasnps SNPs used for PCA (ancestry prediction)
 #' @param pcagroups Groups used for PCA (ancestry prediction), either Superpopulations or Subpopulations
+#' @param assay name of sequencing assay, either `kintelligence` or `custom`
+#' @param pos Path to file containing SNP positions of custom assay, required if assay==`custom`
 #'
 #' @export
 #'
-create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs, sample_manifest, sample, replicate, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, filter_missing, skipancestry, pcasnps, pcagroups){
+create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs, sample_manifest, sample, replicate, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, filter_missing, skipancestry, pcasnps, pcagroups, assay, pos){
   config = setNames(data.frame(matrix(ncol=2, nrow=0)), c("Setting", "Value"))
   config = rbind(config, data.frame(Setting="MixDeR Version:", Value=getNamespaceVersion("mixder")[["version"]]))
   config = rbind(config, data.frame(Setting="EuroForMix Version:", Value=getNamespaceVersion("euroformix")[["version"]]))
+  onfig = rbind(config, data.frame(Setting="Assay:", Value=assay))
+  if (assay == "custom" & method == "Create GEDmatch PRO Report") {
+    config = rbind(config, data.frame(Setting="SNP hg19 positions file for custom assay:", Value=pos))
+  }
   if (isTruthy(sample_manifest)) {
     config = rbind(config, data.frame(Setting="Path to sample manifest:", Value=sample_manifest))
   } else if (isTruthy(sample)) {
@@ -73,7 +79,7 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
       config = rbind(config, data.frame(Setting="Frequency data for Minor Contributor:", Value=freq_all))
     }
   }
-  config = rbind(config, data.frame(Setting="Output path:", Value=glue("{kinpath}/snp_sets/{out_path}/")))
+  config = rbind(config, data.frame(Setting="Output path:", Value=out_path))
   config = rbind(config, data.frame(Setting="Number of SNP sets:", Value=sets))
   config = rbind(config, data.frame(Setting="Minimum number of SNPs:", Value=minimum_snps))
   config = rbind(config, data.frame(Setting="Static AT:", Value=staticAT))
@@ -102,6 +108,6 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
     config = rbind(config, data.frame(Setting="Assumed major contributor:", Value=major))
     config = rbind(config, data.frame(Setting="Assumed minor contributor:", Value=minor))
   }
-  dir.create(file.path(kinpath, "snp_sets", out_path, "config_log_files", date), showWarnings = FALSE, recursive=TRUE)
-  write.table(config, glue("{kinpath}/snp_sets/{out_path}/config_log_files/{date}/config_settings_run_{date}.txt"), row.names=F, quote=F, col.names=T, sep="\t")
+  dir.create(file.path(out_path, "config_log_files", date), showWarnings = FALSE, recursive=TRUE)
+  write.table(config, glue("{out_path}/config_log_files/{date}/config_settings_run_{date}.txt"), row.names=F, quote=F, col.names=T, sep="\t")
 }

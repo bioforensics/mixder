@@ -21,11 +21,12 @@
 #' @param attable AT table
 #' @param cond Condition on specific references
 #' @param uncond TRUE/FALSE if performing unconditioned analyses
+#' @param threads number of threads to use for EFM
 #'
 #' @return list of mixture ratios for each analysis
 #' @export
 #'
-run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, cond = NULL, uncond=TRUE) {
+run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, keep_bins, cond = NULL, uncond=TRUE, threads=0) {
   efm_v = getNamespaceVersion("euroformix")[["version"]]
   final_list = c()
   if (replicate_id != "") {
@@ -35,65 +36,76 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
     sample = glue("{id}_set{i}")
     replicate = replicate_id
   }
-  evidData = create_evid(sample, replicate, snps_input)
+  if (!file.exists(glue("{write_path}/rda_files/{sample}.rda")) | !(keep_bins)) {
+    evidData = create_evid(sample, replicate, snps_input)
+    dir.create(file.path(write_path, "rda_files"), showWarnings = FALSE, recursive=TRUE)
+    save(evidData, file=glue("{write_path}/rda_files/{sample}.rda"))
+  } else {
+    load(glue("{write_path}/rda_files/{sample}.rda"))
+  }
   if (isTruthy(evidData)) {
     ##create AT vector
-    sample_at = create_at(evidData, sample, replicate, attable)
+    if (length(attable) == 1) {
+      sample_at = attable
+    } else {
+      message(glue("Creating AT Table for sample {sample}<br/>"))
+      sample_at = create_at(evidData, sample, replicate, attable)
+    }
     ratio_row = list()
     ratio_row[glue("Set{i}_C1_Prob_uncond")] = NA
     ratio_row[glue("Set{i}_C2_Prob_uncond")] = NA
     if (uncond) {
-      message("Running unconditioned mixture deconvolution<br/>")
-      dir.create(file.path(write_path, "unconditioned"), showWarnings = FALSE, recursive=TRUE)
-      ##unconditioned analysis
-      repeat_num = 0
-      repeat {
-        message(glue("Running unconditioned analysis for set {i}, attempt #{repeat_num+1}<br/>"))
-        if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
-          uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0)
-        } else {
-          uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01)
+      if (!file.exists(glue("{write_path}/unconditioned/{id}_set{i}_uncond.tsv"))) {
+        print(glue("Running unconditioned analysis for set {i}"))
+        message("Running unconditioned mixture deconvolution<br/>")
+        dir.create(file.path(write_path, "unconditioned"), showWarnings = FALSE, recursive=TRUE)
+        ##unconditioned analysis
+        repeat_num = 0
+        repeat {
+          message(glue("Running unconditioned analysis for set {i}, attempt #{repeat_num+1}<br/>"))
+          if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
+            uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0, maxThreads=threads)
+          } else {
+            uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, maxThreads=threads)
+          }
+          uncond_finaltable = euroformix::deconvolve(uncond_results)
+          if (check_allele_probabilities(data.frame(uncond_finaltable[["table4"]]), i)) break
+          message(glue("Set {i} unconditioned: Mixture proportion = 0.5 or Allele probability flipping detected - will rerun!<br/>"))
+          repeat_num = repeat_num + 1
+          if (repeat_num == 10) break
         }
-        uncond_finaltable = euroformix::deconvolve(uncond_results)
-        if (check_allele_probabilities(data.frame(uncond_finaltable[["table4"]]), i)) break
-        message(glue("Set {i} unconditioned: Mixture proportion = 0.5 or Allele probability flipping detected - will rerun!<br/>"))
-        repeat_num = repeat_num + 1
-        if (repeat_num == 10) break
-      }
-      if (repeat_num < 10) {
-        ratio_row[glue("Set{i}_C1_Prob_uncond")] = uncond_results[["fit"]][["thetahat2"]][["Mix-prop. C1"]]
-        ratio_row[glue("Set{i}_C2_Prob_uncond")] = uncond_results[["fit"]][["thetahat2"]][["Mix-prop. C2"]]
-        #ratio_row = list(Set_uncond=i, C1_Prob_uncond=uncond_results[["fit"]][["thetahat2"]][["Mix-prop. C1"]], C2_Prob_uncond=uncond_results[["fit"]][["thetahat2"]][["Mix-prop. C2"]])
-        #uncond_ratios = rbind(uncond_ratios, ratio_row)
-        write.table(uncond_finaltable[["table4"]], glue("{write_path}/unconditioned/{id}_set{i}_uncond.tsv"), quote=F, row.names=F, sep="\t")
-        #uncond_finaltable_all = rbind(uncond_finaltable_all, uncond_finaltable[["table4"]])
-        #set_results = uncond_finaltable[["table4"]]
-      } else {
-        message(glue("Repeated unconditioned analysis 10 times unsuccessfully. Will skip set {i}!<br/>"))
-        #set_results = data.frame()
+        if (repeat_num < 10) {
+          ratio_row[glue("Set{i}_C1_Prob_uncond")] = uncond_results[["fit"]][["thetahat2"]][["Mix-prop. C1"]]
+          ratio_row[glue("Set{i}_C2_Prob_uncond")] = uncond_results[["fit"]][["thetahat2"]][["Mix-prop. C2"]]
+          write.table(uncond_finaltable[["table4"]], glue("{write_path}/unconditioned/{id}_set{i}_uncond.tsv"), quote=F, row.names=F, sep="\t")
+          write.table(uncond_finaltable[["table3"]], glue("{write_path}/unconditioned/{id}_set{i}_uncond_table3.tsv"), quote=F, row.names=F, sep="\t")
+        } else {
+          message(glue("Repeated unconditioned analysis 10 times unsuccessfully. Will skip set {i}!<br/>"))
+        }
+        final_list = c(ratio_row)
       }
     }
-    final_list = c(ratio_row)
     ## conditioned analysis
     if (!is.null(cond)) {
       total_refs = length(names(refData))
       cond_vector = rep.int(0, total_refs)
       for (cond_on in cond) {
         ratio_row = list()
+        print(glue("Running conditioned analysis on {cond_on} for set {i}"))
         message(glue("Running mixture deconvolution conditioned on {cond_on}<br/>"))
-        #nam = glue("df_{cond_on}")
         list_num = match(cond_on, names(refData))
         dir.create(file.path(write_path, glue("/conditioned/cond_on_{cond_on}")), showWarnings = FALSE, recursive=TRUE)
         message(glue("Running conditioned analysis on {cond_on} for set {i}.<br/>"))
         if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
-          condresults = euroformix::calcMLE(2, evidData, popFreq, refData, AT=sample_at, condOrder=replace(cond_vector, list_num, 1), BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0)
+          condresults = euroformix::calcMLE(2, evidData, popFreq, refData, AT=sample_at, condOrder=replace(cond_vector, list_num, 1), BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0, maxThreads=threads)
         } else {
-          condresults = euroformix::calcMLE(2, evidData, popFreq, refData, AT=sample_at, condOrder=replace(cond_vector, list_num, 1), BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01)
+          condresults = euroformix::calcMLE(2, evidData, popFreq, refData, AT=sample_at, condOrder=replace(cond_vector, list_num, 1), BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, maxThreads=threads)
         }
         final_condresults = euroformix::deconvolve(condresults)
         ratio_row[glue("Set{i}_C1_Prob_cond_on_{cond_on}")] = condresults[["fit"]][["thetahat2"]][["Mix-prop. C1"]]
         ratio_row[glue("Set{i}_C2_Prob_cond_on_{cond_on}")] = condresults[["fit"]][["thetahat2"]][["Mix-prop. C2"]]
         write.table(final_condresults[["table4"]], glue("{write_path}/conditioned/cond_on_{cond_on}/unknown_cond_on_{cond_on}_set{i}.tsv"), quote=F, row.names=F, sep="\t")
+        write.table(final_condresults[["table3"]], glue("{write_path}/conditioned/cond_on_{cond_on}/unknown_cond_on_{cond_on}_set{i}_table3.tsv"), quote=F, row.names=F, sep="\t")
         final_list = c(final_list, ratio_row)
       }
     }

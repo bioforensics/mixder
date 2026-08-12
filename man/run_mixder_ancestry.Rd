@@ -7,7 +7,7 @@
 run_mixder_ancestry(
   sample_manifest = NULL,
   sample = NULL,
-  replicate = NULL,
+  replicate = "",
   sample_reports = getwd(),
   output = "output",
   refpath = NULL,
@@ -23,8 +23,10 @@ run_mixder_ancestry(
   A2_threshold = 0.6,
   minor_contrib_threshold = FALSE,
   keep_bins = TRUE,
-  snps,
-  pcagroups
+  snps = "ancestry",
+  pcagroups = "superpopulations",
+  threads = 0,
+  parallel = FALSE
 )
 }
 \arguments{
@@ -64,9 +66,13 @@ run_mixder_ancestry(
 
 \item{keep_bins}{Use existing binned SNP data, if exists (default=TRUE)}
 
-\item{snps}{SNPs to use for ancestry prediction (either ancestry only or all SNPs)}
+\item{snps}{SNPs to use for ancestry prediction (either ancestry only or all SNPs; default="ancestry")}
 
-\item{pcagroups}{How to color PCA plots (superpopulations and/or subpopulations)}
+\item{pcagroups}{How to color PCA plots (superpopulations and/or subpopulations, default="superpopulations")}
+
+\item{threads}{threads for EFM (default=0)}
+
+\item{parallel}{parallelize EFM sets, will detect number of cores on machine and use all available (default=FALSE)}
 }
 \description{
 run MixDeR using the CLI; ancestry prediction

@@ -8,9 +8,8 @@
 # National Biodefense Analysis and Countermeasures Center (NBACC), a Federally Funded Research and
 # Development Center.
 # -------------------------------------------------------------------------------------------------
-#' Load in frequency data
+#' Load frequency data
 #'
-#'@param out_path outpath directory
 #' @param twofreqs If two different allele frequency files are to be used
 #' @param freq_both_input Allele frequency file, if only using one
 #' @param freq_major_input Allele frequency file for major contributor
@@ -18,11 +17,11 @@
 #'
 #' @return list of major AF data data frame and minor AF data data frame
 #' @export
-load_freq = function(out_path, twofreqs, freq_both_input, freq_major_input, freq_minor_input) {
+load_freq = function(twofreqs, freq_both_input, freq_major_input, freq_minor_input) {
   freqs_allowed = c("Global - 1000G", "Global - gnomAD", "AFR - 1000G", "AMR - 1000G", "EAS - 1000G", "EUR - 1000G", "SAS - 1000G")
   if (!twofreqs) {
     if (file.exists(freq_both_input)) {
-      freq_minor = checking_af(freq_both_input, out_path)
+      freq_minor = checking_af(freq_both_input)
       freq_major = freq_minor
     } else {
       freq_both = decode_freq_name(tolower(freq_both_input))
@@ -56,7 +55,7 @@ load_freq = function(out_path, twofreqs, freq_both_input, freq_major_input, freq
     }
   } else {
     if (file.exists(freq_major_input)) {
-      freq_major = checking_af(freq_major_input, out_path)
+      freq_major = checking_af(freq_major_input)
     } else {
       freq_major = decode_freq_name(tolower(freq_major_input))
       if (!freq_major %in% freqs_allowed) {
@@ -81,7 +80,7 @@ load_freq = function(out_path, twofreqs, freq_both_input, freq_major_input, freq
       }
     }
     if (file.exists(freq_minor_input)) {
-      freq_minor = checking_af(freq_minor_input, out_path)
+      freq_minor = checking_af(freq_minor_input)
     } else {
       freq_minor = decode_freq_name(tolower(freq_minor_input))
       if (!freq_minor %in% freqs_allowed) {

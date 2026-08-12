@@ -37,21 +37,35 @@
 #' @param filter_missing Whether to remove SNPs with a missing value for the allele 2 (default=FALSE)
 #' @param minor_contrib_threshold Whether to apply the allele 1 probability threshold to the minor contributor, regardless of the minimum number of SNPs (default=FALSE)
 #' @param keep_bins Use existing binned SNP data, if exists (default=TRUE)
+#' @param threads number of threads for EFM (default=0)
+#' @param parallel parallelize EFM sets, will detect number of cores on machine and use all available (default=FALSE)
 #'
 #' @export
 #'
-run_mixder_metrics = function(sample_manifest=NULL, sample=NULL, replicate=NULL, sample_reports = getwd(), output = "output", twofreqs=FALSE, freq_both="global_1000g", freq_major=NULL, freq_minor=NULL, refpath=NULL, refs=NULL, mixdeconv=TRUE, uncond=TRUE, cond=FALSE, sets=10, dynamicAT=0.015, staticAT=10, minimum_snps=6000, A1min=0.95, A1max=0.99, A2min=0.5, A2max=0.65, major=NULL, minor=NULL, filter_missing=FALSE, minor_contrib_threshold=FALSE, keep_bins=TRUE) {
+run_mixder_metrics = function(sample_manifest=NULL, sample=NULL, replicate="", sample_reports = getwd(), output = "output", assay="kintelligence", twofreqs=FALSE, freq_both="global_1000g", freq_major=NULL, freq_minor=NULL, refpath=NULL, refs=NULL, mixdeconv=TRUE, uncond=TRUE, cond=FALSE, sets=10, dynamicAT=0.015, staticAT=10, minimum_snps=6000, A1min=0.95, A1max=0.99, A2min=0.5, A2max=0.65, major=NULL, minor=NULL, filter_missing=FALSE, minor_contrib_threshold=FALSE, keep_bins=TRUE, threads=0, parallel=FALSE) {
   date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
+  out_path = glue("{sample_reports}/snp_sets/{output}/")
   if (!isTruthy(major) | !isTruthy(minor)) {
     stop("Major and/or minor contributor not specified. Please rerun.")
   }
+  popFreq = load_freq(twofreqs, freq_both, freq_major, freq_minor)
   ## load in references
+  print("loading references")
   if (isTruthy(refpath)) {
-    print("loading references")
-    if (!file.exists(glue("{refpath}/EFM_references.csv"))) {
-      refData = euroformix::sample_tableToList(data.frame(processing_ref_sample_reports(refpath)))
+    if (cond) {
+      if (file.exists(glue("{refpath}/EFM_references.rda"))) {
+        load(glue("{refpath}/EFM_references.rda"))
+      } else {
+        if (!file.exists(glue("{refpath}/EFM_references.csv"))) {
+          refData = convert_table_to_list(data.frame(processing_ref_sample_reports(refpath)))
+        } else {
+          refsdf = data.frame(fread(glue("{refpath}/EFM_references.csv")))
+          refData = convert_table_to_list(refsdf)
+        }
+        save(refData, file=glue("{refpath}/EFM_references.rda"))
+      }
     } else {
-      refData = euroformix::sample_tableToList(euroformix::tableReader(glue("{refpath}/EFM_references.csv")))
+      refData = NULL
     }
   } else {
     stop("No references provided. Please re-run!")
@@ -60,7 +74,7 @@ run_mixder_metrics = function(sample_manifest=NULL, sample=NULL, replicate=NULL,
   if (!isTruthy(sample_manifest) & !isTruthy(sample)){
     stop("Please provide sample manifest or sample ID!")
   }
-  create_config(date, twofreqs, freq_both, freq_major, freq_minor, refpath, sample_manifest, sample, replicate, output, mixdeconv, uncond, refs, "Calculate Metrics", sets, sample_reports, dynamicAT, staticAT, minimum_snps, NA, NA, A1min, A1max, A2min, A2max, major, minor, filter_missing, TRUE, NA, NA)
+  create_config(date, twofreqs, freq_both, freq_major, freq_minor, refpath, sample_manifest, sample, replicate, out_path, mixdeconv, uncond, refs, "Calculate Metrics", sets, sample_reports, dynamicAT, staticAT, minimum_snps, NA, NA, A1min, A1max, A2min, A2max, major, minor, filter_missing, TRUE, NA, NA, assay, NULL)
   if (isTruthy(sample_manifest)) {
     manifest=suppressWarnings(euroformix::tableReader(sample_manifest))
     for (i in nrow(manifest)) {
@@ -68,12 +82,11 @@ run_mixder_metrics = function(sample_manifest=NULL, sample=NULL, replicate=NULL,
       replicate_id = ifelse(is.na(manifest[i, 2]), "", manifest[i, 2])
       message(glue("Sample ID: {id}"))
       message(glue("Replicate ID: {replicate_id}"))
-      run_workflow(date, id, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refpath, output, mixdeconv, uncond, refs, "Calculate Metrics", sets, sample_reports, dynamicAT, staticAT, minimum_snps, NA, NA, A1min, A1max, A2min, A2max, major, minor, minor_contrib_threshold, keep_bins, filter_missing, TRUE, NA, NA)
+      run_workflow(date, id, replicate_id, twofreqs, popFreq, refData, refpath, out_path, mixdeconv, uncond, refs, "Calculate Metrics", sets, sample_reports, dynamicAT, staticAT, minimum_snps, NA, NA, A1min, A1max, A2min, A2max, major, minor, minor_contrib_threshold, keep_bins, filter_missing, TRUE, NA, NA, assay, NULL, threads, parallel)
     }
   } else if (isTruthy(sample)){
-    replicate_id = ifelse(isTruthy(replicate), replicate, "")
     message(glue("Sample ID: {sample}"))
-    message(glue("Replicate ID: {replicate_id}"))
-    run_workflow(date, sample, replicate_id, twofreqs, freq_both, freq_major, freq_minor, refData, refpath, output, mixdeconv, uncond, refs, "Calculate Metrics", sets, sample_reports, dynamicAT, staticAT, minimum_snps, NA, NA, A1min, A1max, A2min, A2max, major, minor, minor_contrib_threshold, keep_bins, filter_missing, TRUE, NA, NA)
+    message(glue("Replicate ID: {replicate}"))
+    run_workflow(date, sample, replicate, twofreqs, popFreq, refData, refpath, out_path, mixdeconv, uncond, refs, "Calculate Metrics", sets, sample_reports, dynamicAT, staticAT, minimum_snps, NA, NA, A1min, A1max, A2min, A2max, major, minor, minor_contrib_threshold, keep_bins, filter_missing, TRUE, NA, NA, assay, NULL, threads, parallel)
   }
 }

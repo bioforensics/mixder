@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">mixder</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,7 @@
     <li><a class="dropdown-item" href="articles/Installation.html">Installation</a></li>
     <li><a class="dropdown-item" href="articles/Required_Files.html">Required Files</a></li>
     <li><a class="dropdown-item" href="articles/Running_MixDecon.html">Running Mixture Deconvolution</a></li>
+    <li><a class="dropdown-item" href="articles/Custom_SNPs.html">Custom SNP Sets</a></li>
     <li><a class="dropdown-item" href="articles/Ancestry_Prediction_Tool.html">Ancestry Prediction Tool</a></li>
     <li><a class="dropdown-item" href="articles/Valmetrics.html">Calculating Validation Metrics</a></li>
     <li><a class="dropdown-item" href="articles/gedmatch.html">Generating GEDmatch PRO Report</a></li>
@@ -67,11 +68,11 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="mixder---current-version-090">MixDeR - Current Version: 0.9.0<a class="anchor" aria-label="anchor" href="#mixder---current-version-090"></a>
+<div class="page-header"><h1 id="mixder---current-version-0100">MixDeR - Current Version: 0.10.0<a class="anchor" aria-label="anchor" href="#mixder---current-version-0100"></a>
 </h1></div>
 <!-- badges: start -->
 <!-- badges: end -->
-<p>MixDeR (<strong>Mix</strong>ture <strong>De</strong>convolution in <strong>R</strong>) is a workflow (with a Shiny app) for performing mixture deconvolution of ForenSeq Kintelligence SNP data for two-person mixtures using <a href="https://github.com/oyvble/euroformix/" class="external-link">EuroForMix</a> and creating GEDmatch PRO reports for the individual contributor SNP profiles.</p>
+<p>MixDeR (<strong>Mix</strong>ture <strong>De</strong>convolution in <strong>R</strong>) is a workflow (with a Shiny app) for performing mixture deconvolution of genotypes developed from either the ForenSeq Kintelligence assay or a custom SNP panel. MixDeR performs the deconvolution of two-contributor mixtures using <a href="https://github.com/oyvble/euroformix/" class="external-link">EuroForMix</a>, ultimately developing single source GEDmatch PRO/FamilyTreeDNA reports of the individual contributor genotypes.</p>
 <p>This method requires extensive validation of the settings. MixDeR provides the option of calculating various metrics for evaluating the accuracy of the deduced SNP genotypes. This is extremely useful when determining settings, specifically the allele 1 probability threshold, the allele 2 probability threshold, and the minimum number of SNPs.</p>
 <p><em>Note: MixDeR (and EFM) assume the mixture samples are composed of two contributors. MixDeR is able to identify and alert the user to samples that may be potentially either single source or consist of a mixture with a large mixture ratio (i.e. &gt; 1:100 ratio between contributors). In these scenarios, the user is warned to be cautious with the minor contributor inferred genotyping results.</em></p>
 <p>MixDeR version 0.8 and later provides the option to perform ancestry prediction using principal component analysis (PCA). Additional information can be found below in the <strong>Ancestry Prediction</strong> section.</p>
@@ -85,7 +86,7 @@
 <p>To launch the shiny app:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(mixder)</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">mixder</span>()</span></code></pre></div>
-<p>To use the command line, please see the CLI page in the MixDeR documentation.</p>
+<p>To use the command line, please see the R API page in the MixDeR documentation.</p>
 <p>Please see <a href="bioforensics.github.io/mixder/">MixDeR documentation</a> for further information.</p>
 </div>
 </div>
