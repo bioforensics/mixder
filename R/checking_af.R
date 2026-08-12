@@ -24,12 +24,20 @@ checking_af = function(affile) {
     af=data.frame(fread(affile, header=T, sep=","))
     filename = gsub(".csv","", affile)
     if (!isTruthy(af[c(1:4),1] == c("A", "C", "G", "T"))) {
-      af_formatted = format_af(af)
-      utils::write.csv(af_formatted, glue("{filename}_EFMformatted.csv"), row.names=F, quote=F)
+      interval = 100000
+      popFreq = list()
+      for (i in seq(from=1, to=nrow(af), by=interval)) {
+        message(glue("Formatting AF file, on SNP #{i}-#{i+interval} of {nrow(af)}"))
+        af_filt = af %>%
+          slice(i:(1+interval))
+        af_formatted = format_af(af_filt)
+        freq_tmp = read_in_freq(af_formatted)
+        popFreq = c(popFreq, freq_tmp)
+        #utils::write.csv(af_formatted, glue("{filename}_EFMformatted.csv"), row.names=F, quote=F)
+      }
     } else {
-      af_formatted = af
+      popFreq=read_in_freq(af)
     }
-    popFreq=read_in_freq(af_formatted)
     save(popFreq, file=glue("{filename}.rda"))
   }
   return(popFreq)
