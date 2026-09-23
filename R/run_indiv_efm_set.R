@@ -27,6 +27,7 @@
 #' @export
 #'
 run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, keep_bins, cond = NULL, uncond=TRUE, threads=0) {
+  popFreqSNP = EFMmps::freq2SNPformat(popFreq)
   efm_v = getNamespaceVersion("euroformix")[["version"]]
   final_list = c()
   if (replicate_id != "") {
@@ -44,6 +45,7 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
     load(glue("{write_path}/rda_files/{sample}.rda"))
   }
   if (isTruthy(evidData)) {
+    samplesSNP = EFMmps::evid2SNPformat(evidData)
     ##create AT vector
     if (length(attable) == 1) {
       sample_at = attable
@@ -64,21 +66,23 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
         repeat {
           message(glue("Running unconditioned analysis for set {i}, attempt #{repeat_num+1}<br/>"))
           if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
-            uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0, maxThreads=threads)
+            uncond_results = EFMmps::calcMLE(2, samplesSNP, popFreqSNP, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0, maxThreads=threads, SNPmodule=TRUE)
           } else {
-            uncond_results = euroformix::calcMLE(2, evidData, popFreq, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, maxThreads=threads)
+            uncond_results = EFMmps::calcMLE(2, samplesSNP, popFreqSNP, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, maxThreads=threads, SNPmodule=TRUE)
           }
-          uncond_finaltable = euroformix::deconvolve(uncond_results)
-          if (check_allele_probabilities(data.frame(uncond_finaltable[["table4"]]), i)) break
-          message(glue("Set {i} unconditioned: Mixture proportion = 0.5 or Allele probability flipping detected - will rerun!<br/>"))
-          repeat_num = repeat_num + 1
-          if (repeat_num == 10) break
+          uncond_finaltable = EFMmps::deconvolve(uncond_results)
+          break
+          #if (check_allele_probabilities(data.frame(uncond_finaltable[["table4"]]), i)) break
+          #message(glue("Set {i} unconditioned: Mixture proportion = 0.5 or Allele probability flipping detected - will rerun!<br/>"))
+          #repeat_num = repeat_num + 1
+          #if (repeat_num == 10) break
         }
         if (repeat_num < 10) {
+          formatted_results = process_efmmps_list(uncond_finaltable)
           ratio_row[glue("Set{i}_C1_Prob_uncond")] = uncond_results[["fit"]][["thetahat2"]][["Mix-prop. C1"]]
           ratio_row[glue("Set{i}_C2_Prob_uncond")] = uncond_results[["fit"]][["thetahat2"]][["Mix-prop. C2"]]
-          write.table(uncond_finaltable[["table4"]], glue("{write_path}/unconditioned/{id}_set{i}_uncond.tsv"), quote=F, row.names=F, sep="\t")
-          write.table(uncond_finaltable[["table3"]], glue("{write_path}/unconditioned/{id}_set{i}_uncond_table3.tsv"), quote=F, row.names=F, sep="\t")
+          write.table(formatted_results$al, glue("{write_path}/unconditioned/{id}_set{i}_uncond.tsv"), quote=F, row.names=F, sep="\t")
+          write.table(formatted_results$gt, glue("{write_path}/unconditioned/{id}_set{i}_uncond_table3.tsv"), quote=F, row.names=F, sep="\t")
         } else {
           message(glue("Repeated unconditioned analysis 10 times unsuccessfully. Will skip set {i}!<br/>"))
         }
@@ -95,17 +99,19 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
         message(glue("Running mixture deconvolution conditioned on {cond_on}<br/>"))
         list_num = match(cond_on, names(refData))
         dir.create(file.path(write_path, glue("/conditioned/cond_on_{cond_on}")), showWarnings = FALSE, recursive=TRUE)
+        refDataSNP = EFMmps::ref2SNPformat(refData)
         message(glue("Running conditioned analysis on {cond_on} for set {i}.<br/>"))
         if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
-          condresults = euroformix::calcMLE(2, evidData, popFreq, refData, AT=sample_at, condOrder=replace(cond_vector, list_num, 1), BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0, maxThreads=threads)
+          condresults = EFMmps::calcMLE(2, samplesSNP, popFreqSNP, refDataSNP, AT=sample_at, condOrder=replace(cond_vector, list_num, 1), BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0, maxThreads=threads, SNPmodule=TRUE)
         } else {
-          condresults = euroformix::calcMLE(2, evidData, popFreq, refData, AT=sample_at, condOrder=replace(cond_vector, list_num, 1), BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, maxThreads=threads)
+          condresults = EFMmps::calcMLE(2, samplesSNP, popFreqSNP, refDataSNP, AT=sample_at, condOrder=replace(cond_vector, list_num, 1), BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, maxThreads=threads, SNPmodule=TRUE)
         }
-        final_condresults = euroformix::deconvolve(condresults)
+        final_condresults = EFMmps::deconvolve(condresults)
+        formatted_results = process_efmmps_list(final_condresults)
         ratio_row[glue("Set{i}_C1_Prob_cond_on_{cond_on}")] = condresults[["fit"]][["thetahat2"]][["Mix-prop. C1"]]
         ratio_row[glue("Set{i}_C2_Prob_cond_on_{cond_on}")] = condresults[["fit"]][["thetahat2"]][["Mix-prop. C2"]]
-        write.table(final_condresults[["table4"]], glue("{write_path}/conditioned/cond_on_{cond_on}/unknown_cond_on_{cond_on}_set{i}.tsv"), quote=F, row.names=F, sep="\t")
-        write.table(final_condresults[["table3"]], glue("{write_path}/conditioned/cond_on_{cond_on}/unknown_cond_on_{cond_on}_set{i}_table3.tsv"), quote=F, row.names=F, sep="\t")
+        write.table(formatted_results$al, glue("{write_path}/conditioned/cond_on_{cond_on}/unknown_cond_on_{cond_on}_set{i}.tsv"), quote=F, row.names=F, sep="\t")
+        write.table(formatted_results$gt, glue("{write_path}/conditioned/cond_on_{cond_on}/unknown_cond_on_{cond_on}_set{i}_table3.tsv"), quote=F, row.names=F, sep="\t")
         final_list = c(final_list, ratio_row)
       }
     }

@@ -49,10 +49,10 @@ run_mixder_metrics = function(sample_manifest=NULL, sample=NULL, replicate="", s
     stop("Major and/or minor contributor not specified. Please rerun.")
   }
   popFreq = load_freq(twofreqs, freq_both, freq_major, freq_minor)
+  #popFreqSNP = EFMmps::freq2SNPformat(popFreq)
   ## load in references
   print("loading references")
   if (isTruthy(refpath)) {
-    if (cond) {
       if (file.exists(glue("{refpath}/EFM_references.rda"))) {
         load(glue("{refpath}/EFM_references.rda"))
       } else {
@@ -64,9 +64,6 @@ run_mixder_metrics = function(sample_manifest=NULL, sample=NULL, replicate="", s
         }
         save(refData, file=glue("{refpath}/EFM_references.rda"))
       }
-    } else {
-      refData = NULL
-    }
   } else {
     stop("No references provided. Please re-run!")
   }
