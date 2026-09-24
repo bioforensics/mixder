@@ -28,12 +28,12 @@
 ancestry_prediction = function(report, path, id, analysis_type, contrib_status, testsnps, groups) {
   if (testsnps == "All Autosomal SNPs") {
     plotid="AllSNPs"
-    geno=mixder::ancestry_1000G_allsamples
+    geno=data.frame(mixder::ancestry_1000G_allsamples)
   } else {
     plotid="AncestrySNPsOnly"
     geno=mixder::ancestrysnps_1000G_allsamples
   }
-  ncols=ncol(geno)
+  ncols = ncol(geno)
   geno_filt=geno[,c(7:ncols)]
   snps = data.frame("snp_id"=colnames(geno_filt))
   snps = snps %>%
@@ -69,7 +69,6 @@ ancestry_prediction = function(report, path, id, analysis_type, contrib_status, 
   newcol=ncols+1
   newcol2=ncols+4
   PCs_anc = cbind(geno_ancestry[,c(newcol:newcol2)], data.frame(PCs[,c(1:10)]))
-
   centroids(groups, PCs_anc, glue("{path}/PCA_plots"), glue("{id}_{contrib_status}_{analysis_type}_{plotid}"))
 
   dir.create(file.path(path, "PCA_plots"), showWarnings = FALSE, recursive=TRUE)

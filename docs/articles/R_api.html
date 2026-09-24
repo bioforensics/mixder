@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixder</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,7 @@
     <li><a class="dropdown-item" href="../articles/Installation.html">Installation</a></li>
     <li><a class="dropdown-item" href="../articles/Required_Files.html">Required Files</a></li>
     <li><a class="dropdown-item" href="../articles/Running_MixDecon.html">Running Mixture Deconvolution</a></li>
+    <li><a class="dropdown-item" href="../articles/Custom_SNPs.html">Custom SNP Sets</a></li>
     <li><a class="dropdown-item" href="../articles/Ancestry_Prediction_Tool.html">Ancestry Prediction Tool</a></li>
     <li><a class="dropdown-item" href="../articles/Valmetrics.html">Calculating Validation Metrics</a></li>
     <li><a class="dropdown-item" href="../articles/gedmatch.html">Generating GEDmatch PRO Report</a></li>
@@ -89,10 +90,10 @@ allele probability thresholds<br>
 - Running ancestry prediction</p>
 <hr>
 <p><strong>NOTE</strong>: There are several allele frequency data files
-stored within MixDeR for your use. 1000G global is the default when
-using the same frequency file for both contributors
-(<code>twofreqs=FALSE</code>). The following datasets are available for
-the <code>freq_both</code>, <code>freq_major</code> and
+stored within MixDeR for your use <em>for Kintelligence data ONLY</em>.
+1000G global is the default when using the same frequency file for both
+contributors (<code>twofreqs=FALSE</code>). The following datasets are
+available for the <code>freq_both</code>, <code>freq_major</code> and
 <code>freq_minor</code> arguments and should be referenced as
 indicated:<br>
 - 1000 Genomes global (<code>1000g_global</code>)<br>
@@ -102,8 +103,9 @@ indicated:<br>
 - 1000 Genomes EAS (<code>eas</code>)<br>
 - 1000 Genomes EUR (<code>eur</code>)<br>
 - 1000 Genomes SAS (<code>sas</code>)<br>
-Of course, a custom allele frequency file is allowed, requiring only the
-Path to the file.</p>
+Of course, a custom allele frequency file is also an option for
+Kintelligence data but is a requirement for a custom SNP set. The Path
+to the file must be specified if using a custom frequency dataset.</p>
 <hr>
 <p><strong>NOTE x 2</strong>: Using the R API, there are two options to
 specify samples:<br>
@@ -123,6 +125,9 @@ report(s)<a class="anchor" aria-label="anchor" href="#running-mixture-deconvolut
 <p><strong>Full reference for this function, including default settings,
 <a href="../reference/run_mixder_report.html">can be found
 here</a>.</strong></p>
+<p><em>The following examples are specifically for the Kintelligence
+data; please see the <a href="Custom_SNPs.html">Custom SNP set</a> page
+for required arguments if using a custom SNP panel.</em></p>
 <p>The following function runs an unconditioned mixture deconvolution
 and creates a report using the default settings (See <a href="Running_MixDecon.html">Running Mixture Deconvolution</a> for more
 information about the defaults), using the 1000 Genomes Global allele
@@ -157,6 +162,9 @@ metrics<a class="anchor" aria-label="anchor" href="#running-mixture-deconvolutio
 <p><strong>Full reference for this function, including default settings,
 <a href="../reference/run_mixder_metrics.html">can be found
 here</a>.</strong></p>
+<p><em>The following examples are specifically for the Kintelligence
+data; please see the <a href="Custom_SNPs.html">Custom SNP set</a> page
+for required arguments if using a custom SNP panel.</em></p>
 <p>The options are similar as the <code>run_mixder_report</code>
 function. The following function runs an unconditioned mixture
 deconvolution and calculates metrics using the default settings (See <a href="Running_MixDecon.html">Running Mixture Deconvolution</a> for more

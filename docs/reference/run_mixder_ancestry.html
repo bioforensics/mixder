@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixder</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,6 +22,7 @@
     <li><a class="dropdown-item" href="../articles/Installation.html">Installation</a></li>
     <li><a class="dropdown-item" href="../articles/Required_Files.html">Required Files</a></li>
     <li><a class="dropdown-item" href="../articles/Running_MixDecon.html">Running Mixture Deconvolution</a></li>
+    <li><a class="dropdown-item" href="../articles/Custom_SNPs.html">Custom SNP Sets</a></li>
     <li><a class="dropdown-item" href="../articles/Ancestry_Prediction_Tool.html">Ancestry Prediction Tool</a></li>
     <li><a class="dropdown-item" href="../articles/Valmetrics.html">Calculating Validation Metrics</a></li>
     <li><a class="dropdown-item" href="../articles/gedmatch.html">Generating GEDmatch PRO Report</a></li>
@@ -58,7 +59,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run_mixder_ancestry</span><span class="op">(</span></span>
 <span>  sample_manifest <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sample <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  replicate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  replicate <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  sample_reports <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  output <span class="op">=</span> <span class="st">"output"</span>,</span>
 <span>  refpath <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -74,8 +75,9 @@
 <span>  A2_threshold <span class="op">=</span> <span class="fl">0.6</span>,</span>
 <span>  minor_contrib_threshold <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  keep_bins <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">snps</span>,</span>
-<span>  <span class="va">pcagroups</span></span>
+<span>  snps <span class="op">=</span> <span class="st">"ancestry"</span>,</span>
+<span>  pcagroups <span class="op">=</span> <span class="st">"superpopulations"</span>,</span>
+<span>  threads <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -156,11 +158,15 @@
 
 
 <dt id="arg-snps">snps<a class="anchor" aria-label="anchor" href="#arg-snps"></a></dt>
-<dd><p>SNPs to use for ancestry prediction (either ancestry only or all SNPs)</p></dd>
+<dd><p>SNPs to use for ancestry prediction (either ancestry only or all SNPs; default="ancestry")</p></dd>
 
 
 <dt id="arg-pcagroups">pcagroups<a class="anchor" aria-label="anchor" href="#arg-pcagroups"></a></dt>
-<dd><p>How to color PCA plots (superpopulations and/or subpopulations)</p></dd>
+<dd><p>How to color PCA plots (superpopulations and/or subpopulations, default="superpopulations")</p></dd>
+
+
+<dt id="arg-threads">threads<a class="anchor" aria-label="anchor" href="#arg-threads"></a></dt>
+<dd><p>threads for EFM (default=0)</p></dd>
 
 </dl></div>
 

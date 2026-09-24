@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixder</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,6 +22,7 @@
     <li><a class="dropdown-item" href="../articles/Installation.html">Installation</a></li>
     <li><a class="dropdown-item" href="../articles/Required_Files.html">Required Files</a></li>
     <li><a class="dropdown-item" href="../articles/Running_MixDecon.html">Running Mixture Deconvolution</a></li>
+    <li><a class="dropdown-item" href="../articles/Custom_SNPs.html">Custom SNP Sets</a></li>
     <li><a class="dropdown-item" href="../articles/Ancestry_Prediction_Tool.html">Ancestry Prediction Tool</a></li>
     <li><a class="dropdown-item" href="../articles/Valmetrics.html">Calculating Validation Metrics</a></li>
     <li><a class="dropdown-item" href="../articles/gedmatch.html">Generating GEDmatch PRO Report</a></li>
@@ -65,8 +66,10 @@
 <span>  <span class="va">replicate_id</span>,</span>
 <span>  <span class="va">write_path</span>,</span>
 <span>  <span class="va">attable</span>,</span>
+<span>  <span class="va">keep_bins</span>,</span>
 <span>  cond <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  uncond <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  uncond <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  threads <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -116,6 +119,10 @@
 
 <dt id="arg-uncond">uncond<a class="anchor" aria-label="anchor" href="#arg-uncond"></a></dt>
 <dd><p>TRUE/FALSE if performing unconditioned analyses</p></dd>
+
+
+<dt id="arg-threads">threads<a class="anchor" aria-label="anchor" href="#arg-threads"></a></dt>
+<dd><p>number of threads to use for EFM</p></dd>
 
 </dl></div>
     <div class="section level2">

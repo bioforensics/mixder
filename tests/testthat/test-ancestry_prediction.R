@@ -1,7 +1,7 @@
 test_that("ancestry prediction", {
   tmpdir = tempdir()
   file.copy(test_path("testdata", "Sample01a_Sample_Report_2021_11_01_16_56_38.xlsx"), tmpdir)
-  outpath = paste0(tempdir(), "/snp_sets/output/ancestry_prediction/Single/Sample01a/unconditioned")
+  outpath = paste0(tmpdir, "/snp_sets/output/ancestry_prediction/Single/Sample01a/unconditioned")
   exp_centroids = read.csv(test_path("testdata", "Sample01a_major_unconditioned_AncestrySNPsOnly_Superpopulations_centroids_Calculations.txt"), header=T, sep="\t")
   obs_pcaplot = glue("{outpath}/PCA_plots/Sample01a_major_unconditioned_AncestrySNPsOnly_superpop_3D_PCAPlot.html")
   obs_centroids_pcaplot = glue("{outpath}/PCA_plots/Centroids_Plots/Sample01a_major_unconditioned_AncestrySNPsOnly_Superpopulations_centroids.html")

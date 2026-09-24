@@ -1,0 +1,40 @@
+---
+title: "Custom SNP Sets"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Custom_SNPs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Background Information
+
+MixDeR has the ability to process much larger custom SNP sets beyond the Kintelligence kit. A few extra files are required:  
+  - The allele frequency file containing the SNPs within the panel (please see [Required Files](Required_Files.html) for proper formatting).    
+  - A file containing the GRCh37 locations for each SNP, specifically the rsID, chromosome and position. This is required for creating a database report, but not required for generating validation metrics.  
+
+**Some things to keep in mind**:  
+  - Updates were made to MixDeR to increase the speed of uploading and formatting the required files for EuroForMix. **However**, the more SNPs included in the panel, the longer it'll take to upload in MixDeR (think *several* hours!). To account for this, files that can take a long time to format and may be used in future MixDeR runs (such as the allele frequency file, the file containing reference genotypes, and the binned SNP mixture data (i.e. SNP set 1, SNP set 2, etc.)) will be automatically saved as an .`rda` file. In future runs, the `.rda` frequency file can then be specified, and the references and binned SNP data will be automatically used if created. A `.rda` file will take only seconds to load the R object with the appropriately formatted EFM data instead of the hours it may take to format a data frame into the required format for EFM.  
+  - With Kintelligence, the UAS applies both a dynamic and analytical threshold. If using non-Kintelligence sequencing data, keep in mind these types of thresholds may not have been applied (or applied differently). A likely threshold setting should be `staticAT=1` and `dynamicAT=0`.  
+  - Please use at your own discretion! While we've had success running several thousand SNPs, please optimize for your own data and SNP panel!  
+  - For now, the ancestry prediction tool only uses the Kintelligence SNPs; while custom SNP data can be uploaded for this module, only the Kintelligence SNPs will be used.   
+  
+  
+___
+
+## Running Custom SNP sets
+
+If using the GUI, please select the drop-down "Assay" menu as "Custom". Once this is selected, a button will appear to upload the SNP position information file.  
+
+If using the R API, please specify the `assay="custom"` and `snp_pos="/path/to/snp_positions.txt` arguments. Further, the frequency file will need to be provided as well. Below is an example of the `run_mixder_report()` function running an unconditioned deconvolution using the same frequency file (the `.rda` file) for both contributors, with no analytical thresholds applied:  
+```
+run_mixder_report(sample="Sample01", assay="custom", snp_pos="custom_panel_snp_positions.txt", freq_both="AF/1000G_allsnps_efmformatted.rda", staticAT=1, dynamicAT=0)
+```
+All other settings can be adjusted as wanted, please see the [R API](R_api.html) page for additional options.  

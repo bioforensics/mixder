@@ -15,7 +15,10 @@
 #' @return command to get list of files
 #' @export
 get_ids = function(inpath) {
-  if (file.exists(glue("{inpath}/EFM_references.csv"))) {
+  if (file.exists(glue("{inpath}/EFM_references.rda"))) {
+    load(glue("{inpath}/EFM_references.rda"))
+    return(names(refData))
+  } else if (file.exists(glue("{inpath}/EFM_references.csv"))) {
     all_samples = utils::read.csv(glue("{inpath}/EFM_references.csv"))
     if ("Sample.Name" %in% colnames(all_samples))  {
       return(unique(all_samples$Sample.Name))

@@ -10,22 +10,17 @@
 # -------------------------------------------------------------------------------------------------
 #' @title Formatting reference file
 #'
-#' @param refData Data frame of the reference genotypes
-#' @param refid Reference order in the reference genotypes file
+#' @param refid ID of the reference genotypes of interest
 #' @param refs Path of the reference genotypes file
 #'
 #' @return Data frame containing reference of interest genotypes
 #' @export
 #'
 #' @importFrom rlang .data
-format_ref = function(refData, refid, refs) {
-  if (is.numeric(refid)) {
-    ref_int = names(refData)[refid]
-  } else {
-    ref_int = refid
-  }
-  ref_profile = euroformix::tableReader(glue("{refs}/EFM_references.csv")) %>%
-    filter(.data$Sample.Name == ref_int)
+#' @importFrom data.table fread
+format_ref = function(refid, refs) {
+  ref_profile = data.frame(fread(glue("{refs}/EFM_references.csv"))) %>%
+    filter(.data$Sample.Name == refid)
   ref_profile$A1_order = ifelse(ref_profile$`Allele1`>ref_profile$`Allele2`, ref_profile$`Allele1`, ref_profile$`Allele2`)
   ref_profile$A2_order = ifelse(ref_profile$`Allele1`>ref_profile$`Allele2`, ref_profile$`Allele2`, ref_profile$`Allele1`)
   return(ref_profile)

@@ -4,12 +4,10 @@
 \alias{format_ref}
 \title{Formatting reference file}
 \usage{
-format_ref(refData, refid, refs)
+format_ref(refid, refs)
 }
 \arguments{
-\item{refData}{Data frame of the reference genotypes}
-
-\item{refid}{Reference order in the reference genotypes file}
+\item{refid}{ID of the reference genotypes of interest}
 
 \item{refs}{Path of the reference genotypes file}
 }

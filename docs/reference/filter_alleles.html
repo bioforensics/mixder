@@ -9,7 +9,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mixder</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,6 +24,7 @@
     <li><a class="dropdown-item" href="../articles/Installation.html">Installation</a></li>
     <li><a class="dropdown-item" href="../articles/Required_Files.html">Required Files</a></li>
     <li><a class="dropdown-item" href="../articles/Running_MixDecon.html">Running Mixture Deconvolution</a></li>
+    <li><a class="dropdown-item" href="../articles/Custom_SNPs.html">Custom SNP Sets</a></li>
     <li><a class="dropdown-item" href="../articles/Ancestry_Prediction_Tool.html">Ancestry Prediction Tool</a></li>
     <li><a class="dropdown-item" href="../articles/Valmetrics.html">Calculating Validation Metrics</a></li>
     <li><a class="dropdown-item" href="../articles/gedmatch.html">Generating GEDmatch PRO Report</a></li>
@@ -65,7 +66,8 @@
 <span>  <span class="va">A1_threshold</span>,</span>
 <span>  <span class="va">A2_threshold</span>,</span>
 <span>  <span class="va">minor_threshold</span>,</span>
-<span>  <span class="va">filter_missing</span></span>
+<span>  <span class="va">filter_missing</span>,</span>
+<span>  <span class="va">pos</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -99,6 +101,10 @@
 
 <dt id="arg-filter-missing">filter_missing<a class="anchor" aria-label="anchor" href="#arg-filter-missing"></a></dt>
 <dd><p>TRUE/FALSE to filter SNPs with missing allele 2 values</p></dd>
+
+
+<dt id="arg-pos">pos<a class="anchor" aria-label="anchor" href="#arg-pos"></a></dt>
+<dd><p>SNP position data frame</p></dd>
 
 </dl></div>
     <div class="section level2">
