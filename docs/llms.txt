@@ -1,0 +1,201 @@
+# MixDeR - Current Version: 0.10.0
+
+MixDeR (**Mix**ture **De**convolution in **R**) is a workflow (with a
+Shiny app) for performing mixture deconvolution of ForenSeq
+Kintelligence SNP data for two-person mixtures using
+[EuroForMix](https://github.com/oyvble/euroformix/) and creating
+GEDmatch PRO reports for the individual contributor SNP profiles.
+
+This method requires extensive validation of the settings. MixDeR
+provides the option of calculating various metrics for evaluating the
+accuracy of the deduced SNP genotypes. This is extremely useful when
+determining settings, specifically the allele 1 probability threshold,
+the allele 2 probability threshold, and the minimum number of SNPs.
+
+*Note: MixDeR (and EFM) assume the mixture samples are composed of two
+contributors. MixDeR is able to identify and alert the user to samples
+that may be potentially either single source or consist of a mixture
+with a large mixture ratio (i.e. \> 1:100 ratio between contributors).
+In these scenarios, the user is warned to be cautious with the minor
+contributor inferred genotyping results.*
+
+MixDeR version 0.8 and later provides the option to perform ancestry
+prediction using principal component analysis (PCA). Additional
+information can be found below in the **Ancestry Prediction** section.
+
+The MixDeR paper can be cited with the following:
+
+``` R
+Mitchell, R., Peck, M., Gorden, E., & Just, R. (2025). MixDeR: A SNP mixture 
+deconvolution workflow for forensic genetic genealogy. Forensic Science 
+International: Genetics, 76, 103224, doi: 10.1016/j.fsigen.2025.103224
+```
+
+## Usage
+
+To launch the shiny app:
+
+``` R
+library(mixder)
+mixder()
+```
+
+To use the command line, please see the R API page in the MixDeR
+documentation.
+
+Please see [MixDeR
+documentation](https://bioforensics.github.io/mixder/bioforensics.github.io/mixder/)
+for further information.
+
+# Package index
+
+## All functions
+
+- [`check_allele_probabilities()`](https://bioforensics.github.io/mixder/reference/This.md)
+  : Checks EFM predicted genotypes for errors
+- [`add_rows()`](https://bioforensics.github.io/mixder/reference/add_rows.md)
+  : Add SNPs to ensure same SNPs are present in both samples for a
+  replicate analysis.
+- [`ancestry_1000G_allsamples`](https://bioforensics.github.io/mixder/reference/ancestry_1000G_allsamples.md)
+  : 1000 Genomes genotypes for 10,030 autosomal SNPs for all 2,504 1000G
+  samples
+- [`ancestry_colors`](https://bioforensics.github.io/mixder/reference/ancestry_colors.md)
+  : Colors for creating 3D PCA plots
+- [`ancestry_prediction()`](https://bioforensics.github.io/mixder/reference/ancestry_prediction.md)
+  : Ancestry prediction using PCA
+- [`ancestrysnps_1000G_allsamples`](https://bioforensics.github.io/mixder/reference/ancestrysnps_1000G_allsamples.md)
+  : 1000 Genomes genotypes for 54 ancestry SNPs for all 2,504 1000G
+  samples
+- [`assigned_A2()`](https://bioforensics.github.io/mixder/reference/assigned_A2.md)
+  : Calls allele 2 based on established threshold
+- [`calc_metrics()`](https://bioforensics.github.io/mixder/reference/calc_metrics.md)
+  : Calculating metrics for a single set of allele 1 and allele 2
+  probability thresholds
+- [`calculate_at()`](https://bioforensics.github.io/mixder/reference/calculate_at.md)
+  : Calculate the analytical threshold
+- [`centroids()`](https://bioforensics.github.io/mixder/reference/centroids.md)
+  : Centroid Calculations and Plotting
+- [`check_3_or_4_col()`](https://bioforensics.github.io/mixder/reference/check_3_or_4_col.md)
+  : Adds additional columns if necessary to data frame to ensure same
+  number of columns between sample and replicate
+- [`check_allele_calls()`](https://bioforensics.github.io/mixder/reference/check_allele_calls.md)
+  : Checks EFM predicted genotypes for errors
+- [`check_nas()`](https://bioforensics.github.io/mixder/reference/check_nas.md)
+  : Checks if entire column has NA values
+- [`check_ratios()`](https://bioforensics.github.io/mixder/reference/check_ratios.md)
+  : Check the mixture ratios for potentially single source samples (or
+  samples with very high mixture ratios)
+- [`check_reads()`](https://bioforensics.github.io/mixder/reference/check_reads.md)
+  : Check SNP sets if all SNPs have 0 reads
+- [`checking_af()`](https://bioforensics.github.io/mixder/reference/checking_af.md)
+  : Checking AF file for correct format; formatting if necessary
+- [`compile_metrics()`](https://bioforensics.github.io/mixder/reference/compile_metrics.md)
+  : Compiling metrics for the range of allele 1 and allele 2 probablity
+  thresholds
+- [`create_at()`](https://bioforensics.github.io/mixder/reference/create_at.md)
+  : Create AT table containing only SNPs contained in the evidence file
+- [`create_config()`](https://bioforensics.github.io/mixder/reference/create_config.md)
+  : Create configuration file containing all settings for a specific run
+- [`create_evid()`](https://bioforensics.github.io/mixder/reference/create_evid.md)
+  : Create evidence files for EFM mixture deconvolution
+- [`create_evid_all()`](https://bioforensics.github.io/mixder/reference/create_evid_all.md)
+  : Creating SNP sets from evidence samples containing all SNPs
+- [`create_gedmatchpro_report()`](https://bioforensics.github.io/mixder/reference/create_gedmatchpro_report.md)
+  : Create GEDmatch PRO report
+- [`create_replicatedf()`](https://bioforensics.github.io/mixder/reference/create_replicatedf.md)
+  : Creates replicate df
+- [`decode_freq_name()`](https://bioforensics.github.io/mixder/reference/decode_freq_name.md)
+  : Convert frequency file name
+- [`equalize_samples()`](https://bioforensics.github.io/mixder/reference/equalize_samples.md)
+  : Equalize samples when using replicates
+- [`filter_alleles()`](https://bioforensics.github.io/mixder/reference/filter_alleles.md)
+  : Filters the called genotypes based on the allele 1 and allele 2
+  probability thresholds
+- [`fix_columns()`](https://bioforensics.github.io/mixder/reference/fix_columns.md)
+  : Identifies if one sample has more columns than another; adds columns
+  as needed.
+- [`format_af()`](https://bioforensics.github.io/mixder/reference/format_af.md)
+  : Formatting allele frequency files for use in EFM
+- [`format_ref()`](https://bioforensics.github.io/mixder/reference/format_ref.md)
+  : Formatting reference file
+- [`gedmatch_metrics()`](https://bioforensics.github.io/mixder/reference/gedmatch_metrics.md)
+  : Calculate various metrics on the inferred genotype dataset to assist
+  user in evaluating the final dataset
+- [`get_ids()`](https://bioforensics.github.io/mixder/reference/get_ids.md)
+  : Get Reference IDs from either CSV file or Sample Reports
+- [`kintelligence_snp_positions`](https://bioforensics.github.io/mixder/reference/kintelligence_snp_positions.md)
+  : Kintelligence SNP positions file
+- [`load_freq()`](https://bioforensics.github.io/mixder/reference/load_freq.md)
+  : Load in frequency data
+- [`load_kin_older()`](https://bioforensics.github.io/mixder/reference/load_kin_older.md)
+  : Formatting Kintelligence Sample Reports created with UAS version
+  \<2.5
+- [`load_kin_uas25()`](https://bioforensics.github.io/mixder/reference/load_kin_uas25.md)
+  : Formatting Kintelligence Sample Reports created with UAS version 2.5
+- [`mixder()`](https://bioforensics.github.io/mixder/reference/mixder.md)
+  : Run MixDeR
+- [`popFreq_1000G`](https://bioforensics.github.io/mixder/reference/popFreq_1000G.md)
+  : Allele Frequency file using 1000G Phase 3 dataset
+- [`popFreq_AFR`](https://bioforensics.github.io/mixder/reference/popFreq_AFR.md)
+  : Allele Frequency file using 1000G Phase 3 dataset for all AFR
+  individuals
+- [`popFreq_AMR`](https://bioforensics.github.io/mixder/reference/popFreq_AMR.md)
+  : Allele Frequency file using 1000G Phase 3 dataset for all AMR
+  individuals
+- [`popFreq_EAS`](https://bioforensics.github.io/mixder/reference/popFreq_EAS.md)
+  : Allele Frequency file using 1000G Phase 3 dataset for all EAS
+  individuals
+- [`popFreq_EUR`](https://bioforensics.github.io/mixder/reference/popFreq_EUR.md)
+  : Allele Frequency file using 1000G Phase 3 dataset for all EUR
+  individuals
+- [`popFreq_SAS`](https://bioforensics.github.io/mixder/reference/popFreq_SAS.md)
+  : Allele Frequency file using 1000G Phase 3 dataset for all SAS
+  individuals
+- [`popFreq_gnomad`](https://bioforensics.github.io/mixder/reference/popFreq_gnomad.md)
+  : Allele Frequency file using gnomADv4 dataset
+- [`process_efm_files()`](https://bioforensics.github.io/mixder/reference/process_efm_files.md)
+  : Process files created by EFM
+- [`process_kinreport()`](https://bioforensics.github.io/mixder/reference/process_kinreport.md)
+  : Function to determine how to create the AT file
+- [`processing_evid_sample_reports()`](https://bioforensics.github.io/mixder/reference/processing_evid_sample_reports.md)
+  : Creating usable data frame from a Kintelligence Sample Report
+- [`processing_ref_sample_reports()`](https://bioforensics.github.io/mixder/reference/processing_ref_sample_reports.md)
+  : Processing Reference Sample Reports
+- [`read_in_table()`](https://bioforensics.github.io/mixder/reference/read_in_table.md)
+  : Read in dataset to run through EFM
+- [`reverse_comp()`](https://bioforensics.github.io/mixder/reference/reverse_comp.md)
+  : Identifying SNPs that need to be reverse complemented
+- [`run_efm()`](https://bioforensics.github.io/mixder/reference/run_efm.md)
+  : Running mixture deconvolution in EuroForMix
+- [`run_indiv_efm_set()`](https://bioforensics.github.io/mixder/reference/run_indiv_efm_set.md)
+  : Running individual EFM SNP sets in parallel
+- [`run_mixder_ancestry()`](https://bioforensics.github.io/mixder/reference/run_mixder_ancestry.md)
+  : run MixDeR using the CLI; ancestry prediction
+- [`run_mixder_metrics()`](https://bioforensics.github.io/mixder/reference/run_mixder_metrics.md)
+  : run MixDeR using the CLI; calculate validation metrics
+- [`run_mixder_report()`](https://bioforensics.github.io/mixder/reference/run_mixder_report.md)
+  : run MixDeR using the CLI; create GEDmatch PRO report(s)
+- [`run_workflow()`](https://bioforensics.github.io/mixder/reference/run_workflow.md)
+  : Run MixDeR workflow
+- [`snpinfo`](https://bioforensics.github.io/mixder/reference/snpinfo.md)
+  : SNP information json file
+- [`write_tables()`](https://bioforensics.github.io/mixder/reference/write_tables.md)
+  : Write metrics tables
+
+# Articles
+
+### Articles
+
+- [Introduction](https://bioforensics.github.io/mixder/articles/Introduction.md):
+- [Installation](https://bioforensics.github.io/mixder/articles/Installation.md):
+- [Required
+  Files](https://bioforensics.github.io/mixder/articles/Required_Files.md):
+- [Running Mixture
+  Deconvolution](https://bioforensics.github.io/mixder/articles/Running_MixDecon.md):
+- [Ancestry Prediction
+  Tool](https://bioforensics.github.io/mixder/articles/Ancestry_Prediction_Tool.md):
+- [Calculating Validation
+  Metrics](https://bioforensics.github.io/mixder/articles/Valmetrics.md):
+- [Generating GEDmatch PRO
+  Report](https://bioforensics.github.io/mixder/articles/gedmatch.md):
+- [R API](https://bioforensics.github.io/mixder/articles/R_api.md):
