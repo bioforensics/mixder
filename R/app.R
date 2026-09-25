@@ -51,15 +51,14 @@ mixder = function() {
         add_prompt(message = "A conditioned analysis assumes a single known contributorto the mixture.\nUser will select which reference sample to condition on after providing\nthe Reference Sample Report Folder.", position = "right")
       ), value = FALSE),
 
-
-
-      shinyFilesButton("sample_GetFile", "Select a Sample Manifest File", "Select a sample manifest", multiple = FALSE,
-                       buttonType = "default", class = NULL), tags$span(icon(
-                         name = "question-circle",
-                       )
-                       ) |>
-        add_prompt(message = "A tab-delimited file containing the list of samples to run MixDeR.\nIt must contain two columns (SampleID and ReplicateID).\nEach row contains the ID of a single sample or the IDs of\nboth the sample and replicate.", position = "right"),
-      textOutput("sample_file"),
+      selectInput("numsamples", tags$span("Single or Multiple Mixtures?", tags$span(icon(
+        name = "question-circle",
+      )
+      ) |>
+        add_prompt(message = "Run a single sample or multiple samples.", position = "right")
+      ), c("Single Mixture", "Multiple Mixtures")),
+      conditionalPanel(condition = "input.numsamples == 'Single Mixture'", uiOutput("sampleid"), uiOutput("replicateid")),
+      conditionalPanel(condition = "input.numsamples == 'Multiple Mixtures'", uiOutput("sample_GetFile")),
       shinyDirButton("kin_prefix", "Select Folder containing Mixture Sample Reports", "Please select a folder containing Mixture Sample Reports",
                      buttonType = "default", class = NULL), tags$span(icon(
                        name = "question-circle",
@@ -102,13 +101,37 @@ mixder = function() {
 
 # Define server
 server = function(input, output, session) {
-  output$numsamples = renderUI({
-    selectInput("numsamples", tags$span("Single or Multiple Mixtures?", tags$span(icon(
-      name = "question-circle",
-    )
+  output$sampleid = renderUI({
+             textInput("sampleid", tags$span("Sample ID", tags$span(
+               icon(
+                 name = "question-circle",
+               )
+             ) |>
+               add_prompt(message = "Sample ID for running a single mixture sample.\n Sample ID must be contained in the file name of the\nKintelligence Sample Report or the\nTSV file.", position = "right")
+             ))
+  })
+  output$replicateid = renderUI({
+    textInput("replicateid", tags$span("Replicate ID (optional)", tags$span(
+      icon(
+        name = "question-circle",
+      )
     ) |>
-      add_prompt(message = "Run a single sample or multiple samples.", position = "right")
-    ), c("", "Single Mixture", "Multiple Mixtures"))
+      add_prompt(message = "If providing a replicate sample, provide the ID.\nReplicate ID must be contained in the file name of the\nKintelligence Sample Report or the\nTSV file.", position = "right")
+    ))
+  })
+  output$sample_GetFile = renderUI({
+    fluidRow(
+      column(10,
+             shinyFilesButton("sample_GetFile", "Select a Sample Manifest File", "Select a sample manifest", multiple = FALSE,
+                     buttonType = "default", class = NULL), tags$span(icon(
+                       name = "question-circle",
+                     )
+                     ) |>
+      add_prompt(message = "A tab-delimited file containing the list of samples to run MixDeR.\nIt must contain two columns (SampleID and ReplicateID).\nEach row contains the ID of a single sample or the IDs of\nboth the sample and replicate.", position = "right"),
+      ))
+    })
+  output$samplefile_text = renderUI({
+      textOutput("sample_file")
   })
   output$ref_GetFile = renderUI({
     fluidRow(
@@ -199,9 +222,6 @@ server = function(input, output, session) {
   })
   output$freq_text_minor = renderUI({
     textOutput("freq_file_minor")
-  })
-  output$sample_file_text = renderUI({
-
   })
   output$ancestry_text = renderUI({
     HTML("<b>Optional: Ancestry Prediction Tool using PCA</b> <br/> Use this tool to assist in predicting the ancestry of each contributor. The population-specific allele frequency file can then be used in the next mixture deconvolution step. Select the above box to skip this step and move forward to mixture deconvolution.<br/>See the README for more information.<br/><br/>")
@@ -438,10 +458,17 @@ server = function(input, output, session) {
 
 ## Input the sample manifest and run the workflow on each line (sample)
   observeEvent(input$Submit, {
-    if (!isTruthy(samplefile()$datapath)) {
+    if (!isTruthy(samplefile()$datapath) & input$numsamples == "Multiple Mixtures") {
       showModal(modalDialog(
         title = "Missing Input",
         "Please provide a sample manifest before proceeding.",
+        easyClose = TRUE,
+        footer = modalButton("Dismiss")
+      ))
+    } else if (!isTruthy(input$sampleid) & input$numsamples == "Single Mixture") {
+      showModal(modalDialog(
+        title = "Missing Input",
+        "Please provide a sample ID before proceeding.",
         easyClose = TRUE,
         footer = modalButton("Dismiss")
       ))
@@ -478,24 +505,38 @@ server = function(input, output, session) {
     } else {
       refData = NULL
     }
-    sample_list = suppressWarnings(euroformix::tableReader(samplefile()$datapath))
     date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
-    create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, NULL, NULL, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups)
-    withProgress(message = "Running Samples", value = 0, {
-      n = nrow(sample_list)
-      for (row in 1:n) {
-        id = sample_list[row, 1]
-        replicate_id = ifelse(is.na(sample_list[row, 2]), "", sample_list[row, 2])
-        incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
-          withCallingHandlers({
-            shinyjs::html(id = "text", html = "")
-            run_workflow(date, id, replicate_id, input$twofreqs, ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath),ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refData, refs(), input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups)
-          },
-          message = function(m) {
-            shinyjs::html(id = "text", html = m$message, add = TRUE)
-          })
-        }
+    if (isTruthy(samplefile()$datapath)) {
+      sample_list = suppressWarnings(euroformix::tableReader(samplefile()$datapath))
+      create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, input$sampleid, input$replicateid, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups)
+      withProgress(message = "Running Samples", value = 0, {
+        n = nrow(sample_list)
+        for (row in 1:n) {
+          id = sample_list[row, 1]
+          replicate_id = ifelse(is.na(sample_list[row, 2]), "", sample_list[row, 2])
+          incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
+            withCallingHandlers({
+              shinyjs::html(id = "text", html = "")
+              run_workflow(date, id, replicate_id, input$twofreqs, ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath),ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refData, refs(), input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups)
+            },
+            message = function(m) {
+              shinyjs::html(id = "text", html = m$message, add = TRUE)
+            })
+          }
+        })
+    } else if (isTruthy(input$sampleid)) {
+      repid = ifelse(isTruthy(input$replicateid), input$replicateid, "")
+      create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, input$sampleid, repid, input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups)
+      withProgress(message = "Running Sample", value = 0, {
+        withCallingHandlers({
+          shinyjs::html(id = "text", html = "")
+          run_workflow(date, input$sampleid, repid, input$twofreqs, ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath),ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refData, refs(), input$output, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups)
+        },
+        message = function(m) {
+          shinyjs::html(id = "text", html = m$message, add = TRUE)
+        })
       })
+      }
     }
   })
 }
