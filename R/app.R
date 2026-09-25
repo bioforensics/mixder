@@ -50,6 +50,9 @@ mixder = function() {
       ) |>
         add_prompt(message = "A conditioned analysis assumes a single known contributorto the mixture.\nUser will select which reference sample to condition on after providing\nthe Reference Sample Report Folder.", position = "right")
       ), value = FALSE),
+
+
+
       shinyFilesButton("sample_GetFile", "Select a Sample Manifest File", "Select a sample manifest", multiple = FALSE,
                        buttonType = "default", class = NULL), tags$span(icon(
                          name = "question-circle",
@@ -99,6 +102,14 @@ mixder = function() {
 
 # Define server
 server = function(input, output, session) {
+  output$numsamples = renderUI({
+    selectInput("numsamples", tags$span("Single or Multiple Mixtures?", tags$span(icon(
+      name = "question-circle",
+    )
+    ) |>
+      add_prompt(message = "Run a single sample or multiple samples.", position = "right")
+    ), c("", "Single Mixture", "Multiple Mixtures"))
+  })
   output$ref_GetFile = renderUI({
     fluidRow(
       column(10,
