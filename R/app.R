@@ -58,7 +58,7 @@ mixder = function() {
         add_prompt(message = "Run a single sample or multiple samples.", position = "right")
       ), c("Single Mixture", "Multiple Mixtures")),
       conditionalPanel(condition = "input.numsamples == 'Single Mixture'", uiOutput("sampleid"), uiOutput("replicateid")),
-      conditionalPanel(condition = "input.numsamples == 'Multiple Mixtures'", uiOutput("sample_GetFile")),
+      conditionalPanel(condition = "input.numsamples == 'Multiple Mixtures'", uiOutput("sample_GetFile"), uiOutput("samplefile_text")),
       shinyDirButton("kin_prefix", "Select Folder containing Mixture Sample Reports", "Please select a folder containing Mixture Sample Reports",
                      buttonType = "default", class = NULL), tags$span(icon(
                        name = "question-circle",
