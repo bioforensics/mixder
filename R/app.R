@@ -108,7 +108,7 @@ server = function(input, output, session) {
                  name = "question-circle",
                )
              ) |>
-               add_prompt(message = "Sample ID for running a single mixture sample.\n Sample ID must be contained in the file name of the\nKintelligence Sample Report or the TSV file.", position = "right")
+               add_prompt(message = "Sample ID for running a single mixture sample.\n Sample ID must be contained in the file name of the\nKintelligence Sample Report or the TSV file.\nThis is case-sensitive!", position = "right")
              ))
   })
   output$replicateid = renderUI({
@@ -117,7 +117,7 @@ server = function(input, output, session) {
         name = "question-circle",
       )
     ) |>
-      add_prompt(message = "If providing a replicate sample, provide the ID.\nReplicate ID must be contained in the file name of the\nKintelligence Sample Report or the TSV file.", position = "right")
+      add_prompt(message = "If providing a replicate sample, provide the ID.\nReplicate ID must be contained in the file name of the\nKintelligence Sample Report or the TSV file.\nThis is case-sensitive!", position = "right")
     ))
   })
   output$sample_GetFile = renderUI({
