@@ -1,0 +1,48 @@
+# MixDeR - Current Version: 0.10.0
+
+MixDeR (**Mix**ture **De**convolution in **R**) is a workflow (with a
+Shiny app) for performing mixture deconvolution of ForenSeq
+Kintelligence SNP data for two-person mixtures using
+[EuroForMix](https://github.com/oyvble/euroformix/) and creating
+GEDmatch PRO reports for the individual contributor SNP profiles.
+
+This method requires extensive validation of the settings. MixDeR
+provides the option of calculating various metrics for evaluating the
+accuracy of the deduced SNP genotypes. This is extremely useful when
+determining settings, specifically the allele 1 probability threshold,
+the allele 2 probability threshold, and the minimum number of SNPs.
+
+*Note: MixDeR (and EFM) assume the mixture samples are composed of two
+contributors. MixDeR is able to identify and alert the user to samples
+that may be potentially either single source or consist of a mixture
+with a large mixture ratio (i.e. \> 1:100 ratio between contributors).
+In these scenarios, the user is warned to be cautious with the minor
+contributor inferred genotyping results.*
+
+MixDeR version 0.8 and later provides the option to perform ancestry
+prediction using principal component analysis (PCA). Additional
+information can be found below in the **Ancestry Prediction** section.
+
+The MixDeR paper can be cited with the following:
+
+``` R
+Mitchell, R., Peck, M., Gorden, E., & Just, R. (2025). MixDeR: A SNP mixture 
+deconvolution workflow for forensic genetic genealogy. Forensic Science 
+International: Genetics, 76, 103224, doi: 10.1016/j.fsigen.2025.103224
+```
+
+## Usage
+
+To launch the shiny app:
+
+``` R
+library(mixder)
+mixder()
+```
+
+To use the command line, please see the R API page in the MixDeR
+documentation.
+
+Please see [MixDeR
+documentation](https://bioforensics.github.io/mixder/bioforensics.github.io/mixder/)
+for further information.

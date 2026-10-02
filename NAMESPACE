@@ -51,19 +51,27 @@ import(plotly)
 import(prompter)
 import(shiny)
 import(shinyFiles)
-importFrom(grDevices,dev.off)
-importFrom(grDevices,png)
+importFrom(grDevices,
+  dev.off,
+  png
+)
 importFrom(methods,show)
 importFrom(readxl,read_excel)
 importFrom(rlang,.data)
-importFrom(stats,aggregate)
-importFrom(stats,median)
-importFrom(stats,sd)
-importFrom(stats,setNames)
+importFrom(stats,
+  aggregate,
+  median,
+  sd,
+  setNames
+)
 importFrom(tibble,add_column)
-importFrom(tidyr,pivot_wider)
-importFrom(tidyr,separate)
-importFrom(utils,compareVersion)
-importFrom(utils,read.table)
-importFrom(utils,write.csv)
-importFrom(utils,write.table)
+importFrom(tidyr,
+  pivot_wider,
+  separate
+)
+importFrom(utils,
+  compareVersion,
+  read.table,
+  write.csv,
+  write.table
+)

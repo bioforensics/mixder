@@ -23,7 +23,7 @@
 #' @export
 filter_alleles = function(all_files, contrib_status, minimum_snps, A1_threshold, A2_threshold, minor_threshold, filter_missing) {
   . = NULL
-  if (filter_missing) {
+  if (isTruthy(filter_missing)) {
     all_files = subset(all_files, !(all_files$A2 == 99 & all_files$A2_Prob<A2_threshold))
   }
   filt_df = all_files %>%

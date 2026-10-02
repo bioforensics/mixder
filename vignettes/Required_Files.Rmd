@@ -37,7 +37,8 @@ MixDeR will divide the entire Kintelligence dataset into more manageable sets (o
 The default is for MixDeR to use previously-created SNP sets, if present in the specified input folder. If this option is unselected, MixDeR will create new SNP sets files, overwriting any previously made files.  
 
 2. **The sample manifest**  
-This file lists the Sample IDs of the files to run. The `SampleID` is extracted from the `Sample Name` field in the Sample Report. The columns names do not matter, just the order and both columns **must** be present even if no replicates are included. If a single sample is run, only the single ID needs to be in the first column, the second column should be left blank. If a second sample is to be run in replicate, the replicate ID should be listed in the second column.  
+**NOTE** As of version 0.10, a single sample ID (along with a single replicate ID, if warranted), can be provided in place of a sample manifest by selecting the "Single Mixture" option.
+If "Multiple Mixtures" option is selected, a sample manifest is required. This file lists the Sample IDs of the files to run. The `SampleID` is extracted from the `Sample Name` field in the Sample Report. The columns names do not matter, just the order and both columns **must** be present even if no replicates are included. If a single sample is run, only the single ID needs to be in the first column, the second column should be left blank. If a second sample is to be run in replicate, the replicate ID should be listed in the second column.  
 ```{r table2, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
 tabl = "
 | SampleID | ReplicateID  |

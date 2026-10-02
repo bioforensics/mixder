@@ -63,6 +63,8 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
   if (!isTruthy(skipancestry)) {
     config = rbind(config, data.frame(Setting="SNPs Used for PCA (Ancestry Prediction):", Value=pcasnps))
     config = rbind(config, data.frame(Setting="Groups Used for PCA (Ancestry Prediction):", Value=pcagroups))
+  } else {
+    config = rbind(config, data.frame(Setting="Running mixture deconvolution:", Value=run_mixdeconv))
   }
   if (isTruthy(run_mixdeconv)) {
     if (isTruthy(twofreqs)) {
@@ -78,7 +80,6 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
   config = rbind(config, data.frame(Setting="Minimum number of SNPs:", Value=minimum_snps))
   config = rbind(config, data.frame(Setting="Static AT:", Value=staticAT))
   config = rbind(config, data.frame(Setting="Dynamic AT:", Value=dynamicAT))
-  config = rbind(config, data.frame(Setting="Running mixture deconvolution:", Value=run_mixdeconv))
   config = rbind(config, data.frame(Setting="Running unconditioned deconvolution:", Value=unconditioned))
   if (isTruthy(cond)) {
     for (id in cond) {
@@ -87,20 +88,20 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
   } else {
     config = rbind(config, data.frame(Setting="Running conditioned deconvolution on reference:", Value=FALSE))
   }
-  if (method == "") {
+  if (!isTruthy(method)) {
     config = rbind(config, data.frame(Setting="Method run post deconvolution:", Value="None"))
   } else {
     config = rbind(config, data.frame(Setting="Method run post deconvolution:", Value=method))
     config = rbind(config, data.frame(Setting="Filtering SNPs if allele 2 is missing?", Value=filter_missing))
-  }
-  if (method == "Create GEDmatch PRO Report"){
-    config = rbind(config, data.frame(Setting="Allele 1 probability threshold (for GEDmatch PRO reports or ancestry prediction):", Value=A1_threshold))
-    config = rbind(config, data.frame(Setting="Allele 2 probability threshold (for GEDmatch PRO reports or ancestry prediction):", Value=A2_threshold))
-  } else if (method == "Calculate Metrics") {
-    config = rbind(config, data.frame(Setting="Allele 1 probability range for validation metric calculations:", Value=glue("{A1min}-{A1max}")))
-    config = rbind(config, data.frame(Setting="Allele 2 probability range for validation metric calculations:", Value=glue("{A2min}-{A2max}")))
-    config = rbind(config, data.frame(Setting="Assumed major contributor:", Value=major))
-    config = rbind(config, data.frame(Setting="Assumed minor contributor:", Value=minor))
+    if (method == "Create GEDmatch PRO Report"){
+      config = rbind(config, data.frame(Setting="Allele 1 probability threshold (for GEDmatch PRO reports or ancestry prediction):", Value=A1_threshold))
+      config = rbind(config, data.frame(Setting="Allele 2 probability threshold (for GEDmatch PRO reports or ancestry prediction):", Value=A2_threshold))
+    } else if (method == "Calculate Metrics") {
+      config = rbind(config, data.frame(Setting="Allele 1 probability range for validation metric calculations:", Value=glue("{A1min}-{A1max}")))
+      config = rbind(config, data.frame(Setting="Allele 2 probability range for validation metric calculations:", Value=glue("{A2min}-{A2max}")))
+      config = rbind(config, data.frame(Setting="Assumed major contributor:", Value=major))
+      config = rbind(config, data.frame(Setting="Assumed minor contributor:", Value=minor))
+    }
   }
   dir.create(file.path(kinpath, "snp_sets", out_path, "config_log_files", date), showWarnings = FALSE, recursive=TRUE)
   write.table(config, glue("{kinpath}/snp_sets/{out_path}/config_log_files/{date}/config_settings_run_{date}.txt"), row.names=F, quote=F, col.names=T, sep="\t")
