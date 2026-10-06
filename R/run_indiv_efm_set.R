@@ -44,6 +44,7 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
   } else {
     load(glue("{write_path}/rda_files/{sample}.rda"))
   }
+  print(head(evidData))
   if (isTruthy(evidData)) {
     samplesSNP = EFMmps::evid2SNPformat(evidData)
     ##create AT vector

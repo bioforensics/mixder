@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# MixDeR - Current Version: 0.10.0
+# MixDeR - Current Version: 0.11.0
 
 <!-- badges: start -->
 

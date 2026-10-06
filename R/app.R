@@ -27,9 +27,10 @@ mixder = function() {
         )
     ),
     # App title
-    titlePanel("MixDeR: A Mixture Deconvolution Workflow for FGG"),
+    titlePanel("MixDeR: A Mixture Deconvolution Workflow for IGG"),
     sidebarPanel(width=6,
       use_prompt(),
+      tags$a(href = "https://bioforensics.github.io/mixder/", "For all available options, check out the MixDeR documentation", target = "_blank"),
       checkboxInput("skip_ancestry", tags$span("Skip Ancestry Prediction Step", tags$span(
         icon(
           name = "question-circle",
@@ -50,19 +51,22 @@ mixder = function() {
       ) |>
         add_prompt(message = "A conditioned analysis assumes a single known contributorto the mixture.\nUser will select which reference sample to condition on after providing\nthe Reference Sample Report Folder.", position = "right")
       ), value = FALSE),
-      shinyFilesButton("sample_GetFile", "Select a Sample Manifest File", "Select a sample manifest", multiple = FALSE,
-                       buttonType = "default", class = NULL), tags$span(icon(
-                         name = "question-circle",
-                       )
-                       ) |>
-        add_prompt(message = "A tab-delimited file containing the list of samples to run MixDeR.\nIt must contain two columns (SampleID and ReplicateID).\nEach row contains the ID of a single sample or the IDs of\nboth the sample and replicate.", position = "right"),
-      textOutput("sample_file"),
+
+      selectInput("numsamples", tags$span("Single or Multiple Mixtures?", tags$span(icon(
+        name = "question-circle",
+      )
+      ) |>
+        add_prompt(message = "Run a single sample or multiple samples.", position = "right")
+      ), c("Single Mixture", "Multiple Mixtures")),
+      conditionalPanel(condition = "input.numsamples == 'Single Mixture'", uiOutput("sampleid"), uiOutput("replicateid")),
+      conditionalPanel(condition = "input.numsamples == 'Multiple Mixtures'", uiOutput("sample_GetFile"), uiOutput("samplefile_text")),
       shinyDirButton("kin_prefix", "Select Folder containing Mixture Sample Reports", "Please select a folder containing Mixture Sample Reports",
                      buttonType = "default", class = NULL), tags$span(icon(
                        name = "question-circle",
                      )
                      ) |>
         add_prompt(message = "Select a folder containing the Mixture Sample Reports or a TSV file containing mixture genotypes.", position = "right"),
+
       textOutput("kin_inpath"),
       conditionalPanel(condition = "input.method == 'Calculate Metrics' | input.cond == 1", uiOutput("ref_GetFile"), uiOutput("ref_text")),
       conditionalPanel(condition = "input.cond == 1", uiOutput("ref_selector")),
@@ -100,6 +104,38 @@ mixder = function() {
 
 # Define server
 server = function(input, output, session) {
+  output$sampleid = renderUI({
+             textInput("sampleid", tags$span("Sample ID", tags$span(
+               icon(
+                 name = "question-circle",
+               )
+             ) |>
+               add_prompt(message = "Sample ID for running a single mixture sample.\n Sample ID must be contained in the file name of the\nKintelligence Sample Report or the TSV file.\nThis is case-sensitive!", position = "right")
+             ))
+  })
+  output$replicateid = renderUI({
+    textInput("replicateid", tags$span("Replicate ID (optional)", tags$span(
+      icon(
+        name = "question-circle",
+      )
+    ) |>
+      add_prompt(message = "If providing a replicate sample, provide the ID.\nReplicate ID must be contained in the file name of the\nKintelligence Sample Report or the TSV file.\nThis is case-sensitive!", position = "right")
+    ))
+  })
+  output$sample_GetFile = renderUI({
+    fluidRow(
+      column(10,
+             shinyFilesButton("sample_GetFile", "Select a Sample Manifest File", "Select a sample manifest", multiple = FALSE,
+                     buttonType = "default", class = NULL), tags$span(icon(
+                       name = "question-circle",
+                     )
+                     ) |>
+      add_prompt(message = "A tab-delimited file containing the list of samples to run MixDeR.\nIt must contain two columns (SampleID and ReplicateID).\nEach row contains the ID of a single sample or the IDs of\nboth the sample and replicate.", position = "right"),
+      ))
+    })
+  output$samplefile_text = renderUI({
+      textOutput("sample_file")
+  })
   output$ref_GetFile = renderUI({
     fluidRow(
       column(10,
@@ -213,11 +249,8 @@ server = function(input, output, session) {
   output$freq_text_minor = renderUI({
     textOutput("freq_file_minor")
   })
-  output$sample_file_text = renderUI({
-
-  })
   output$ancestry_text = renderUI({
-    HTML("<b>Optional: Ancestry Prediction Tool using PCA</b> <br/> Use this tool to assist in predicting the ancestry of each contributor. The population-specific allele frequency file can then be used in the next mixture deconvolution step. Select the above box to skip this step and move forward to mixture deconvolution.<br/>See the README for more information.<br/><br/>")
+    HTML("<b>Optional: Ancestry Prediction Tool using PCA</b> <br/> Use this tool to assist in predicting the ancestry of each contributor. The population-specific allele frequency file can then be used in the next mixture deconvolution step. Select the above box to skip this step and move forward to mixture deconvolution.<br/>See the above linked MixDeR documentation for more information.<br/><br/>")
   })
   output$ancestry_snps = renderUI({
     selectInput("ancestry_snps", tags$span("SNPs to Use for Ancestry Prediction:", tags$span(icon(
@@ -395,6 +428,8 @@ server = function(input, output, session) {
       add_prompt(message = "When calculating metrics, a range of allele 2 probability thresholds\ncan be used to calculate the metrics at each combination of allele 1 and allele 2 probability thresholds.\nThis sets the maximum allele 2 probability threshold.\nThe threshold increases in increments of 0.01.", position = "right")
     ), value=1, min = 0, max = 1)
   })
+
+  #volumes = getVolumes()
   ## sample file
   roots = c(home="~", wd=".")
   shinyFileChoose(input, "sample_GetFile", roots=roots, session=session, defaultRoot="home")
@@ -404,6 +439,7 @@ server = function(input, output, session) {
       output$sample_file = renderText({as.character(samplefile()$datapath)})
     })
   }
+
   ## freq files
   shinyFileChoose(input, "freq_GetFile", roots=roots, session=session, defaultRoot="home")
   freq = reactive({parseFilePaths(roots, input$freq_GetFile)})
@@ -455,12 +491,20 @@ server = function(input, output, session) {
   })
 
 
-## Input the sample manifest and run the workflow on each line (sample)
+## Check all settings/files are appropriate and run MixDeR
   observeEvent(input$Submit, {
-    if (!isTruthy(samplefile()$datapath)) {
+    method = ifelse(exists("method"), method, "")
+    if (!isTruthy(samplefile()$datapath) & input$numsamples == "Multiple Mixtures") {
       showModal(modalDialog(
         title = "Missing Input",
         "Please provide a sample manifest before proceeding.",
+        easyClose = TRUE,
+        footer = modalButton("Dismiss")
+      ))
+    } else if (!isTruthy(input$sampleid) & input$numsamples == "Single Mixture") {
+      showModal(modalDialog(
+        title = "Missing Input",
+        "Please provide a sample ID before proceeding.",
         easyClose = TRUE,
         footer = modalButton("Dismiss")
       ))
@@ -492,30 +536,36 @@ server = function(input, output, session) {
         easyClose = TRUE,
         footer = modalButton("Dismiss")
       ))
+    } else if ((isTruthy(input$cond) | method == "Calculate Metrics") & !isTruthy(refs())) {
+      showModal(modalDialog(
+        title = "Missing Input",
+        "Please provide reference genotypes for selected conditioned analysis or to calculate concordance metrics.",
+        easyClose = TRUE,
+        footer = modalButton("Dismiss")
+      ))
     } else {
       if (isTruthy(refs())) {
         withProgress(message = "Loading References", value = 0, {
           if (file.exists(glue("{refs()}/EFM_references.rda"))) {
             load(glue("{refs()}/EFM_references.rda"))
-          } else if (!file.exists(glue("{refs()}/EFM_references.csv"))) {
-            refData = convert_table_to_list(data.frame(processing_ref_sample_reports(refs())))
           } else {
-            refs = data.frame(fread(glue("{refs()}/EFM_references.csv")))
-            refData = convert_table_to_list(refs)
+            if (!file.exists(glue("{refs()}/EFM_references.csv"))) {
+              refData = convert_table_to_list(data.frame(processing_ref_sample_reports(refs())))
+            } else {
+              refsdf = data.frame(fread(glue("{refs()}/EFM_references.csv")))
+              refData = convert_table_to_list(refsdf)
+            }
             save(refData, file=glue("{refs()}/EFM_references.rda"))
           }
         })
       } else {
-        refData=NULL
+        refData = NULL
       }
-      sample_list = suppressWarnings(euroformix::tableReader(samplefile()$datapath))
       date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
-      out_path = glue("{kin_inpath()}/snp_sets/{input$output}/")
-      create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, NULL, NULL, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups, input$assay_choice, assay()$datapath)
       withProgress(message = "Loading Allele Frequency Data", value = 0, {
         freq_both = ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath)
-        freq_major = ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath)
-        freq_minor = ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath)
+        freq_major = ifelse(isTruthy(input$uploadfreq_major) & !isTruthy(freq_major()$datapath), input$uploadfreq_major, ifelse(isTruthy(freq_major()$datapath), freq_major()$datapath,""))
+        freq_minor = ifelse(isTruthy(input$uploadfreq_major) & !isTruthy(freq_minor()$datapath), input$uploadfreq_minor, ifelse(isTruthy(freq_minor()$datapath), freq_minor()$datapath, ""))
         popFreq = load_freq(input$twofreqs, freq_both, freq_major, freq_minor)
       })
       if (isTruthy(assay()$datapath)) {
@@ -523,28 +573,46 @@ server = function(input, output, session) {
       } else {
         snp_positions = mixder::kintelligence_snp_positions
       }
-      withProgress(message = "Running Samples", value = 0, {
-        n = nrow(sample_list)
-        for (row in 1:n) {
-          id = sample_list[row, 1]
-          if (ncol(sample_list)>1) {
-            replicate_id = ifelse(is.na(sample_list[row, 2]), "", sample_list[row, 2])
-          } else {
-            replicate_id = ""
+      out_path = glue("{kin_inpath()}/snp_sets/{input$output}/")
+      if (isTruthy(samplefile()$datapath)) {
+        sample_list = suppressWarnings(euroformix::tableReader(samplefile()$datapath))
+        create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, input$sampleid, input$replicateid, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups, input$assay_choice, assay()$datapath)
+        withProgress(message = "Running Samples", value = 0, {
+          n = nrow(sample_list)
+          for (row in 1:n) {
+            id = sample_list[row, 1]
+            if (ncol(sample_list)>1) {
+              replicate_id = ifelse(is.na(sample_list[row, 2]), "", sample_list[row, 2])
+            } else {
+              replicate_id = ""
+            }
+            incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
+              withCallingHandlers({
+                shinyjs::html(id = "text", html = "")
+                run_workflow(date, id, replicate_id, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups, input$assay_choice, snp_positions)
+              },
+              message = function(m) {
+                shinyjs::html(id = "text", html = m$message, add = TRUE)
+              })
           }
-          incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
-            withCallingHandlers({
-              shinyjs::html(id = "text", html = "")
-              run_workflow(date, id, replicate_id, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups, input$assay_choice, snp_positions)
-            },
-            message = function(m) {
-              shinyjs::html(id = "text", html = m$message, add = TRUE)
-            })
-        }
-      })
+        })
+      } else if (isTruthy(input$sampleid)) {
+        repid = ifelse(isTruthy(input$replicateid), input$replicateid, "")
+        create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, input$sampleid, repid, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups, input$assay_choice, assay()$datapath)
+        withProgress(message = "Running Sample", value = 0, {
+          withCallingHandlers({
+            shinyjs::html(id = "text", html = "")
+            run_workflow(date, input$sampleid, repid, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups, input$assay_choice, snp_positions)
+          },
+          message = function(m) {
+            shinyjs::html(id = "text", html = m$message, add = TRUE)
+          })
+        })
+      }
     }
   })
 }
+
 
 # Run the application
 shinyApp(ui = ui, server = server)
