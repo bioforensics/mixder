@@ -1,3 +1,15 @@
+# mixder 0.10.1
+
+## Changes in version 0.10.1
+- Fixed bug with using Sample Reports generated using UAS version 2.5 or higher
+
+# mixder 0.10.0
+
+## Changes in version 0.10.0
+- Fixed bug with running MixDeR through Shiny app
+- Improved error handling in Shiny app with pop-up messages
+- Implemented text input for entering Sample ID for running a single mixture instead of utilizing a sample manifest file (this option still exists if user selects to run "Multiple Mixtures")
+
 # mixder 0.9.0
 
 ## Changes in version 0.9.0

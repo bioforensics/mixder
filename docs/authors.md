@@ -7,13 +7,13 @@
 ## Citation
 
 Mitchell R (2026). *mixder: A workflow for performing SNP mixture
-deconvolution*. R package version 0.10.0,
+deconvolution*. R package version 0.10.1,
 <https://bioforensics.github.io/mixder>.
 
     @Manual{,
       title = {mixder: A workflow for performing SNP mixture deconvolution},
       author = {Rebecca Mitchell},
       year = {2026},
-      note = {R package version 0.10.0},
+      note = {R package version 0.10.1},
       url = {https://bioforensics.github.io/mixder},
     }

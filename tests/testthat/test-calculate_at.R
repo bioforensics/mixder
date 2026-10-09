@@ -3,4 +3,5 @@ test_that("Calculating the AT for all SNPs", {
   expect_equal(fulltable[fulltable["Marker"]=="RS1000022",][[2]], 31)
   expect_equal(fulltable[fulltable["Marker"]=="RS1000137",][[2]], 10)
   expect_equal(nrow(fulltable), 10039)
+  expect_no_error(calculate_at("NA24385", test_path("testdata"), 0.015, 10))
 })
