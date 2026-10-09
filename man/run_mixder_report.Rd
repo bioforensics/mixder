@@ -7,9 +7,11 @@
 run_mixder_report(
   sample_manifest = NULL,
   sample = NULL,
-  replicate = NULL,
+  replicate = "",
   sample_reports = getwd(),
   output = "output",
+  assay = "kintelligence",
+  snp_pos = NULL,
   twofreqs = FALSE,
   freq_both = "global_1000g",
   freq_major = NULL,
@@ -27,7 +29,9 @@ run_mixder_report(
   A2_threshold = 0.6,
   filter_missing = FALSE,
   minor_contrib_threshold = FALSE,
-  keep_bins = TRUE
+  keep_bins = TRUE,
+  threads = 0,
+  parallel = FALSE
 )
 }
 \arguments{
@@ -40,6 +44,10 @@ run_mixder_report(
 \item{sample_reports}{Path to directory of Sample Reports or CSV file of mixture genotypes (default=current directory)}
 
 \item{output}{name of output directory, will be outputted into the sample reports directory (default="output")}
+
+\item{assay}{name of sequencing assay, either `kintelligence` or `custom` (default=kintelligence)}
+
+\item{snp_pos}{Path to file containing SNP positions of custom assay, required if assay==`custom` (default=NULL)}
 
 \item{twofreqs}{TRUE if using different allele frequency data for each contributor (default=FALSE)}
 
@@ -76,6 +84,10 @@ run_mixder_report(
 \item{minor_contrib_threshold}{Whether to apply the allele 1 probability threshold to the minor contributor, regardless of the minimum number of SNPs (default=FALSE)}
 
 \item{keep_bins}{Use existing binned SNP data, if exists (default=TRUE)}
+
+\item{threads}{number of threads for EFM (default=0)}
+
+\item{parallel}{parallelize EFM sets, will detect number of cores on machine and use all available (default=FALSE)}
 }
 \description{
 run MixDeR using the CLI; create GEDmatch PRO report(s)

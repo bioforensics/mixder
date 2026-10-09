@@ -12,10 +12,11 @@ allele probability thresholds
 ------------------------------------------------------------------------
 
 **NOTE**: There are several allele frequency data files stored within
-MixDeR for your use. 1000G global is the default when using the same
-frequency file for both contributors (`twofreqs=FALSE`). The following
-datasets are available for the `freq_both`, `freq_major` and
-`freq_minor` arguments and should be referenced as indicated:  
+MixDeR for your use *for Kintelligence data ONLY*. 1000G global is the
+default when using the same frequency file for both contributors
+(`twofreqs=FALSE`). The following datasets are available for the
+`freq_both`, `freq_major` and `freq_minor` arguments and should be
+referenced as indicated:  
 - 1000 Genomes global (`1000g_global`)  
 - gnomAD global (`gnomad`)  
 - 1000 Genomes AFR (`afr`)  
@@ -23,8 +24,9 @@ datasets are available for the `freq_both`, `freq_major` and
 - 1000 Genomes EAS (`eas`)  
 - 1000 Genomes EUR (`eur`)  
 - 1000 Genomes SAS (`sas`)  
-Of course, a custom allele frequency file is allowed, requiring only the
-Path to the file.
+Of course, a custom allele frequency file is also an option for
+Kintelligence data but is a requirement for a custom SNP set. The Path
+to the file must be specified if using a custom frequency dataset.
 
 ------------------------------------------------------------------------
 
@@ -45,6 +47,11 @@ Please see below for examples.
 **Full reference for this function, including default settings, [can be
 found
 here](https://bioforensics.github.io/mixder/reference/run_mixder_report.md).**
+
+*The following examples are specifically for the Kintelligence data;
+please see the [Custom SNP
+set](https://bioforensics.github.io/mixder/articles/Custom_SNPs.md) page
+for required arguments if using a custom SNP panel.*
 
 The following function runs an unconditioned mixture deconvolution and
 creates a report using the default settings (See [Running Mixture
@@ -93,6 +100,11 @@ report for a previously run deconvolution stored in the
 **Full reference for this function, including default settings, [can be
 found
 here](https://bioforensics.github.io/mixder/reference/run_mixder_metrics.md).**
+
+*The following examples are specifically for the Kintelligence data;
+please see the [Custom SNP
+set](https://bioforensics.github.io/mixder/articles/Custom_SNPs.md) page
+for required arguments if using a custom SNP panel.*
 
 The options are similar as the `run_mixder_report` function. The
 following function runs an unconditioned mixture deconvolution and

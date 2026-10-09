@@ -15,9 +15,12 @@ run_efm(
   attable,
   nsets,
   ancestry,
+  assay,
   cond = NULL,
   uncond = TRUE,
-  keep_bins = TRUE
+  keep_bins = TRUE,
+  threads = 0,
+  parallel = FALSE
 )
 }
 \arguments{
@@ -39,13 +42,17 @@ run_efm(
 
 \item{nsets}{Number of SNP sets}
 
-\item{ancestry}{if not skipping ancestry prediction}
+\item{ancestry}{TRUE/FALSE if to skip ancestry}
+
+\item{assay}{assay used (kintelligence or custom)}
 
 \item{cond}{Sample IDs to condition on}
 
 \item{uncond}{TRUE/FALSE if performing unconditioned analysis}
 
 \item{keep_bins}{To use existing SNP bins or create new bins (and files)}
+
+\item{threads}{number of threads used for EFM}
 }
 \description{
 Running mixture deconvolution in EuroForMix

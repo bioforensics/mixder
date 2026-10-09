@@ -36,7 +36,9 @@ create_config(
   filter_missing,
   skipancestry,
   pcasnps,
-  pcagroups
+  pcagroups,
+  assay,
+  pos
 )
 ```
 
@@ -171,3 +173,12 @@ create_config(
 
   Groups used for PCA (ancestry prediction), either Superpopulations or
   Subpopulations
+
+- assay:
+
+  name of sequencing assay, either \`kintelligence\` or \`custom\`
+
+- pos:
+
+  Path to file containing SNP positions of custom assay, required if
+  assay==\`custom\`

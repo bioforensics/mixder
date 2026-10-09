@@ -10,6 +10,7 @@ articles:
   - Installation
   - Required_Files
   - Running_MixDecon
+  - Custom_SNPs
   - Ancestry_Prediction_Tool
   - Valmetrics
   - gedmatch

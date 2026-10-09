@@ -15,8 +15,10 @@ run_indiv_efm_set(
   replicate_id,
   write_path,
   attable,
+  keep_bins,
   cond = NULL,
-  uncond = TRUE
+  uncond = TRUE,
+  threads = 0
 )
 ```
 
@@ -65,6 +67,10 @@ run_indiv_efm_set(
 - uncond:
 
   TRUE/FALSE if performing unconditioned analyses
+
+- threads:
+
+  number of threads to use for EFM
 
 ## Value
 

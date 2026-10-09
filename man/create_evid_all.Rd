@@ -4,7 +4,7 @@
 \alias{create_evid_all}
 \title{Creating SNP sets from evidence samples containing all SNPs}
 \usage{
-create_evid_all(inpath, id, nsets, keep_bins)
+create_evid_all(inpath, id, nsets, keep_bins, assay)
 }
 \arguments{
 \item{inpath}{input path}

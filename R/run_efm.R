@@ -19,28 +19,30 @@
 #' @param out_path Output path
 #' @param attable AT table
 #' @param nsets Number of SNP sets
-#' @param ancestry if not skipping ancestry prediction
+#' @param ancestry TRUE/FALSE if to skip ancestry
+#' @param assay assay used (kintelligence or custom)
 #' @param cond Sample IDs to condition on
 #' @param uncond TRUE/FALSE if performing unconditioned analysis
 #' @param keep_bins To use existing SNP bins or create new bins (and files)
+#' @param threads number of threads used for EFM
 #'
 #' @export
 #'
 #' @import parallel
 #'
-run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, attable, nsets, ancestry, cond = NULL, uncond=TRUE, keep_bins=TRUE) {
+run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, attable, nsets, ancestry, assay, cond = NULL, uncond=TRUE, keep_bins=TRUE, threads=0, parallel=FALSE) {
   if (!ancestry) {
     new_path = glue("{out_path}/ancestry_prediction/")
   } else {
     new_path = out_path
   }
   if (replicate_id == "") {
-    create_evid_all(inpath, id, nsets, keep_bins)
+    create_evid_all(inpath, id, nsets, keep_bins, assay)
     write_path = glue("{new_path}Single/{id}")
     log_name = id
   } else {
-    create_evid_all(inpath, id, nsets, keep_bins)
-    create_evid_all(inpath, replicate_id, nsets, keep_bins)
+    create_evid_all(inpath, id, nsets, keep_bins, assay)
+    create_evid_all(inpath, replicate_id, nsets, keep_bins, assay)
     write_path = glue("{new_path}Replicates/{id}")
     log_name = glue("{id}_{replicate_id}")
   }
@@ -51,9 +53,17 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
   } else {
     ids = NULL
   }
-  results = list()
-  for (i in 1:nsets) {
-    results[[i]] = run_indiv_efm_set(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, cond=cond, uncond=uncond)
+  if (parallel) {
+    numCores = ifelse(detectCores()<nsets, detectCores(), nsets)
+    message(glue("Running EFM mixture deconvolution using {numCores} cores."))
+    cl = makeCluster(numCores, outfile=glue("{out_path}config_log_files/{date}/efm_output_{log_name}_{date}.txt"))
+    results = parLapply(cl, 1:(nsets), run_indiv_efm_set, ids=ids, snps_input=snps_input, popFreq=popFreq, refData=refData, id=id, replicate_id=replicate_id, write_path=write_path, attable=attable, keep_bins=keep_bins, cond=cond, uncond=uncond, threads=threads)
+    stopCluster(cl)
+  } else {
+    results = list()
+    for (i in 1:nsets) {
+      results[[i]] = run_indiv_efm_set(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, keep_bins, cond=cond, uncond=uncond, threads=threads)
+    }
   }
   uncond_ratios = data.frame()
   uncond_finaltable_all = data.frame()

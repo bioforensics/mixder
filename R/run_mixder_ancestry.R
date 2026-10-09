@@ -28,23 +28,31 @@
 #' @param A2_threshold Allele 2 probability threshold (default=0.60)
 #' @param minor_contrib_threshold Whether to apply the allele 1 probability threshold to the minor contributor, regardless of the minimum number of SNPs (default=FALSE)
 #' @param keep_bins Use existing binned SNP data, if exists (default=TRUE)
-#' @param snps SNPs to use for ancestry prediction (either ancestry only or all SNPs)
-#' @param pcagroups How to color PCA plots (superpopulations and/or subpopulations)
+#' @param snps SNPs to use for ancestry prediction (either ancestry only or all SNPs; default="ancestry")
+#' @param pcagroups How to color PCA plots (superpopulations and/or subpopulations, default="superpopulations")
+#' @param threads threads for EFM (default=0)
+#' @param parallel parallelize EFM sets, will detect number of cores on machine and use all available (default=FALSE)
 #'
 #' @export
 #'
-run_mixder_ancestry = function(sample_manifest=NULL, sample=NULL, replicate=NULL, sample_reports = getwd(), output = "output", refpath=NULL, refs=NULL, mixdeconv=TRUE, uncond=TRUE, cond=FALSE, sets=10, dynamicAT=0.015, staticAT=10, minimum_snps=6000, A1_threshold=0.99, A2_threshold=0.6, minor_contrib_threshold=FALSE, keep_bins=TRUE, snps, pcagroups) {
+run_mixder_ancestry = function(sample_manifest=NULL, sample=NULL, replicate="", sample_reports = getwd(), output = "output", refpath=NULL, refs=NULL, mixdeconv=TRUE, uncond=TRUE, cond=FALSE, sets=10, dynamicAT=0.015, staticAT=10, minimum_snps=6000, A1_threshold=0.99, A2_threshold=0.6, minor_contrib_threshold=FALSE, keep_bins=TRUE, snps="ancestry", pcagroups="superpopulations", threads=0, parallel=FALSE) {
   date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
+  popFreq = list(mixder::popFreq_1000G, mixder::popFreq_1000G)
+  out_path = glue("{sample_reports}/snp_sets/{output}/")
   ## load in references
   if (isTruthy(refpath)) {
     print("loading references")
-    if (!file.exists(glue("{refpath}/EFM_references.csv"))) {
-      refData = euroformix::sample_tableToList(data.frame(processing_ref_sample_reports(refpath)))
+    if (file.exists(glue("{refpath}/EFM_references.rda"))) {
+      load(glue("{refpath}/EFM_references.rda"))
     } else {
-      refData = euroformix::sample_tableToList(euroformix::tableReader(glue("{refpath}/EFM_references.csv")))
+      if (!file.exists(glue("{refpath}/EFM_references.csv"))) {
+        refData = convert_table_to_list(data.frame(processing_ref_sample_reports(refpath)))
+      } else {
+       refsdf = data.frame(fread(glue("{refpath}/EFM_references.csv")))
+       refData = convert_table_to_list(refsdf)
+      }
+      save(refData, file=glue("{refpath}/EFM_references.rda"))
     }
-  } else if (cond) {
-    stop("No references provided but selected conditioned analyses. Please re-run!")
   } else {
     refData = NULL
   }
@@ -65,8 +73,9 @@ run_mixder_ancestry = function(sample_manifest=NULL, sample=NULL, replicate=NULL
   if (!isTruthy(sample_manifest) & !isTruthy(sample)){
     stop("Please provide sample manifest or sample ID!")
   }
+  snp_positions = mixder::kintelligence_snp_positions
   print("Running ancestry prediction")
-  create_config(date, FALSE, "1000G_global", NA, NA, refpath, sample_manifest, sample, replicate, output, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, FALSE, FALSE, snpset, pcagroupcat)
+  create_config(date, FALSE, "1000G_global", NA, NA, refpath, sample_manifest, sample, replicate, out_path, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, FALSE, FALSE, snpset, pcagroupcat, "kintelligence", NULL)
   if (isTruthy(sample_manifest)) {
   ## sample manifest; loop through each sample
     manifest=suppressWarnings(euroformix::tableReader(sample_manifest))
@@ -75,12 +84,11 @@ run_mixder_ancestry = function(sample_manifest=NULL, sample=NULL, replicate=NULL
       replicate_id = ifelse(is.na(manifest[i, 2]), "", manifest[i, 2])
       message(glue("Sample ID: {id}"))
       message(glue("Replicate ID: {replicate_id}"))
-      run_workflow(date, id, replicate_id, FALSE, "1000G_global", NA, NA, refData, refpath, output, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, FALSE, FALSE, snpset, pcagroupcat)
+      run_workflow(date, id, replicate_id, FALSE, popFreq, refData, refpath, out_path, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, FALSE, FALSE, snpset, pcagroupcat, "kintelligence", snp_positions, threads, parallel)
     }
   } else if (isTruthy(sample)){
-    replicate_id = ifelse(isTruthy(replicate), replicate, "")
     message(glue("Sample ID: {sample}"))
-    message(glue("Replicate ID: {replicate_id}"))
-    run_workflow(date, sample, replicate_id, FALSE, "1000G_global", NA, NA, refData, refpath, output, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, FALSE, FALSE, snpset, pcagroupcat)
+    message(glue("Replicate ID: {replicate}"))
+    run_workflow(date, sample, replicate, FALSE, popFreq, refData, refpath, out_path, mixdeconv, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, FALSE, FALSE, snpset, pcagroupcat, "kintelligence", snp_positions, threads, parallel)
   }
 }

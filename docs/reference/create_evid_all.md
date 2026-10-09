@@ -5,7 +5,7 @@ Creating SNP sets from evidence samples containing all SNPs
 ## Usage
 
 ``` r
-create_evid_all(inpath, id, nsets, keep_bins)
+create_evid_all(inpath, id, nsets, keep_bins, assay)
 ```
 
 ## Arguments

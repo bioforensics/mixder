@@ -4,12 +4,14 @@
 \alias{assigned_A2}
 \title{Calls allele 2 based on established threshold}
 \usage{
-assigned_A2(x, thresh)
+assigned_A2(x, thresh, pos)
 }
 \arguments{
 \item{x}{Data frame of allele calls}
 
 \item{thresh}{Allele 2 probability threshold}
+
+\item{pos}{SNP positions data frame}
 }
 \value{
 data frame

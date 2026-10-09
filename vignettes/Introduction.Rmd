@@ -14,16 +14,22 @@ knitr::opts_chunk$set(
 )
 ```
 
-MixDeR has three modules:   
+MixDeR has four modules:   
 1. EFM mixture deconvolution   
 2. Calculate validation metrics   
 3. Create GEDmatch PRO reports  
+4. Ancestry Prediction  
 
 EFM mixture deconvolution must be run at least once. If it's been run previously, the other modules can be run using the existing deconvolution data.
 
+___
+
 MixDeR can either calculate validation metrics OR create the GEDmatch PRO reports during a single run, not both.
+
+___
 
 NOTE about the allele probability thresholds:   
 This workflow utilizes individual probabilities for each allele call from EFM. The reported allele 1 is the allele with the higher probability; allele 2 is the allele with the lower probability. When applying the allele 1 probability threshold, any SNP with a probability below the threshold will be removed completely from the dataset. When applying the allele 2 probability threshold to the remaining SNPs, if the probability is below the threshold, allele 2 is reported as the same allele as allele 1. If it is above, the allele will be reported as called. For example, if the genotype for SNP rs12615742 is C,T but the allele 2 probability is below the threshold, the SNP genotype will be reported as C,C. If it is above the threshold, the SNP genotype will be reported as C,T.
 
-
+___ 
+As of MixDeR version 0.10, a custom SNP set can be utilized, however, the default settings and built-in features will still exist for the Kintelligence assay. Please see the [section on using a custom SNP set](Custom_SNPs.html) for additional information.

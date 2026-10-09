@@ -10,7 +10,7 @@ test_that("Run MixDeR Metrics", {
   obs_metrics = read.csv(glue("{outpath}/unconditioned/Ref1_metrics_table.tsv"), header=T, sep="\t")
   expect_equal(exp_metrics, obs_metrics)
   exp_cond_metrics = read.csv(test_path("testdata", "Ref1_cond_metrics_table.tsv"), header=T, sep="\t")
-  run_mixder_metrics(sample="Sample01a", sample_reports=tmpdir, output="output", refpath=refdir, refs=list("Ref2"), major="Ref1", minor="Ref2")
+  run_mixder_metrics(sample="Sample01a", sample_reports=tmpdir, output="output", refpath=refdir, refs=list("Ref2"), major="Ref1", minor="Ref2", uncond=FALSE, cond=TRUE)
   obs_cond_metrics = read.csv(glue("{outpath}/conditioned/Ref1_metrics_table.tsv"), header=T, sep="\t")
   expect_equal(exp_cond_metrics, obs_cond_metrics)
 })

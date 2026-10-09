@@ -17,7 +17,8 @@ create_gedmatchpro_report(
   A2min,
   A2max,
   minor_threshold,
-  filter_missing
+  filter_missing,
+  pos
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ create_gedmatchpro_report(
 \item{minor_threshold}{If apply allele 1 probability to minor contributor}
 
 \item{filter_missing}{TRUE/FALSE to filter SNPs with missing allele 2 values}
+
+\item{pos}{SNP position data frame}
 }
 \value{
 list of two data frames, the GEDmatch PRO report and a data frame of metrics calculated for that report
