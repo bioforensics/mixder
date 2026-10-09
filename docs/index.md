@@ -1,4 +1,4 @@
-# MixDeR - Current Version: 0.10.0
+# MixDeR - Current Version: 0.10.1
 
 MixDeR (**Mix**ture **De**convolution in **R**) is a workflow (with a
 Shiny app) for performing mixture deconvolution of ForenSeq
