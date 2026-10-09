@@ -18,7 +18,8 @@ create_gedmatchpro_report(
   A2min,
   A2max,
   minor_threshold,
-  filter_missing
+  filter_missing,
+  pos
 )
 ```
 
@@ -75,6 +76,10 @@ create_gedmatchpro_report(
 - filter_missing:
 
   TRUE/FALSE to filter SNPs with missing allele 2 values
+
+- pos:
+
+  SNP position data frame
 
 ## Value
 

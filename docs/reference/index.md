@@ -43,6 +43,8 @@
 - [`compile_metrics()`](https://bioforensics.github.io/mixder/reference/compile_metrics.md)
   : Compiling metrics for the range of allele 1 and allele 2 probablity
   thresholds
+- [`convert_table_to_list()`](https://bioforensics.github.io/mixder/reference/convert_table_to_list.md)
+  : Convert table to list
 - [`create_at()`](https://bioforensics.github.io/mixder/reference/create_at.md)
   : Create AT table containing only SNPs contained in the evidence file
 - [`create_config()`](https://bioforensics.github.io/mixder/reference/create_config.md)
@@ -77,7 +79,7 @@
 - [`kintelligence_snp_positions`](https://bioforensics.github.io/mixder/reference/kintelligence_snp_positions.md)
   : Kintelligence SNP positions file
 - [`load_freq()`](https://bioforensics.github.io/mixder/reference/load_freq.md)
-  : Load in frequency data
+  : Load frequency data
 - [`load_kin_older()`](https://bioforensics.github.io/mixder/reference/load_kin_older.md)
   : Formatting Kintelligence Sample Reports created with UAS version
   \<2.5
@@ -106,12 +108,16 @@
   : Allele Frequency file using gnomADv4 dataset
 - [`process_efm_files()`](https://bioforensics.github.io/mixder/reference/process_efm_files.md)
   : Process files created by EFM
+- [`process_efmmps_list()`](https://bioforensics.github.io/mixder/reference/process_efmmps_list.md)
+  : Format deconvolve_SNP results
 - [`process_kinreport()`](https://bioforensics.github.io/mixder/reference/process_kinreport.md)
   : Function to determine how to create the AT file
 - [`processing_evid_sample_reports()`](https://bioforensics.github.io/mixder/reference/processing_evid_sample_reports.md)
   : Creating usable data frame from a Kintelligence Sample Report
 - [`processing_ref_sample_reports()`](https://bioforensics.github.io/mixder/reference/processing_ref_sample_reports.md)
   : Processing Reference Sample Reports
+- [`read_in_freq()`](https://bioforensics.github.io/mixder/reference/read_in_freq.md)
+  : Read in Frequency tables already formatted for EFM
 - [`read_in_table()`](https://bioforensics.github.io/mixder/reference/read_in_table.md)
   : Read in dataset to run through EFM
 - [`reverse_comp()`](https://bioforensics.github.io/mixder/reference/reverse_comp.md)

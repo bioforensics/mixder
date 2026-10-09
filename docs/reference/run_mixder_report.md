@@ -8,9 +8,11 @@ run MixDeR using the CLI; create GEDmatch PRO report(s)
 run_mixder_report(
   sample_manifest = NULL,
   sample = NULL,
-  replicate = NULL,
+  replicate = "",
   sample_reports = getwd(),
   output = "output",
+  assay = "kintelligence",
+  snp_pos = NULL,
   twofreqs = FALSE,
   freq_both = "global_1000g",
   freq_major = NULL,
@@ -28,7 +30,9 @@ run_mixder_report(
   A2_threshold = 0.6,
   filter_missing = FALSE,
   minor_contrib_threshold = FALSE,
-  keep_bins = TRUE
+  keep_bins = TRUE,
+  threads = 0,
+  parallel = FALSE
 )
 ```
 
@@ -57,6 +61,16 @@ run_mixder_report(
 
   name of output directory, will be outputted into the sample reports
   directory (default="output")
+
+- assay:
+
+  name of sequencing assay, either \`kintelligence\` or \`custom\`
+  (default=kintelligence)
+
+- snp_pos:
+
+  Path to file containing SNP positions of custom assay, required if
+  assay==\`custom\` (default=NULL)
 
 - twofreqs:
 
@@ -136,3 +150,12 @@ run_mixder_report(
 - keep_bins:
 
   Use existing binned SNP data, if exists (default=TRUE)
+
+- threads:
+
+  number of threads for EFM (default=0)
+
+- parallel:
+
+  parallelize EFM sets, will detect number of cores on machine and use
+  all available (default=FALSE)

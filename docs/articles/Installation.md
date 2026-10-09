@@ -15,7 +15,7 @@ The R package `devtools` is required to install from GitHub:
 
 If installing from source, first install the following R packages:
 
-    install.packages(c("dplyr", "ggplot2", "glue", "prompter", "readxl", "rlang", "shiny", "shinyFiles", "shinyjs", "tibble", "tidyr"))
+    install.packages(c("dplyr", "ggplot2", "glue", "kgp", "plotly", "prompter", "readxl", "rlang", "rrapply", "shiny", "shinyFiles", "shinyjs", "tibble", "tidyr"))
 
 To install MixDeR from source (i.e. the `mixder_0.1.0.tar.gz` file):
 

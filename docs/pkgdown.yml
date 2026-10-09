@@ -11,11 +11,7 @@ articles:
   Required_Files: Required_Files.html
   Running_MixDecon: Running_MixDecon.html
   Valmetrics: Valmetrics.html
-<<<<<<< HEAD
-last_built: 2026-05-12T18:08Z
-=======
-last_built: 2026-09-25T14:24Z
->>>>>>> main
+last_built: 2026-10-09T14:54Z
 urls:
   reference: https://bioforensics.github.io/mixder/reference
   article: https://bioforensics.github.io/mixder/articles

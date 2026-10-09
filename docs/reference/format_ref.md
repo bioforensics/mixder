@@ -5,18 +5,14 @@ Formatting reference file
 ## Usage
 
 ``` r
-format_ref(refData, refid, refs)
+format_ref(refid, refs)
 ```
 
 ## Arguments
 
-- refData:
-
-  Data frame of the reference genotypes
-
 - refid:
 
-  Reference order in the reference genotypes file
+  ID of the reference genotypes of interest
 
 - refs:
 

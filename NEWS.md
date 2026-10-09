@@ -1,6 +1,7 @@
-# mixder 0.10.0
 
-## Changes in version 0.10.0
+# mixder 0.11.0
+
+## Changes in version 0.11.0
 - Created more flexibility with file format for sample manifest
 - Implemented support for custom SNP panels:
   - In GUI, Drop down menu to select either "Kintelligence" or "Custom" assay; will require SNP positions file if using custom
@@ -11,6 +12,17 @@
 - Improved error handling in Shiny app (pop-up window will appear if required files or settings are missing)
 - Added option to change number of threads used by EFM; useful if running on a server or grid (default is 0)
 
+# mixder 0.10.1
+
+## Changes in version 0.10.1
+- Fixed bug with using Sample Reports generated using UAS version 2.5 or higher
+
+# mixder 0.10.0
+
+## Changes in version 0.10.0
+- Fixed bug with running MixDeR through Shiny app
+- Improved error handling in Shiny app with pop-up messages
+- Implemented text input for entering Sample ID for running a single mixture instead of utilizing a sample manifest file (this option still exists if user selects to run "Multiple Mixtures")
 
 # mixder 0.9.0
 

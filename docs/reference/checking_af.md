@@ -5,7 +5,7 @@ Checking AF file for correct format; formatting if necessary
 ## Usage
 
 ``` r
-checking_af(affile, outpath)
+checking_af(affile)
 ```
 
 ## Arguments
@@ -14,9 +14,9 @@ checking_af(affile, outpath)
 
   Allele Frequency file
 
-- outpath:
+- contrib:
 
-  Path to write formatted AF file to if necessary
+  contributor assigned to AF file
 
 ## Value
 

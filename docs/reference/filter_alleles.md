@@ -13,7 +13,8 @@ filter_alleles(
   A1_threshold,
   A2_threshold,
   minor_threshold,
-  filter_missing
+  filter_missing,
+  pos
 )
 ```
 
@@ -46,6 +47,10 @@ filter_alleles(
 - filter_missing:
 
   TRUE/FALSE to filter SNPs with missing allele 2 values
+
+- pos:
+
+  SNP position data frame
 
 ## Value
 

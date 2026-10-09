@@ -1,10 +1,12 @@
-# MixDeR - Current Version: 0.10.0
+# MixDeR - Current Version: 0.11.0
 
 MixDeR (**Mix**ture **De**convolution in **R**) is a workflow (with a
-Shiny app) for performing mixture deconvolution of ForenSeq
-Kintelligence SNP data for two-person mixtures using
-[EuroForMix](https://github.com/oyvble/euroformix/) and creating
-GEDmatch PRO reports for the individual contributor SNP profiles.
+Shiny app) for performing mixture deconvolution of genotypes developed
+from either the ForenSeq Kintelligence assay or a custom SNP panel.
+MixDeR performs the deconvolution of two-contributor mixtures using
+[EuroForMix](https://github.com/oyvble/euroformix/), ultimately
+developing single source GEDmatch PRO/FamilyTreeDNA reports of the
+individual contributor genotypes.
 
 This method requires extensive validation of the settings. MixDeR
 provides the option of calculating various metrics for evaluating the

@@ -30,7 +30,7 @@ calculate_at = function(sample, kinreports, dynamicAT, staticAT) {
       if (uas_setting[[11,1]] == "Software Version") {
         version = uas_setting[[11,2]]
         if (compareVersion(version, "2.5.0") == 1 | compareVersion(version, "2.5.0") == 0) {
-          final_snps = load_kin_uas25(filename)
+          compiled_snps = load_kin_uas25(filename)
         } else {
           message("Check software version!")
         }
