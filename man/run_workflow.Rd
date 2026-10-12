@@ -33,7 +33,7 @@ run_workflow(
   minor_threshold,
   keep_bins,
   filter_missing,
-  skipancestry,
+  runancestry,
   ancestrysnps,
   pcagroups,
   assay,
@@ -97,7 +97,7 @@ run_workflow(
 
 \item{filter_missing}{TRUE/FALSE whether to filter SNPs with either allele missing}
 
-\item{skipancestry}{TRUE/FALSE whether to skip ancestry prediction}
+\item{runancestry}{TRUE/FALSE whether to skip ancestry prediction}
 
 \item{ancestrysnps}{SNPs to use for ancestry prediction (either ancestry only or all SNPs)}
 

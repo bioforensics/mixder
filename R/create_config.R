@@ -39,7 +39,7 @@
 #' @param major assumed major contributor of mixture
 #' @param minor assumed minor contributor of mixture
 #' @param filter_missing TRUE/FALSE whether to filter SNPs if second allele is missing (99)
-#' @param skipancestry TRUE/FALSE whether to skip ancestry prediction step
+#' @param runancestry TRUE/FALSE whether to skip ancestry prediction step
 #' @param pcasnps SNPs used for PCA (ancestry prediction)
 #' @param pcagroups Groups used for PCA (ancestry prediction), either Superpopulations or Subpopulations
 #' @param assay name of sequencing assay, either `kintelligence` or `custom`
@@ -47,7 +47,7 @@
 #'
 #' @export
 #'
-create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs, sample_manifest, sample, replicate, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, filter_missing, skipancestry, pcasnps, pcagroups, assay, pos){
+create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs, sample_manifest, sample, replicate, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, filter_missing, runancestry, pcasnps, pcagroups, assay, pos){
   config = setNames(data.frame(matrix(ncol=2, nrow=0)), c("Setting", "Value"))
   config = rbind(config, data.frame(Setting="MixDeR Version:", Value=getNamespaceVersion("mixder")[["version"]]))
   config = rbind(config, data.frame(Setting="EuroForMix Version:", Value=getNamespaceVersion("euroformix")[["version"]]))
@@ -65,8 +65,8 @@ create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs,
     config = rbind(config, data.frame(Setting="Path to references:", Value=refs))
   }
   config = rbind(config, data.frame(Setting="Path to mixtures:", Value=kinpath))
-  config = rbind(config, data.frame(Setting="Run Ancestry Prediction Step:", Value=!skipancestry))
-  if (!isTruthy(skipancestry)) {
+  config = rbind(config, data.frame(Setting="Run Ancestry Prediction Step:", Value=runancestry))
+  if (isTruthy(runancestry)) {
     config = rbind(config, data.frame(Setting="SNPs Used for PCA (Ancestry Prediction):", Value=pcasnps))
     config = rbind(config, data.frame(Setting="Groups Used for PCA (Ancestry Prediction):", Value=pcagroups))
   } else {

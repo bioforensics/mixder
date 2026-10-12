@@ -213,7 +213,7 @@ server = function(input, output, session) {
     })
   output$input_a = output$input_md = renderUI({ mix_input() })
   input_text = reactive({
-    textOutput("kin_inpath")
+    textOutput("kin_file")
   })
   output$input_text_a = output$input_text_md = renderUI({ input_text() })
   analyses = reactive({
@@ -641,12 +641,11 @@ server = function(input, output, session) {
   kin_inpath = reactive({parseDirPath(roots, input$kin_prefix)})
   observe({
     if(!is.null(kin_inpath)){
-      output$kin_inpath = renderText({as.character(kin_inpath())})
+      output$kin_file = renderText({as.character(kin_inpath())})
     }
   })
 
   observeEvent(input$Submit_Ancestry, {
-    method = ifelse(exists("method"), method, "")
     if (!isTruthy(samplefile()$datapath) & input$numsamples == "Multiple Mixtures") {
       showModal(modalDialog(
         title = "Missing Input",
@@ -672,13 +671,6 @@ server = function(input, output, session) {
       showModal(modalDialog(
         title = "Input Error",
         "Please select either an Unconditioned or Conditioned analysis (or both!) before proceeding.",
-        easyClose = TRUE,
-        footer = modalButton("Dismiss")
-      ))
-    } else if (input$assay_choice=="Custom" & !isTruthy(assay()$datapath)) {
-      showModal(modalDialog(
-        title = "Missing Input",
-        "When running a custom SNP panel, please provide the SNP positions file.",
         easyClose = TRUE,
         footer = modalButton("Dismiss")
       ))
@@ -710,18 +702,13 @@ server = function(input, output, session) {
       date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
       threads = ifelse(input$threads == "All Available", 0, input$threads)
       withProgress(message = "Loading Allele Frequency Data", value = 0, {
-        freq_both = ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath)
-        popFreq = load_freq(input$twofreqs, freq_both, freq_major, freq_minor)
+        popFreq = load_freq(FALSE, "Global - 1000G", FALSE, FALSE)
       })
-      if (isTruthy(assay()$datapath)) {
-        snp_positions = read.table(assay()$datapath, sep="\t", header=T)
-      } else {
-        snp_positions = mixder::kintelligence_snp_positions
-      }
+      snp_positions = mixder::kintelligence_snp_positions
       out_path = glue("{kin_inpath()}/snp_sets/{input$output}/")
       if (isTruthy(samplefile()$datapath)) {
         sample_list = suppressWarnings(euroformix::tableReader(samplefile()$datapath))
-        create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, input$sampleid, input$replicateid, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, FALSE, input$ancestry_snps, input$pcagroups, input$assay_choice, assay()$datapath)
+        create_config(date, FALSE, "Global - 1000G", NULL, NULL, refs(), samplefile()$datapath, input$sampleid, input$replicateid, out_path, TRUE, input$uncond, input$ref_selector, "", input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, NULL, NULL, NULL, NULL, NULL, NULL, input$filter_missing, TRUE, input$ancestry_snps, input$pcagroups, "Kintelligence", NULL)
         withProgress(message = "Running Samples", value = 0, {
           n = nrow(sample_list)
           for (row in 1:n) {
@@ -734,7 +721,7 @@ server = function(input, output, session) {
             incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
             withCallingHandlers({
               shinyjs::html(id = "text", html = "")
-              run_workflow(date, id, replicate_id, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, FALSE, input$ancestry_snps, input$pcagroups, input$assay_choice, snp_positions, threads, input$parallel)
+              run_workflow(date, id, replicate_id, FALSE, popFreq, refData, refs(), out_path, TRUE, input$uncond, input$ref_selector, method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, NULL, NULL, NULL, NULL, NULL, NULL, input$min_cont_prob, input$keep_bins, input$filter_missing, TRUE, input$ancestry_snps, input$pcagroups, input$assay_choice, snp_positions, threads, input$parallel)
             },
             message = function(m) {
               shinyjs::html(id = "text", html = m$message, add = TRUE)
@@ -743,11 +730,11 @@ server = function(input, output, session) {
         })
       } else if (isTruthy(input$sampleid)) {
         repid = ifelse(isTruthy(input$replicateid), input$replicateid, "")
-        create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, input$sampleid, repid, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, FALSE, input$ancestry_snps, input$pcagroups, input$assay_choice, assay()$datapath)
+        create_config(date, FALSE, "Global - 1000G", NULL, NULL, refs(), samplefile()$datapath, input$sampleid, repid, out_path, TRUE, input$uncond, input$ref_selector, "", input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, NULL, NULL, NULL, NULL, NULL, NULL, input$filter_missing, TRUE, input$ancestry_snps, input$pcagroups, "Kintelligence", NULL)
         withProgress(message = "Running Sample", value = 0, {
           withCallingHandlers({
             shinyjs::html(id = "text", html = "")
-            run_workflow(date, input$sampleid, repid, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, FALSE, input$ancestry_snps, input$pcagroups, input$assay_choice, snp_positions, threads, input$parallel)
+            run_workflow(date, input$sampleid, repid, FALSE, popFreq, refData, refs(), out_path, TRUE, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, NULL, NULL, NULL, NULL, NULL, NULL, input$min_cont_prob, input$keep_bins, input$filter_missing, TRUE, input$ancestry_snps, input$pcagroups, "Kintelligence", snp_positions, threads, input$parallel)
           },
           message = function(m) {
             shinyjs::html(id = "text", html = m$message, add = TRUE)
@@ -836,8 +823,9 @@ server = function(input, output, session) {
       }
       date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
       threads = ifelse(input$threads == "All Available", 0, input$threads)
+      freqsingle = ifelse(isTruthy(input$uploadfreq), input$uploadfreq, "Global - 1000G")
       withProgress(message = "Loading Allele Frequency Data", value = 0, {
-        freq_both = ifelse(!isTruthy(freq()$datapath), input$uploadfreq, freq()$datapath)
+        freq_both = ifelse(!isTruthy(freq()$datapath), freqsingle, freq()$datapath)
         freq_major = ifelse(isTruthy(input$uploadfreq_major) & !isTruthy(freq_major()$datapath), input$uploadfreq_major, ifelse(isTruthy(freq_major()$datapath), freq_major()$datapath,""))
         freq_minor = ifelse(isTruthy(input$uploadfreq_major) & !isTruthy(freq_minor()$datapath), input$uploadfreq_minor, ifelse(isTruthy(freq_minor()$datapath), freq_minor()$datapath, ""))
         popFreq = load_freq(input$twofreqs, freq_both, freq_major, freq_minor)
@@ -850,7 +838,7 @@ server = function(input, output, session) {
       out_path = glue("{kin_inpath()}/snp_sets/{input$output}/")
       if (isTruthy(samplefile()$datapath)) {
         sample_list = suppressWarnings(euroformix::tableReader(samplefile()$datapath))
-        create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, input$sampleid, input$replicateid, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups, input$assay_choice, assay()$datapath)
+        create_config(date, input$twofreqs, freq_both, freq_major, freq_minor, refs(), samplefile()$datapath, input$sampleid, input$replicateid, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, assay()$datapath)
         withProgress(message = "Running Samples", value = 0, {
           n = nrow(sample_list)
           for (row in 1:n) {
@@ -863,7 +851,7 @@ server = function(input, output, session) {
             incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
               withCallingHandlers({
                 shinyjs::html(id = "text", html = "")
-                run_workflow(date, id, replicate_id, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups, input$assay_choice, snp_positions, threads, input$parallel)
+                run_workflow(date, id, replicate_id, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, snp_positions, threads, input$parallel)
               },
               message = function(m) {
                 shinyjs::html(id = "text", html = m$message, add = TRUE)
@@ -872,11 +860,11 @@ server = function(input, output, session) {
         })
       } else if (isTruthy(input$sampleid)) {
         repid = ifelse(isTruthy(input$replicateid), input$replicateid, "")
-        create_config(date, input$twofreqs, ifelse(!isTruthy(freq()$datapath),  input$uploadfreq, freq()$datapath), ifelse(!isTruthy(freq_major()$datapath), input$uploadfreq_major, freq_major()$datapath), ifelse(!isTruthy(freq_minor()$datapath), input$uploadfreq_minor, freq_minor()$datapath), refs(), samplefile()$datapath, input$sampleid, repid, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups, input$assay_choice, assay()$datapath)
+        create_config(date, input$twofreqs, freq_both, freq_major, freq_minor, refs(), samplefile()$datapath, input$sampleid, repid, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, assay()$datapath)
         withProgress(message = "Running Sample", value = 0, {
           withCallingHandlers({
             shinyjs::html(id = "text", html = "")
-            run_workflow(date, input$sampleid, repid, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, input$skip_ancestry, input$ancestry_snps, input$pcagroups, input$assay_choice, snp_positions, threads, input$parallel)
+            run_workflow(date, input$sampleid, repid, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, snp_positions, threads, input$parallel)
           },
           message = function(m) {
             shinyjs::html(id = "text", html = m$message, add = TRUE)

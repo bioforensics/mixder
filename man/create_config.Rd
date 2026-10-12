@@ -33,7 +33,7 @@ create_config(
   major,
   minor,
   filter_missing,
-  skipancestry,
+  runancestry,
   pcasnps,
   pcagroups,
   assay,
@@ -97,7 +97,7 @@ create_config(
 
 \item{filter_missing}{TRUE/FALSE whether to filter SNPs if second allele is missing (99)}
 
-\item{skipancestry}{TRUE/FALSE whether to skip ancestry prediction step}
+\item{runancestry}{TRUE/FALSE whether to skip ancestry prediction step}
 
 \item{pcasnps}{SNPs used for PCA (ancestry prediction)}
 
