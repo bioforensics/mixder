@@ -90,13 +90,15 @@ mixder = function() {
           uiOutput("assay_choice"),
           conditionalPanel(condition = "input.assay_choice == 'Custom'", uiOutput("assay_GetFile"), uiOutput("assay_text")),
           hr(),
-          conditionalPanel(condition = "input.run_mixdeconv == 1", uiOutput("sets_md"), uiOutput("ATs_md"), uiOutput("minsnps_md")),
+          conditionalPanel(condition = "input.run_mixdeconv == 1", uiOutput("sets_md"), uiOutput("ATs_md")),
+          conditionalPanel(condition = "input.run_mixdeconv == 1 & input.assay_choice == 'Kintelligence'", uiOutput("minsnps_md")),
+          conditionalPanel(condition = "input.run_mixdeconv == 1 & input.assay_choice == 'Custom'", uiOutput("minsnps_custom")),
           hr(),
           uiOutput("method"),
           hr(),
-          conditionalPanel(condition = "input.method == 'Calculate Metrics'", uiOutput("selector"), uiOutput("metrics_A1"), uiOutput("metrics_A2")),
-          conditionalPanel(condition = "input.method == 'Calculate Metrics' | input.method == 'Create GEDmatch PRO Report'", uiOutput("filter_missing")),
-          conditionalPanel(condition = "input.method == 'Create GEDmatch PRO Report'", uiOutput("allele_thresh_md")),
+          conditionalPanel(condition = "input.method == 'Calculate Metrics'", uiOutput("selector"), uiOutput("metrics_A1"), uiOutput("metrics_A2"), uiOutput("filter_missing")),
+          conditionalPanel(condition = "input.method == 'Create GEDmatch PRO Report' & input.assay_choice == 'Kintelligence'", uiOutput("allele_thresh_md"), uiOutput("filter_missing")),
+          conditionalPanel(condition = "input.method == 'Create GEDmatch PRO Report' & input.assay_choice == 'Custom'", uiOutput("allele_thresh_custom"), uiOutput("filter_missing")),
           hr(),
           uiOutput("output_md"),
         shinyjs::useShinyjs(),
@@ -505,6 +507,36 @@ server = function(input, output, session) {
     )
   })
   output$allele_thresh_a = output$allele_thresh_md = renderUI({ allele_thresh() })
+  output$allele_thresh_custom = renderUI({
+    fluidRow(
+      column(4,
+             numericInput("A1_threshold_c", tags$span("Allele 1 Probability Threshold", tags$span(
+               icon(
+                 name = "question-circle",
+               )
+             ) |>
+               add_prompt(message = "This sets the allele 1 probability threshold for creating the GEDmatch PRO report.\nAny SNP with an allele 1 probability below the threshold will be removed from the report.", position = "right")
+             ), value=0, min = 0, max = 1)
+      ),
+      column(4,
+             numericInput("A2_threshold_c", tags$span("Allele 2 Probability Threshold", tags$span(
+               icon(
+                 name = "question-circle",
+               )
+             ) |>
+               add_prompt(message = "This sets the allele 2 probability threshold for creating the GEDmatch PRO report.\nAny SNP with an allele 2 probability below the threshold will be removed from the report.", position = "right")
+             ), value=0, min = 0, max = 1)
+      ),
+      column(4,
+             checkboxInput("min_cont_prob_c", tags$span("Apply Allele 1 Probability Threshold to Minor Contributor", tags$span(
+               icon(
+                 name = "question-circle",
+               )
+             ) |>
+               add_prompt(message = "By default, the SNP profile for the minor contributor contains the\nspecified minimum number of SNPs (i.e. the top 6,000 SNPs ordered by allele 1 probability).\nThis will instead apply the allele 1 probability threshold for the\ncreated SNP profile for the minor contributor, assuming a SNP profile can be generated\nthat meets the specified minimum number of SNPs.", position = "right")
+             ), value=TRUE))
+    )
+  })
   output$filter_missing = renderUI({
     checkboxInput("filter_missing", tags$span("Remove SNPs If Missing Either Allele?", tags$span(
       icon(
@@ -566,10 +598,23 @@ server = function(input, output, session) {
         )
       ) |>
         add_prompt(message = "The minimum number of SNPs to retain either for\ncalculating metrics or for creating the GEDmatch PRO report.", position = "right")
-      ), value=0)
+      ), value=6000)
     ))
   })
   output$minsnps_a = output$minsnps_md = renderUI({ minsnps() })
+
+  output$minsnps_custom = renderUI({
+    fluidRow(
+      column(4,
+             numericInput("minimum_snps_c", tags$span("Minimum Number of SNPs",  tags$span(
+               icon(
+                 name = "question-circle",
+               )
+             ) |>
+               add_prompt(message = "The minimum number of SNPs to retain either for\ncalculating metrics or for creating the GEDmatch PRO report.", position = "right")
+             ), value=0)
+      ))
+  })
 
   outputdirpath = reactive({
     fluidRow(
