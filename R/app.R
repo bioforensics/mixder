@@ -90,9 +90,9 @@ mixder = function() {
           uiOutput("assay_choice"),
           conditionalPanel(condition = "input.assay_choice == 'Custom'", uiOutput("assay_GetFile"), uiOutput("assay_text")),
           hr(),
-          conditionalPanel(condition = "input.run_mixdeconv == 1", uiOutput("sets_md"), uiOutput("ATs_md")),
-          conditionalPanel(condition = "input.run_mixdeconv == 1 & input.assay_choice == 'Kintelligence'", uiOutput("minsnps_md")),
-          conditionalPanel(condition = "input.run_mixdeconv == 1 & input.assay_choice == 'Custom'", uiOutput("minsnps_custom")),
+          conditionalPanel(condition = "input.run_mixdeconv == 1", uiOutput("sets_md")),
+          conditionalPanel(condition = "input.run_mixdeconv == 1 & input.assay_choice == 'Kintelligence'", uiOutput("ATs_md"), uiOutput("minsnps_md")),
+          conditionalPanel(condition = "input.run_mixdeconv == 1 & input.assay_choice == 'Custom'", uiOutput("ATs_c"), uiOutput("minsnps_custom")),
           hr(),
           uiOutput("method"),
           hr(),
@@ -427,7 +427,7 @@ server = function(input, output, session) {
             name = "question-circle",
           )
         ) |>
-          add_prompt(message = "The static analytical threshold indicates the minimum number of reads\nrequired to include a called allele it in the deconvolution at a particular SNP.\nThe default is 10 reads.", position = "right")
+          add_prompt(message = "The static analytical threshold indicates the minimum number of reads\nrequired to include a called allele it in the deconvolution at a particular SNP.\nThe default for Kintelligence data is 10 reads.", position = "right")
         ), value=10)
       ),
     column(4,
@@ -442,7 +442,27 @@ server = function(input, output, session) {
     )
   })
   output$ATs_a = output$ATs_md = renderUI({ ATs() })
-  output$min_cont_prob = renderUI({
+  output$ATs_c = renderUI({
+    fluidRow(
+      column(4,
+             numericInput("staticAT_c", tags$span("Static Analytical Threshold", tags$span(
+               icon(
+                 name = "question-circle",
+               )
+             ) |>
+               add_prompt(message = "The static analytical threshold indicates the minimum number of reads\nrequired to include a called allele it in the deconvolution at a particular SNP.\nFor custom datasets, the default is 1 read.", position = "right")
+             ), value=1)
+      ),
+      column(4,
+             numericInput("dynamicAT_c", tags$span("Dynamic Analytical Threshold", tags$span(
+               icon(
+                 name = "question-circle",
+               )
+             ) |>
+               add_prompt(message = "The dynamic analytical thresholds indicates the percentage of number of total reads\nto set the minimum number of reads required to include a called allele it in\nthe deconvolution at a particular SNP.\nFor example, if a SNP has 100 total reads, a 10% dynamic AT would require an allele\nto have at least 10 reads to be included.\nThe default for custom datasets is 0.", position = "right")
+             ), value=0)
+      )
+    )
   })
   output$freqselect = renderUI({
     fluidRow(
@@ -548,7 +568,7 @@ server = function(input, output, session) {
   })
   output$metrics_A1 = renderUI({
     fluidRow(
-      column(4,
+      column(5,
         numericInput("A1_threshmin_metrics", tags$span("Minimum Allele 1 Probability Threshold", tags$span(
           icon(
             name = "question-circle",
@@ -557,7 +577,7 @@ server = function(input, output, session) {
           add_prompt(message = "When calculating metrics, a range of allele 1 probability thresholds\ncan be used to calculate the metrics at each combination of\nallele 1 and allele 2 probability thresholds.\nThis sets the minimum allele 1 probability threshold.\nThe threshold increases in increments of 0.01.", position = "right")
         ), value=0, min = 0, max = 1)
       ),
-      column(4,
+      column(5,
         numericInput("A1_threshmax_metrics", tags$span("Maximum Allele 1 Probability Threshold", tags$span(
           icon(
             name = "question-circle",
@@ -569,7 +589,7 @@ server = function(input, output, session) {
     })
   output$metrics_A2 = renderUI({
     fluidRow(
-      column(4,
+      column(5,
         numericInput("A2_threshmin_metrics", tags$span("Minimum Allele 2 Probability Threshold",  tags$span(
           icon(
             name = "question-circle",
@@ -578,7 +598,7 @@ server = function(input, output, session) {
           add_prompt(message = "When calculating metrics, a range of allele 2 probability thresholds\ncan be used to calculate the metrics at each combination of allele 1 and allele 2 probability thresholds.\nThis sets the minimum allele 2 probability threshold.\nThe threshold increases in increments of 0.01.", position = "right")
         ), value=0, min = 0, max = 1)
       ),
-      column(4,
+      column(5,
         numericInput("A2_threshmax_metrics", tags$span("Maximum Allele 2 Probability Threshold", tags$span(
           icon(
             name = "question-circle",
@@ -880,10 +900,16 @@ server = function(input, output, session) {
       } else {
         snp_positions = mixder::kintelligence_snp_positions
       }
+      dynamicat = ifelse(input$assay_choice == "Kintelligence", input$dynamicAT, input$dynamicAT_c)
+      staticat = ifelse(input$assay_choice == "Kintelligence", input$staticAT, input$staticAT_c)
+      min_snps = ifelse(input$assay_choice == "Kintelligence", input$minimum_snps, input$minimum_snps_c)
+      A1_thresh = ifelse(input$assay_choice == "Kintelligence", input$A1_threshold, input$A1_threshold_c)
+      A2_thresh = ifelse(input$assay_choice == "Kintelligence", input$A2_threshold, input$A2_threshold_c)
+      mincontprob = ifelse(input$assay_choice == "Kintelligence", input$min_cont_prob, input$min_cont_prob_c)
       out_path = glue("{kin_inpath()}/snp_sets/{input$output}/")
       if (isTruthy(samplefile()$datapath)) {
         sample_list = suppressWarnings(euroformix::tableReader(samplefile()$datapath))
-        create_config(date, input$twofreqs, freq_both, freq_major, freq_minor, refs(), samplefile()$datapath, input$sampleid, input$replicateid, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, assay()$datapath)
+        create_config(date, input$twofreqs, freq_both, freq_major, freq_minor, refs(), samplefile()$datapath, input$sampleid, input$replicateid, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), dynamicat, staticat, min_snps, A1_thresh, A2_thresh, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, assay()$datapath)
         withProgress(message = "Running Samples", value = 0, {
           n = nrow(sample_list)
           for (row in 1:n) {
@@ -896,7 +922,7 @@ server = function(input, output, session) {
             incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
               withCallingHandlers({
                 shinyjs::html(id = "text", html = "")
-                run_workflow(date, id, replicate_id, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, snp_positions, threads, input$parallel)
+                run_workflow(date, id, replicate_id, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(),  dynamicat, staticat, min_snps, A1_thresh, A2_thresh, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, mincontprob, input$keep_bins, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, snp_positions, threads, input$parallel)
               },
               message = function(m) {
                 shinyjs::html(id = "text", html = m$message, add = TRUE)
@@ -905,11 +931,11 @@ server = function(input, output, session) {
         })
       } else if (isTruthy(input$sampleid)) {
         repid = ifelse(isTruthy(input$replicateid), input$replicateid, "")
-        create_config(date, input$twofreqs, freq_both, freq_major, freq_minor, refs(), samplefile()$datapath, input$sampleid, repid, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, assay()$datapath)
+        create_config(date, input$twofreqs, freq_both, freq_major, freq_minor, refs(), samplefile()$datapath, input$sampleid, repid, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(),  dynamicat, staticat, min_snps, A1_thresh, A2_thresh, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, assay()$datapath)
         withProgress(message = "Running Sample", value = 0, {
           withCallingHandlers({
             shinyjs::html(id = "text", html = "")
-            run_workflow(date, input$sampleid, repid, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$min_cont_prob, input$keep_bins, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, snp_positions, threads, input$parallel)
+            run_workflow(date, input$sampleid, repid, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(),  dynamicat, staticat, min_snps, A1_thresh, A2_thresh, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, mincontprob, input$keep_bins, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, snp_positions, threads, input$parallel)
           },
           message = function(m) {
             shinyjs::html(id = "text", html = m$message, add = TRUE)
