@@ -812,6 +812,9 @@ server = function(input, output, session) {
 ## Check all settings/files are appropriate and run MixDeR
   observeEvent(input$Submit_mixdecon, {
     method = ifelse(exists("method"), method, "")
+    freqsingle = ifelse(isTruthy(input$uploadfreq), input$uploadfreq, "Global - 1000G")
+    freqmaj = ifelse(isTruthy(input$uploadfreq_major), input$uploadfreq_major, "Global - 1000G")
+    freqmin = ifelse(isTruthy(input$uploadfreq_minor), input$uploadfreq_minor, "Global - 1000G")
     if (!isTruthy(samplefile()$datapath) & input$numsamples == "Multiple Mixtures") {
       showModal(modalDialog(
         title = "Missing Input",
@@ -861,10 +864,17 @@ server = function(input, output, session) {
         easyClose = TRUE,
         footer = modalButton("Dismiss")
       ))
-    } else if(input$threads != "All Available" & !is.numeric(input$threads)) {
+    } else if (input$threads != "All Available" & !is.numeric(input$threads)) {
       showModal(modalDialog(
         title = "Incorrect Threads count entered",
         "Please enter a numeric value for the number of threads (i.e. 10, 50).",
+        easyClose = TRUE,
+        footer = modalButton("Dismiss")
+      ))
+    } else if (input$assay_choice == "Custom" & ((!isTruthy(input$twofreq) & freqsingle != "Upload Custom") | (isTruthy(input$twofreq) & freqmaj != "Upload Custom" & freqmin != "Upload Custom"))) {
+      showModal(modalDialog(
+        title = "Incorrect allele frequency data",
+        "Please upload custom allele frequency file!",
         easyClose = TRUE,
         footer = modalButton("Dismiss")
       ))
@@ -888,7 +898,6 @@ server = function(input, output, session) {
       }
       date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
       threads = ifelse(input$threads == "All Available", 0, input$threads)
-      freqsingle = ifelse(isTruthy(input$uploadfreq), input$uploadfreq, "Global - 1000G")
       withProgress(message = "Loading Allele Frequency Data", value = 0, {
         freq_both = ifelse(!isTruthy(freq()$datapath), freqsingle, freq()$datapath)
         freq_major = ifelse(isTruthy(input$uploadfreq_major) & !isTruthy(freq_major()$datapath), input$uploadfreq_major, ifelse(isTruthy(freq_major()$datapath), freq_major()$datapath,""))
