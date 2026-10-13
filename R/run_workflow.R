@@ -21,6 +21,7 @@
 #' @param refs Path of reference genotype(s) file
 #' @param output Name of output directory
 #' @param run_mixdeconv TRUE if running EFM mixture deconvolution
+#' @param software mixture deconvolution software to use (EFM or EFMmps)
 #' @param unconditioned TRUE if running unconditioned mixture deconvolution
 #' @param cond Sample IDs to condition on
 #' @param method Calculate Metrics or Create GEDmatch PRO Report
@@ -54,7 +55,7 @@
 #'@importFrom utils write.table write.csv read.table
 #'@importFrom grDevices dev.off png
 #'@importFrom methods show
-run_workflow = function(date, id, replicate_id, twofreqs, popFreq, refData, refs, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, runancestry, ancestrysnps, pcagroups, assay, positions, threads=0, parallel=FALSE) {
+run_workflow = function(date, id, replicate_id, twofreqs, popFreq, refData, refs, out_path, run_mixdeconv, software, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, minor_threshold, keep_bins, filter_missing, runancestry, ancestrysnps, pcagroups, assay, positions, threads=0, parallel=FALSE) {
   if (replicate_id == "") {
     logfile = file(glue("{out_path}config_log_files/{date}/run_log_{id}_{date}.txt"), open = "wt")
   } else {

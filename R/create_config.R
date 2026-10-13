@@ -22,6 +22,7 @@
 #' @param replicate replicate ID for running a single sample if sample_manifest=NULL
 #' @param out_path name of output folder
 #' @param run_mixdeconv if running mixture deconvolution
+#' @param software mixture deconvolution software to use (EFM or EFMmps)
 #' @param unconditioned if running an unconditioned deconvolution
 #' @param cond if running a conditioned deconvolution, which references to condition on
 #' @param method downstream method (calculate metrics/create GEDmatch PRO report)
@@ -47,10 +48,12 @@
 #'
 #' @export
 #'
-create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs, sample_manifest, sample, replicate, out_path, run_mixdeconv, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, filter_missing, runancestry, pcasnps, pcagroups, assay, pos){
+create_config = function(date, twofreqs, freq_all, freq_major, freq_minor, refs, sample_manifest, sample, replicate, out_path, run_mixdeconv, software, unconditioned, cond, method, sets, kinpath, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, A1min, A1max, A2min, A2max, major, minor, filter_missing, runancestry, pcasnps, pcagroups, assay, pos){
   config = setNames(data.frame(matrix(ncol=2, nrow=0)), c("Setting", "Value"))
   config = rbind(config, data.frame(Setting="MixDeR Version:", Value=getNamespaceVersion("mixder")[["version"]]))
-  config = rbind(config, data.frame(Setting="EuroForMix Version:", Value=getNamespaceVersion("euroformix")[["version"]]))
+  config = rbind(config, data.frame(Setting="Mixture deconvolution software:", Value=software))
+  software_v = ifelse(software == "EFM", getNamespaceVersion("euroformix")[["version"]], getNamespaceVersion("EFMmps")[["version"]])
+  config = rbind(config, data.frame(Setting="EuroForMix Version:", Value=software_v))
   config = rbind(config, data.frame(Setting="Assay:", Value=assay))
   if (assay == "custom" & method == "Create GEDmatch PRO Report") {
     config = rbind(config, data.frame(Setting="SNP hg19 positions file for custom assay:", Value=pos))

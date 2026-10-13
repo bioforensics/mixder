@@ -24,6 +24,7 @@
 #' @param refpath Path to directory containing reference genotypes (default=NULL)
 #' @param refs list of sample IDs to use as reference for conditioning, can specify more than one (default=NULL, example: list("Ref1", "Ref2"))
 #' @param mixdeconv whether to run mixture deconvolution (default=TRUE)
+#' @param software mixture deconvolution software to use (EFM or EFMmps; default is EFM)
 #' @param uncond run (or use) an unconditioned mixture deconvolution (default=TRUE)
 #' @param cond run (or use) a conditioned mixture deconvolution (default=FALSE)
 #' @param sets number of bins to divide SNPs into (default=10)
@@ -40,7 +41,7 @@
 #'
 #' @export
 #'
-run_mixder_report = function(sample_manifest=NULL, sample=NULL, replicate="", sample_reports = getwd(), output = "output", assay="kintelligence", snp_pos=NULL, twofreqs=FALSE, freq_both="global_1000g", freq_major=NULL, freq_minor=NULL, refpath=NULL, refs=NULL, mixdeconv=TRUE, uncond=TRUE, cond=FALSE, sets=10, dynamicAT=0.015, staticAT=10, minimum_snps=6000, A1_threshold=0.99, A2_threshold=0.6, filter_missing=FALSE, minor_contrib_threshold=FALSE, keep_bins=TRUE, threads=0, parallel=FALSE) {
+run_mixder_report = function(sample_manifest=NULL, sample=NULL, replicate="", sample_reports = getwd(), output = "output", assay="kintelligence", snp_pos=NULL, twofreqs=FALSE, freq_both="global_1000g", freq_major=NULL, freq_minor=NULL, refpath=NULL, refs=NULL, mixdeconv=TRUE, software="EFM", uncond=TRUE, cond=FALSE, sets=10, dynamicAT=0.015, staticAT=10, minimum_snps=6000, A1_threshold=0.99, A2_threshold=0.6, filter_missing=FALSE, minor_contrib_threshold=FALSE, keep_bins=TRUE, threads=0, parallel=FALSE) {
   date = glue("{Sys.Date()}_{format(Sys.time(), '%H_%M_%S')}")
   out_path = glue("{sample_reports}/snp_sets/{output}/")
   popFreq = load_freq(twofreqs, freq_both, freq_major, freq_minor)
@@ -77,7 +78,7 @@ run_mixder_report = function(sample_manifest=NULL, sample=NULL, replicate="", sa
   if (!isTruthy(sample_manifest) & !isTruthy(sample)){
     stop("Please provide sample manifest or sample ID!")
   }
-  create_config(date, twofreqs, freq_both, freq_major, freq_minor, refpath, sample_manifest, sample, replicate, out_path, mixdeconv, uncond, refs, "Create GEDmatch PRO Report", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, filter_missing, TRUE, NA, NA, assay, snp_pos)
+  create_config(date, twofreqs, freq_both, freq_major, freq_minor, refpath, sample_manifest, sample, replicate, out_path, mixdeconv, software, uncond, refs, "Create GEDmatch PRO Report", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, filter_missing, TRUE, NA, NA, assay, snp_pos)
   if (isTruthy(sample_manifest)) {
     manifest=suppressWarnings(euroformix::tableReader(sample_manifest))
     for (i in nrow(manifest)) {
@@ -85,11 +86,11 @@ run_mixder_report = function(sample_manifest=NULL, sample=NULL, replicate="", sa
       replicate_id = ifelse(is.na(manifest[i, 2]), "", manifest[i, 2])
       message(glue("Sample ID: {id}"))
       message(glue("Replicate ID: {replicate_id}"))
-      run_workflow(date, id, replicate_id, twofreqs, popFreq, refData, refpath, out_path, mixdeconv, uncond, refs, "Create GEDmatch PRO Report", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, filter_missing, TRUE, NA, NA, assay, snp_positions, threads, parallel)
+      run_workflow(date, id, replicate_id, twofreqs, popFreq, refData, refpath, out_path, mixdeconv, software, uncond, refs, "Create GEDmatch PRO Report", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, filter_missing, TRUE, NA, NA, assay, snp_positions, threads, parallel)
     }
   } else if (isTruthy(sample)){
     message(glue("Sample ID: {sample}"))
     message(glue("Replicate ID: {replicate}"))
-    run_workflow(date, sample, replicate, twofreqs, popFreq, refData, refpath, out_path, mixdeconv, uncond, refs, "Create GEDmatch PRO Report", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, filter_missing, TRUE, NA, NA, assay, snp_positions, threads, parallel)
+    run_workflow(date, sample, replicate, twofreqs, popFreq, refData, refpath, out_path, mixdeconv, software, uncond, refs, "Create GEDmatch PRO Report", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, filter_missing, TRUE, NA, NA, assay, snp_positions, threads, parallel)
   }
 }

@@ -16,6 +16,7 @@ create_config(
   replicate,
   out_path,
   run_mixdeconv,
+  software,
   unconditioned,
   cond,
   method,
@@ -62,6 +63,8 @@ create_config(
 \item{out_path}{name of output folder}
 
 \item{run_mixdeconv}{if running mixture deconvolution}
+
+\item{software}{mixture deconvolution software to use (EFM or EFMmps)}
 
 \item{unconditioned}{if running an unconditioned deconvolution}
 

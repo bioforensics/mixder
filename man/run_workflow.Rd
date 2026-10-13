@@ -14,6 +14,7 @@ run_workflow(
   refs,
   out_path,
   run_mixdeconv,
+  software,
   unconditioned,
   cond,
   method,
@@ -58,6 +59,8 @@ run_workflow(
 \item{refs}{Path of reference genotype(s) file}
 
 \item{run_mixdeconv}{TRUE if running EFM mixture deconvolution}
+
+\item{software}{mixture deconvolution software to use (EFM or EFMmps)}
 
 \item{unconditioned}{TRUE if running unconditioned mixture deconvolution}
 

@@ -46,13 +46,13 @@ mixder = function() {
                   uiOutput("input_a"),
                   uiOutput("input_text_a"),
                   hr(),
-                  p("Please select one or both of the types of mixture deconvolution to perform:"),
+                  strong("Please select one or both of the types of mixture deconvolution to perform:"),
                   uiOutput("analyses_a"),
                   conditionalPanel(condition = "input.cond == 1", uiOutput("refs_a"), uiOutput("ref_text_a"), uiOutput("ref_selector_a")),
                   hr(),
                   uiOutput("ancestry_snps_groups"),
                   hr(),
-                  p("Below are parameters for running the mixture deconvolution step:"),
+                  strong("Below are parameters for running the mixture deconvolution step:"),
                   uiOutput("sets_a"),
                   uiOutput("allele_thresh_a"),
                   uiOutput("ATs_a"),
@@ -82,7 +82,7 @@ mixder = function() {
           conditionalPanel(condition = "input.numsamples == 'Single Mixture'", uiOutput("ids_mixde")),
           conditionalPanel(condition = "input.numsamples == 'Multiple Mixtures'", uiOutput("sampleman_mixde"), uiOutput("sampleman_text_md")),
           hr(),
-          p("Please select one or both of the types of mixture deconvolution to perform:"),
+          strong("Please select one or both of the types of mixture deconvolution to perform:"),
           uiOutput("analyses_md"),
           conditionalPanel(condition = "input.cond == 1 | input.method == 'Calculate Metrics'", uiOutput("refs_md"), uiOutput("ref_text_md")),
           conditionalPanel(condition = "input.cond == 1", uiOutput("ref_selector_md")),
@@ -90,6 +90,7 @@ mixder = function() {
           uiOutput("assay_choice"),
           conditionalPanel(condition = "input.assay_choice == 'Custom'", uiOutput("assay_GetFile"), uiOutput("assay_text")),
           hr(),
+          strong("Mixture deconvolution parameters:"),
           conditionalPanel(condition = "input.run_mixdeconv == 1", uiOutput("sets_md")),
           conditionalPanel(condition = "input.run_mixdeconv == 1 & input.assay_choice == 'Kintelligence'", uiOutput("ATs_md"), uiOutput("minsnps_md")),
           conditionalPanel(condition = "input.run_mixdeconv == 1 & input.assay_choice == 'Custom'", uiOutput("ATs_c"), uiOutput("minsnps_custom")),
@@ -399,6 +400,15 @@ server = function(input, output, session) {
   })
   sets = reactive({
     fluidRow(
+      column(3,
+             selectInput("algo", tags$span("Select Mix Decon Program:", tags$span(
+               icon(
+                 name = "question-circle",
+               )
+             ) |>
+               add_prompt(message = "Select the mixture deconvolution software program, either EuroForMix (EFM) or EFMmps.\nEFMmps more appropriate for larger SNP datasets.\nSee documentation for further details.", position = "right")
+             ), choices = c("EFM", "EFMmps"), selected = "EFM")
+      ),
       column(3,
              numericInput("sets", tags$span("Number of SNP Sets", tags$span(
         icon(
@@ -773,7 +783,7 @@ server = function(input, output, session) {
       out_path = glue("{kin_inpath()}/snp_sets/{input$output}/")
       if (isTruthy(samplefile()$datapath)) {
         sample_list = suppressWarnings(euroformix::tableReader(samplefile()$datapath))
-        create_config(date, FALSE, "Global - 1000G", NULL, NULL, refs(), samplefile()$datapath, input$sampleid, input$replicateid, out_path, TRUE, input$uncond, input$ref_selector, "", input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, NULL, NULL, NULL, NULL, NULL, NULL, input$filter_missing, TRUE, input$ancestry_snps, input$pcagroups, "Kintelligence", NULL)
+        create_config(date, FALSE, "Global - 1000G", NULL, NULL, refs(), samplefile()$datapath, input$sampleid, input$replicateid, out_path, TRUE, input$algo, input$uncond, input$ref_selector, "", input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, NULL, NULL, NULL, NULL, NULL, NULL, input$filter_missing, TRUE, input$ancestry_snps, input$pcagroups, "Kintelligence", NULL)
         withProgress(message = "Running Samples", value = 0, {
           n = nrow(sample_list)
           for (row in 1:n) {
@@ -786,7 +796,7 @@ server = function(input, output, session) {
             incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
             withCallingHandlers({
               shinyjs::html(id = "text", html = "")
-              run_workflow(date, id, replicate_id, FALSE, popFreq, refData, refs(), out_path, TRUE, input$uncond, input$ref_selector, method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, NULL, NULL, NULL, NULL, NULL, NULL, input$min_cont_prob, input$keep_bins, input$filter_missing, TRUE, input$ancestry_snps, input$pcagroups, input$assay_choice, snp_positions, threads, input$parallel)
+              run_workflow(date, id, replicate_id, FALSE, popFreq, refData, refs(), out_path, TRUE, input$algo, input$uncond, input$ref_selector, method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, NULL, NULL, NULL, NULL, NULL, NULL, input$min_cont_prob, input$keep_bins, input$filter_missing, TRUE, input$ancestry_snps, input$pcagroups, input$assay_choice, snp_positions, threads, input$parallel)
             },
             message = function(m) {
               shinyjs::html(id = "text", html = m$message, add = TRUE)
@@ -795,11 +805,11 @@ server = function(input, output, session) {
         })
       } else if (isTruthy(input$sampleid)) {
         repid = ifelse(isTruthy(input$replicateid), input$replicateid, "")
-        create_config(date, FALSE, "Global - 1000G", NULL, NULL, refs(), samplefile()$datapath, input$sampleid, repid, out_path, TRUE, input$uncond, input$ref_selector, "", input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, NULL, NULL, NULL, NULL, NULL, NULL, input$filter_missing, TRUE, input$ancestry_snps, input$pcagroups, "Kintelligence", NULL)
+        create_config(date, FALSE, "Global - 1000G", NULL, NULL, refs(), samplefile()$datapath, input$sampleid, repid, out_path, TRUE, input$algo, input$uncond, input$ref_selector, "", input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, NULL, NULL, NULL, NULL, NULL, NULL, input$filter_missing, TRUE, input$ancestry_snps, input$pcagroups, "Kintelligence", NULL)
         withProgress(message = "Running Sample", value = 0, {
           withCallingHandlers({
             shinyjs::html(id = "text", html = "")
-            run_workflow(date, input$sampleid, repid, FALSE, popFreq, refData, refs(), out_path, TRUE, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, NULL, NULL, NULL, NULL, NULL, NULL, input$min_cont_prob, input$keep_bins, input$filter_missing, TRUE, input$ancestry_snps, input$pcagroups, "Kintelligence", snp_positions, threads, input$parallel)
+            run_workflow(date, input$sampleid, repid, FALSE, popFreq, refData, refs(), out_path, TRUE, input$algo, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), input$dynamicAT, input$staticAT, input$minimum_snps, input$A1_threshold, input$A2_threshold, NULL, NULL, NULL, NULL, NULL, NULL, input$min_cont_prob, input$keep_bins, input$filter_missing, TRUE, input$ancestry_snps, input$pcagroups, "Kintelligence", snp_positions, threads, input$parallel)
           },
           message = function(m) {
             shinyjs::html(id = "text", html = m$message, add = TRUE)
@@ -909,6 +919,7 @@ server = function(input, output, session) {
       } else {
         snp_positions = mixder::kintelligence_snp_positions
       }
+      print(input$assay_choice)
       dynamicat = ifelse(input$assay_choice == "Kintelligence", input$dynamicAT, input$dynamicAT_c)
       staticat = ifelse(input$assay_choice == "Kintelligence", input$staticAT, input$staticAT_c)
       min_snps = ifelse(input$assay_choice == "Kintelligence", input$minimum_snps, input$minimum_snps_c)
@@ -918,7 +929,7 @@ server = function(input, output, session) {
       out_path = glue("{kin_inpath()}/snp_sets/{input$output}/")
       if (isTruthy(samplefile()$datapath)) {
         sample_list = suppressWarnings(euroformix::tableReader(samplefile()$datapath))
-        create_config(date, input$twofreqs, freq_both, freq_major, freq_minor, refs(), samplefile()$datapath, input$sampleid, input$replicateid, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), dynamicat, staticat, min_snps, A1_thresh, A2_thresh, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, assay()$datapath)
+        create_config(date, input$twofreqs, freq_both, freq_major, freq_minor, refs(), samplefile()$datapath, input$sampleid, input$replicateid, out_path, input$run_mixdeconv, input$algo, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), dynamicat, staticat, min_snps, A1_thresh, A2_thresh, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, assay()$datapath)
         withProgress(message = "Running Samples", value = 0, {
           n = nrow(sample_list)
           for (row in 1:n) {
@@ -931,7 +942,7 @@ server = function(input, output, session) {
             incProgress((row-1)/n, detail = glue("On Sample {row} of {n}"))
               withCallingHandlers({
                 shinyjs::html(id = "text", html = "")
-                run_workflow(date, id, replicate_id, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(),  dynamicat, staticat, min_snps, A1_thresh, A2_thresh, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, mincontprob, input$keep_bins, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, snp_positions, threads, input$parallel)
+                run_workflow(date, id, replicate_id, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$algo, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(),  dynamicat, staticat, min_snps, A1_thresh, A2_thresh, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, mincontprob, input$keep_bins, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, snp_positions, threads, input$parallel)
               },
               message = function(m) {
                 shinyjs::html(id = "text", html = m$message, add = TRUE)
@@ -940,11 +951,11 @@ server = function(input, output, session) {
         })
       } else if (isTruthy(input$sampleid)) {
         repid = ifelse(isTruthy(input$replicateid), input$replicateid, "")
-        create_config(date, input$twofreqs, freq_both, freq_major, freq_minor, refs(), samplefile()$datapath, input$sampleid, repid, out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(),  dynamicat, staticat, min_snps, A1_thresh, A2_thresh, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, assay()$datapath)
+        create_config(date, input$twofreqs, freq_both, freq_major, freq_minor, refs(), samplefile()$datapath, input$sampleid, repid, out_path, input$run_mixdeconv, input$algo, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(),  dynamicat, staticat, min_snps, A1_thresh, A2_thresh, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, assay()$datapath)
         withProgress(message = "Running Sample", value = 0, {
           withCallingHandlers({
             shinyjs::html(id = "text", html = "")
-            run_workflow(date, input$sampleid, repid, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(),  dynamicat, staticat, min_snps, A1_thresh, A2_thresh, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, mincontprob, input$keep_bins, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, snp_positions, threads, input$parallel)
+            run_workflow(date, input$sampleid, repid, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$algo, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(),  dynamicat, staticat, min_snps, A1_thresh, A2_thresh, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, mincontprob, input$keep_bins, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, snp_positions, threads, input$parallel)
           },
           message = function(m) {
             shinyjs::html(id = "text", html = m$message, add = TRUE)
