@@ -863,14 +863,7 @@ server = function(input, output, session) {
     } else if ((input$method == "Calculate Metrics" | isTruthy(input$cond)) & !isTruthy(refs())) {
       showModal(modalDialog(
         title = "Missing Input",
-        "Please provide reference genotypes before proceeding.",
-        easyClose = TRUE,
-        footer = modalButton("Dismiss")
-      ))
-    } else if ((isTruthy(input$cond) | method == "Calculate Metrics") & !isTruthy(refs())) {
-      showModal(modalDialog(
-        title = "Missing Input",
-        "Please provide reference genotypes for selected conditioned analysis or to calculate concordance metrics.",
+        "Please provide reference genotypes (button below the selection of unconditioned/conditioned analyses) before proceeding.",
         easyClose = TRUE,
         footer = modalButton("Dismiss")
       ))
@@ -919,18 +912,22 @@ server = function(input, output, session) {
       } else {
         snp_positions = mixder::kintelligence_snp_positions
       }
-      print(input$assay_choice)
       dynamicat = ifelse(input$assay_choice == "Kintelligence", input$dynamicAT, input$dynamicAT_c)
       staticat = ifelse(input$assay_choice == "Kintelligence", input$staticAT, input$staticAT_c)
       min_snps = ifelse(input$assay_choice == "Kintelligence", input$minimum_snps, input$minimum_snps_c)
-      A1_thresh = ifelse(input$assay_choice == "Kintelligence", input$A1_threshold, input$A1_threshold_c)
-      A2_thresh = ifelse(input$assay_choice == "Kintelligence", input$A2_threshold, input$A2_threshold_c)
-      mincontprob = ifelse(input$assay_choice == "Kintelligence", input$min_cont_prob, input$min_cont_prob_c)
+      if (method == "Create GEDmatch PRO Report") {
+        A1_thresh = ifelse(input$assay_choice == "Kintelligence", input$A1_threshold, input$A1_threshold_c)
+        A2_thresh = ifelse(input$assay_choice == "Kintelligence", input$A2_threshold, input$A2_threshold_c)
+        mincontprob = ifelse(input$assay_choice == "Kintelligence", input$min_cont_prob, input$min_cont_prob_c)
+      }
+      print('h2')
+      print(input$algo)
+      print('h')
       out_path = glue("{kin_inpath()}/snp_sets/{input$output}/")
       if (isTruthy(samplefile()$datapath)) {
         sample_list = suppressWarnings(euroformix::tableReader(samplefile()$datapath))
         create_config(date, input$twofreqs, freq_both, freq_major, freq_minor, refs(), samplefile()$datapath, input$sampleid, input$replicateid, out_path, input$run_mixdeconv, input$algo, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(), dynamicat, staticat, min_snps, A1_thresh, A2_thresh, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, assay()$datapath)
-        withProgress(message = "Running Samples", value = 0, {
+        withProgress(message = "Running Samples - Scroll down for output!", value = 0, {
           n = nrow(sample_list)
           for (row in 1:n) {
             id = sample_list[row, 1]
@@ -952,7 +949,7 @@ server = function(input, output, session) {
       } else if (isTruthy(input$sampleid)) {
         repid = ifelse(isTruthy(input$replicateid), input$replicateid, "")
         create_config(date, input$twofreqs, freq_both, freq_major, freq_minor, refs(), samplefile()$datapath, input$sampleid, repid, out_path, input$run_mixdeconv, input$algo, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(),  dynamicat, staticat, min_snps, A1_thresh, A2_thresh, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, assay()$datapath)
-        withProgress(message = "Running Sample", value = 0, {
+        withProgress(message = "Running Sample - Scroll down for output!", value = 0, {
           withCallingHandlers({
             shinyjs::html(id = "text", html = "")
             run_workflow(date, input$sampleid, repid, input$twofreqs, popFreq, refData, refs(), out_path, input$run_mixdeconv, input$algo, input$uncond, input$ref_selector, input$method, input$sets, kin_inpath(),  dynamicat, staticat, min_snps, A1_thresh, A2_thresh, input$A1_threshmin_metrics, input$A1_threshmax_metrics, input$A2_threshmin_metrics, input$A2_threshmax_metrics, input$major_selector, input$minor_selector, mincontprob, input$keep_bins, input$filter_missing, FALSE, NULL, NULL, input$assay_choice, snp_positions, threads, input$parallel)
