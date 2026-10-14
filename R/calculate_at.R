@@ -44,11 +44,15 @@ calculate_at = function(sample, kinreports, dynamicAT, staticAT) {
       break
     }
   }
-  at = compiled_snps %>%
-    group_by(.data$Marker) %>%
-    summarize(Reads=sum(.data$Reads))
-  at$Thresh = ifelse(ceiling(at$Reads*dynamicAT) > staticAT, ceiling(at$Reads*dynamicAT), staticAT)
-  at = data.frame(at)
-  at$Marker = toupper(at$Marker)
+  if (exists("compiled_snps")) {
+    at = compiled_snps %>%
+      group_by(.data$Marker) %>%
+      summarize(Reads=sum(.data$Reads))
+    at$Thresh = ifelse(ceiling(at$Reads*dynamicAT) > staticAT, ceiling(at$Reads*dynamicAT), staticAT)
+    at = data.frame(at)
+    at$Marker = toupper(at$Marker)
+  } else {
+    stop(glue("No matching Sample Reports or .tsv files found! Please check provided sample ID ({sample}) and input folder ({kinreports})."))
+  }
   return(at[,c(1,3)])
 }
