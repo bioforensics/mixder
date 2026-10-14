@@ -15,6 +15,7 @@ run_indiv_efm_set(
   write_path,
   attable,
   keep_bins,
+  software = "EFM",
   cond = NULL,
   uncond = TRUE,
   threads = 0
@@ -38,6 +39,10 @@ run_indiv_efm_set(
 \item{write_path}{Path to write output to}
 
 \item{attable}{AT table}
+
+\item{keep_bins}{To use existing SNP bins or create new bins (and files)}
+
+\item{software}{mixture deconvolution software to use (EFM or EFMmps)}
 
 \item{cond}{Condition on specific references}
 

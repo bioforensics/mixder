@@ -96,8 +96,9 @@ run_workflow = function(date, id, replicate_id, twofreqs, popFreq, refData, refs
     dir.create(file.path(write_path, "GEDMatchPROReports/Metrics"), showWarnings = FALSE, recursive=TRUE)
   }
   if (isTruthy(unconditioned)) {
-    efm_v = getNamespaceVersion("euroformix")[["version"]]
-    if (substr(efm_v, 1,3)!="4.0" & substr(efm_v, 1,2) != "3.") {
+
+    efm_v = ifelse(software == "EFM", getNamespaceVersion("euroformix")[["version"]], getNamespaceVersion("EFMmps")[["version"]])
+    if (compareVersion(efm_v, "4.0") == 1 | software == "EFMmps") {
       major_c = "C2"
       minor_c = "C1"
     } else {

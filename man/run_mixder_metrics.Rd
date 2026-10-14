@@ -18,6 +18,7 @@ run_mixder_metrics(
   refpath = NULL,
   refs = NULL,
   mixdeconv = TRUE,
+  software = "EFM",
   uncond = TRUE,
   cond = FALSE,
   sets = 10,
@@ -61,6 +62,8 @@ run_mixder_metrics(
 \item{refs}{list of sample IDs to use as reference for conditioning, can specify more than one (default=NULL, example: list("Ref1", "Ref2"))}
 
 \item{mixdeconv}{whether to run mixture deconvolution (default=TRUE)}
+
+\item{software}{mixture deconvolution software to use (EFM or EFMmps; default is EFM)}
 
 \item{uncond}{run (or use) an unconditioned mixture deconvolution (default=TRUE)}
 

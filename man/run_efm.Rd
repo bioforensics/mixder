@@ -19,6 +19,7 @@ run_efm(
   cond = NULL,
   uncond = TRUE,
   keep_bins = TRUE,
+  software = "EFM",
   threads = 0,
   parallel = FALSE
 )
@@ -42,7 +43,7 @@ run_efm(
 
 \item{nsets}{Number of SNP sets}
 
-\item{ancestry}{TRUE/FALSE if to skip ancestry}
+\item{ancestry}{TRUE/FALSE if to run ancestry}
 
 \item{assay}{assay used (kintelligence or custom)}
 
@@ -52,7 +53,11 @@ run_efm(
 
 \item{keep_bins}{To use existing SNP bins or create new bins (and files)}
 
+\item{software}{mixture deconvolution software to use (EFM or EFMmps)}
+
 \item{threads}{number of threads used for EFM}
+
+\item{parallel}{run in parallel}
 }
 \description{
 Running mixture deconvolution in EuroForMix

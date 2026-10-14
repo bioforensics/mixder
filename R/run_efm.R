@@ -19,19 +19,21 @@
 #' @param out_path Output path
 #' @param attable AT table
 #' @param nsets Number of SNP sets
-#' @param ancestry TRUE/FALSE if to skip ancestry
+#' @param ancestry TRUE/FALSE if to run ancestry
 #' @param assay assay used (kintelligence or custom)
 #' @param cond Sample IDs to condition on
 #' @param uncond TRUE/FALSE if performing unconditioned analysis
+#' @param software mixture deconvolution software to use (EFM or EFMmps)
 #' @param keep_bins To use existing SNP bins or create new bins (and files)
 #' @param threads number of threads used for EFM
+#' @param parallel run in parallel
 #'
 #' @export
 #'
 #' @import parallel
 #'
-run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, attable, nsets, ancestry, assay, cond = NULL, uncond=TRUE, keep_bins=TRUE, threads=0, parallel=FALSE) {
-  if (!ancestry) {
+run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, attable, nsets, ancestry, assay, cond = NULL, uncond=TRUE, keep_bins=TRUE, software="EFM", threads=0, parallel=FALSE) {
+  if (ancestry) {
     new_path = glue("{out_path}/ancestry_prediction/")
   } else {
     new_path = out_path
@@ -57,12 +59,12 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
     numCores = ifelse(detectCores()<nsets, detectCores(), nsets)
     message(glue("Running EFM mixture deconvolution using {numCores} cores."))
     cl = makeCluster(numCores, outfile=glue("{out_path}config_log_files/{date}/efm_output_{log_name}_{date}.txt"))
-    results = parLapply(cl, 1:(nsets), run_indiv_efm_set, ids=ids, snps_input=snps_input, popFreq=popFreq, refData=refData, id=id, replicate_id=replicate_id, write_path=write_path, attable=attable, keep_bins=keep_bins, cond=cond, uncond=uncond, threads=threads)
+    results = parLapply(cl, 1:(nsets), run_indiv_efm_set, ids=ids, snps_input=snps_input, popFreq=popFreq, refData=refData, id=id, replicate_id=replicate_id, write_path=write_path, attable=attable, keep_bins=keep_bins, software=software, cond=cond, uncond=uncond, threads=threads)
     stopCluster(cl)
   } else {
     results = list()
     for (i in 1:nsets) {
-      results[[i]] = run_indiv_efm_set(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, keep_bins, cond=cond, uncond=uncond, threads=threads)
+      results[[i]] = run_indiv_efm_set(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, keep_bins, software=software, cond=cond, uncond=uncond, threads=threads)
     }
   }
   uncond_ratios = data.frame()

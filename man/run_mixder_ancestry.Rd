@@ -25,6 +25,7 @@ run_mixder_ancestry(
   keep_bins = TRUE,
   snps = "ancestry",
   pcagroups = "superpopulations",
+  software = "EFM",
   threads = 0,
   parallel = FALSE
 )
@@ -69,6 +70,8 @@ run_mixder_ancestry(
 \item{snps}{SNPs to use for ancestry prediction (either ancestry only or all SNPs; default="ancestry")}
 
 \item{pcagroups}{How to color PCA plots (superpopulations and/or subpopulations, default="superpopulations")}
+
+\item{software}{mixture deconvolution software to use (EFM or EFMmps; default is EFM)}
 
 \item{threads}{threads for EFM (default=0)}
 

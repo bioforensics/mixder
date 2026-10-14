@@ -821,7 +821,7 @@ server = function(input, output, session) {
 
 ## Check all settings/files are appropriate and run MixDeR
   observeEvent(input$Submit_mixdecon, {
-    method = ifelse(exists("method"), method, "")
+    method = ifelse(isTruthy(input$method), input$method, "")
     freqsingle = ifelse(isTruthy(input$uploadfreq), input$uploadfreq, "Global - 1000G")
     freqmaj = ifelse(isTruthy(input$uploadfreq_major), input$uploadfreq_major, "Global - 1000G")
     freqmin = ifelse(isTruthy(input$uploadfreq_minor), input$uploadfreq_minor, "Global - 1000G")
@@ -920,9 +920,6 @@ server = function(input, output, session) {
         A2_thresh = ifelse(input$assay_choice == "Kintelligence", input$A2_threshold, input$A2_threshold_c)
         mincontprob = ifelse(input$assay_choice == "Kintelligence", input$min_cont_prob, input$min_cont_prob_c)
       }
-      print('h2')
-      print(input$algo)
-      print('h')
       out_path = glue("{kin_inpath()}/snp_sets/{input$output}/")
       if (isTruthy(samplefile()$datapath)) {
         sample_list = suppressWarnings(euroformix::tableReader(samplefile()$datapath))
