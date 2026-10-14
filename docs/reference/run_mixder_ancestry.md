@@ -8,7 +8,7 @@ run MixDeR using the CLI; ancestry prediction
 run_mixder_ancestry(
   sample_manifest = NULL,
   sample = NULL,
-  replicate = NULL,
+  replicate = "",
   sample_reports = getwd(),
   output = "output",
   refpath = NULL,
@@ -24,8 +24,10 @@ run_mixder_ancestry(
   A2_threshold = 0.6,
   minor_contrib_threshold = FALSE,
   keep_bins = TRUE,
-  snps,
-  pcagroups
+  snps = "ancestry",
+  pcagroups = "superpopulations",
+  threads = 0,
+  parallel = FALSE
 )
 ```
 
@@ -111,8 +113,19 @@ run_mixder_ancestry(
 
 - snps:
 
-  SNPs to use for ancestry prediction (either ancestry only or all SNPs)
+  SNPs to use for ancestry prediction (either ancestry only or all SNPs;
+  default="ancestry")
 
 - pcagroups:
 
-  How to color PCA plots (superpopulations and/or subpopulations)
+  How to color PCA plots (superpopulations and/or subpopulations,
+  default="superpopulations")
+
+- threads:
+
+  threads for EFM (default=0)
+
+- parallel:
+
+  parallelize EFM sets, will detect number of cores on machine and use
+  all available (default=FALSE)

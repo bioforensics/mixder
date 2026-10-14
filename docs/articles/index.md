@@ -8,6 +8,8 @@
   Files](https://bioforensics.github.io/mixder/articles/Required_Files.md):
 - [Running Mixture
   Deconvolution](https://bioforensics.github.io/mixder/articles/Running_MixDecon.md):
+- [Custom SNP
+  Sets](https://bioforensics.github.io/mixder/articles/Custom_SNPs.md):
 - [Ancestry Prediction
   Tool](https://bioforensics.github.io/mixder/articles/Ancestry_Prediction_Tool.md):
 - [Calculating Validation

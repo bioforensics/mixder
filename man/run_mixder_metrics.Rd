@@ -7,9 +7,10 @@
 run_mixder_metrics(
   sample_manifest = NULL,
   sample = NULL,
-  replicate = NULL,
+  replicate = "",
   sample_reports = getwd(),
   output = "output",
+  assay = "kintelligence",
   twofreqs = FALSE,
   freq_both = "global_1000g",
   freq_major = NULL,
@@ -17,6 +18,7 @@ run_mixder_metrics(
   refpath = NULL,
   refs = NULL,
   mixdeconv = TRUE,
+  software = "EFM",
   uncond = TRUE,
   cond = FALSE,
   sets = 10,
@@ -31,7 +33,9 @@ run_mixder_metrics(
   minor = NULL,
   filter_missing = FALSE,
   minor_contrib_threshold = FALSE,
-  keep_bins = TRUE
+  keep_bins = TRUE,
+  threads = 0,
+  parallel = FALSE
 )
 }
 \arguments{
@@ -58,6 +62,8 @@ run_mixder_metrics(
 \item{refs}{list of sample IDs to use as reference for conditioning, can specify more than one (default=NULL, example: list("Ref1", "Ref2"))}
 
 \item{mixdeconv}{whether to run mixture deconvolution (default=TRUE)}
+
+\item{software}{mixture deconvolution software to use (EFM or EFMmps; default is EFM)}
 
 \item{uncond}{run (or use) an unconditioned mixture deconvolution (default=TRUE)}
 
@@ -88,6 +94,10 @@ run_mixder_metrics(
 \item{minor_contrib_threshold}{Whether to apply the allele 1 probability threshold to the minor contributor, regardless of the minimum number of SNPs (default=FALSE)}
 
 \item{keep_bins}{Use existing binned SNP data, if exists (default=TRUE)}
+
+\item{threads}{number of threads for EFM (default=0)}
+
+\item{parallel}{parallelize EFM sets, will detect number of cores on machine and use all available (default=FALSE)}
 }
 \description{
 run MixDeR using the CLI; calculate validation metrics

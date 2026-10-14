@@ -1,16 +1,21 @@
 # Introduction
 
-MixDeR has three modules:  
+MixDeR has four modules:  
 1. EFM mixture deconvolution  
 2. Calculate validation metrics  
-3. Create GEDmatch PRO reports
+3. Create GEDmatch PRO reports  
+4. Ancestry Prediction
 
 EFM mixture deconvolution must be run at least once. If it’s been run
 previously, the other modules can be run using the existing
 deconvolution data.
 
+------------------------------------------------------------------------
+
 MixDeR can either calculate validation metrics OR create the GEDmatch
 PRO reports during a single run, not both.
+
+------------------------------------------------------------------------
 
 NOTE about the allele probability thresholds:  
 This workflow utilizes individual probabilities for each allele call
@@ -25,3 +30,11 @@ called. For example, if the genotype for SNP rs12615742 is C,T but the
 allele 2 probability is below the threshold, the SNP genotype will be
 reported as C,C. If it is above the threshold, the SNP genotype will be
 reported as C,T.
+
+------------------------------------------------------------------------
+
+As of MixDeR version 0.10, a custom SNP set can be utilized, however,
+the default settings and built-in features will still exist for the
+Kintelligence assay. Please see the [section on using a custom SNP
+set](https://bioforensics.github.io/mixder/articles/Custom_SNPs.md) for
+additional information.

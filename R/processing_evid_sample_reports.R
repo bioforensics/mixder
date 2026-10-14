@@ -38,11 +38,15 @@ processing_evid_sample_reports = function(inpath, id) {
       final_snps = read.table(filename, header=T, sep="\t")
     }
   }
-  evid_formatted = final_snps %>%
-    group_by(.data$Marker) %>%
-    rename(Height = "Reads") %>%
-    mutate(row = row_number()) %>%
-    pivot_wider(names_from = row, values_from = c("Allele", "Height"), names_sep = ".")
+  if (exists("final_snps")) {
+    evid_formatted = final_snps %>%
+      group_by(.data$Marker) %>%
+      rename(Height = "Reads") %>%
+      mutate(row = row_number()) %>%
+      pivot_wider(names_from = row, values_from = c("Allele", "Height"), names_sep = ".")
+  } else {
+    stop(glue("No matching Sample Reports or .tsv files found! Please check provided sample ID ({id}) and input folder ({inpath})."))
+  }
   return(evid_formatted)
 }
 

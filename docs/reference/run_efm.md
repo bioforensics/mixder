@@ -16,9 +16,12 @@ run_efm(
   attable,
   nsets,
   ancestry,
+  assay,
   cond = NULL,
   uncond = TRUE,
-  keep_bins = TRUE
+  keep_bins = TRUE,
+  threads = 0,
+  parallel = FALSE
 )
 ```
 
@@ -62,7 +65,11 @@ run_efm(
 
 - ancestry:
 
-  if not skipping ancestry prediction
+  TRUE/FALSE if to skip ancestry
+
+- assay:
+
+  assay used (kintelligence or custom)
 
 - cond:
 
@@ -75,3 +82,7 @@ run_efm(
 - keep_bins:
 
   To use existing SNP bins or create new bins (and files)
+
+- threads:
+
+  number of threads used for EFM
