@@ -55,6 +55,7 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
   } else {
     ids = NULL
   }
+  write.table(attable, glue("{out_path}config_log_files/{date}/AT_table.txt"), row.names=F, quote=F, col.names=T, sep="\t")
   if (parallel) {
     numCores = ifelse(detectCores()<nsets, detectCores(), nsets)
     message(glue("Running EFM mixture deconvolution using {numCores} cores."))
