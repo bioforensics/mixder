@@ -76,7 +76,7 @@ run_mixder_ancestry = function(sample_manifest=NULL, sample=NULL, replicate="", 
   }
   snp_positions = mixder::kintelligence_snp_positions
   print("Running ancestry prediction")
-  create_config(date, FALSE, "1000G_global", NA, NA, refpath, sample_manifest, sample, replicate, out_path, mixdeconv, software, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, FALSE, FALSE, snpset, pcagroupcat, "kintelligence", NULL)
+  create_config(date, FALSE, "1000G_global", NA, NA, refpath, sample_manifest, sample, replicate, out_path, mixdeconv, software, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, FALSE, TRUE, snpset, pcagroupcat, "kintelligence", NULL)
   if (isTruthy(sample_manifest)) {
   ## sample manifest; loop through each sample
     manifest=suppressWarnings(euroformix::tableReader(sample_manifest))
@@ -85,11 +85,11 @@ run_mixder_ancestry = function(sample_manifest=NULL, sample=NULL, replicate="", 
       replicate_id = ifelse(is.na(manifest[i, 2]), "", manifest[i, 2])
       message(glue("Sample ID: {id}"))
       message(glue("Replicate ID: {replicate_id}"))
-      run_workflow(date, id, replicate_id, FALSE, popFreq, refData, refpath, out_path, mixdeconv, software, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, FALSE, FALSE, snpset, pcagroupcat, "kintelligence", snp_positions, threads, parallel)
+      run_workflow(date, id, replicate_id, FALSE, popFreq, refData, refpath, out_path, mixdeconv, software, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, FALSE, TRUE, snpset, pcagroupcat, "kintelligence", snp_positions, threads, parallel)
     }
   } else if (isTruthy(sample)){
     message(glue("Sample ID: {sample}"))
     message(glue("Replicate ID: {replicate}"))
-    run_workflow(date, sample, replicate, FALSE, popFreq, refData, refpath, out_path, mixdeconv, software, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, FALSE, FALSE, snpset, pcagroupcat, "kintelligence", snp_positions, threads, parallel)
+    run_workflow(date, sample, replicate, FALSE, popFreq, refData, refpath, out_path, mixdeconv, software, uncond, refs, "", sets, sample_reports, dynamicAT, staticAT, minimum_snps, A1_threshold, A2_threshold, NA, NA, NA, NA, NA, NA, minor_contrib_threshold, keep_bins, FALSE, TRUE, snpset, pcagroupcat, "kintelligence", snp_positions, threads, parallel)
   }
 }

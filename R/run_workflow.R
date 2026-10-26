@@ -62,7 +62,7 @@ run_workflow = function(date, id, replicate_id, twofreqs, popFreq, refData, refs
     logfile = file(glue("{out_path}config_log_files/{date}/run_log_{id}_{replicate_id}_{date}.txt"), open = "wt")
   }
   sink(logfile, type = "message", append=T)
-  on.exit(sink(file=NULL, type="message"))
+  on.exit({sink(file=NULL, type="message")}, add = TRUE)
   message(glue("Sample: {id}<br/>"))
   message(glue("Replicate Sample: {replicate_id}<br/>"))
     ## run EFM

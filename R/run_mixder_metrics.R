@@ -71,7 +71,7 @@ run_mixder_metrics = function(sample_manifest=NULL, sample=NULL, replicate="", s
   if (!isTruthy(sample_manifest) & !isTruthy(sample)){
     stop("Please provide sample manifest or sample ID!")
   }
-  create_config(date, twofreqs, freq_both, freq_major, freq_minor, refpath, sample_manifest, sample, replicate, out_path, mixdeconv, software, uncond, refs, "Calculate Metrics", sets, sample_reports, dynamicAT, staticAT, minimum_snps, NA, NA, A1min, A1max, A2min, A2max, major, minor, filter_missing, TRUE, NA, NA, assay, NULL)
+  create_config(date, twofreqs, freq_both, freq_major, freq_minor, refpath, sample_manifest, sample, replicate, out_path, mixdeconv, software, uncond, refs, "Calculate Metrics", sets, sample_reports, dynamicAT, staticAT, minimum_snps, NA, NA, A1min, A1max, A2min, A2max, major, minor, filter_missing, FALSE, NA, NA, assay, NULL)
   if (isTruthy(sample_manifest)) {
     manifest=suppressWarnings(euroformix::tableReader(sample_manifest))
     for (i in nrow(manifest)) {
@@ -79,11 +79,11 @@ run_mixder_metrics = function(sample_manifest=NULL, sample=NULL, replicate="", s
       replicate_id = ifelse(is.na(manifest[i, 2]), "", manifest[i, 2])
       message(glue("Sample ID: {id}"))
       message(glue("Replicate ID: {replicate_id}"))
-      run_workflow(date, id, replicate_id, twofreqs, popFreq, refData, refpath, out_path, mixdeconv, software, uncond, refs, "Calculate Metrics", sets, sample_reports, dynamicAT, staticAT, minimum_snps, NA, NA, A1min, A1max, A2min, A2max, major, minor, minor_contrib_threshold, keep_bins, filter_missing, TRUE, NA, NA, assay, NULL, threads, parallel)
+      run_workflow(date, id, replicate_id, twofreqs, popFreq, refData, refpath, out_path, mixdeconv, software, uncond, refs, "Calculate Metrics", sets, sample_reports, dynamicAT, staticAT, minimum_snps, NA, NA, A1min, A1max, A2min, A2max, major, minor, minor_contrib_threshold, keep_bins, filter_missing, FALSE, NA, NA, assay, NULL, threads, parallel)
     }
   } else if (isTruthy(sample)){
     message(glue("Sample ID: {sample}"))
     message(glue("Replicate ID: {replicate}"))
-    run_workflow(date, sample, replicate, twofreqs, popFreq, refData, refpath, out_path, mixdeconv, software, uncond, refs, "Calculate Metrics", sets, sample_reports, dynamicAT, staticAT, minimum_snps, NA, NA, A1min, A1max, A2min, A2max, major, minor, minor_contrib_threshold, keep_bins, filter_missing, TRUE, NA, NA, assay, NULL, threads, parallel)
+    run_workflow(date, sample, replicate, twofreqs, popFreq, refData, refpath, out_path, mixdeconv, software, uncond, refs, "Calculate Metrics", sets, sample_reports, dynamicAT, staticAT, minimum_snps, NA, NA, A1min, A1max, A2min, A2max, major, minor, minor_contrib_threshold, keep_bins, filter_missing, FALSE, NA, NA, assay, NULL, threads, parallel)
   }
 }
