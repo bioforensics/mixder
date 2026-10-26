@@ -1,7 +1,7 @@
 
-# mixder 0.11.0
+# mixder 1.0
 
-## Changes in version 0.11.0
+## Changes in version 1.0
 - Created more flexibility with file format for sample manifest
 - Implemented support for custom SNP panels:
   - In GUI, Drop down menu to select either "Kintelligence" or "Custom" assay; will require SNP positions file if using custom
@@ -11,6 +11,8 @@
 - Load frequency data only once instead of with each sample when using Shiny app
 - Improved error handling in Shiny app (pop-up window will appear if required files or settings are missing)
 - Added option to change number of threads used by EFM; useful if running on a server or grid (default is 0)
+- Complete redesign of Shiny app
+- Added option of using EFMmps for mixture deconvolution
 
 # mixder 0.10.1
 
