@@ -85,8 +85,6 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
   }
   final_list = list(uncond_finaltable_all, uncond_ratios)
   if (!is.null(cond)) {
-    C1_num = 3
-    C2_num = 4
     for (cond_on in cond) {
       cond_ratios = data.frame()
       cond_finaltable_all = data.frame()
@@ -102,8 +100,6 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
       }
       check_ratios(cond_ratios, uncond=FALSE)
       final_list = c(final_list, list(cond_finaltable_all, cond_ratios))
-      C1_num = C1_num + 2
-      C2_num = C2_num + 2
     }
   }
   return(final_list)
