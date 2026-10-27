@@ -13,6 +13,7 @@ test_that("Run MixDeR Report", {
   run_mixder_report(sample="Sample01a", sample_reports=tmpdir, software="EFMmps", output="output_mps")
   exp_report = read.csv(test_path("testdata", "Sample01a_uncond_major_Single_GEDmatchPROReport.txt"), header=T, sep="\t")
   obs_report = read.csv(glue("{outpath_mps}/Sample01a_uncond_major_Single_GEDmatchPROReport.txt"), header=T, sep="\t")
+  expect_equal(exp_report, obs_report)
   refdir=paste0(tmpdir, "/ref/")
   dir.create(refdir)
   file.copy(test_path("testdata", "EFM_references.csv"), refdir)

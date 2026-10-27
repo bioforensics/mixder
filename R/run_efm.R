@@ -76,7 +76,7 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
       if (file.exists(set_file)) {
         set_results = read.table(set_file, header=T, sep="\t")
         uncond_finaltable_all = rbind(uncond_finaltable_all, set_results)
-        uncond_ratios = rbind(uncond_ratios, data.frame(Set=i, C1_Prob=results[[i]][[1]], C2_Prob=results[[i]][[2]]))
+        uncond_ratios = rbind(uncond_ratios, data.frame(Set=i, C1_Prob=results[[i]][[glue("Set{i}_C1_Prob_uncond")]], C2_Prob=results[[i]][[glue("Set{i}_C2_Prob_uncond")]]))
       } else {
         message(glue("Set {i} for the unconditioned analysis was skipped. See EFM run log in {out_path}config_log_files/{date}/efm_output_{log_name}_{date}.txt for more information.<br/>"))
       }
@@ -95,7 +95,7 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
         if (file.exists(set_file)) {
           set_results = read.table(set_file, header=T, sep="\t")
           cond_finaltable_all = rbind(cond_finaltable_all, set_results)
-          cond_ratios = rbind(cond_ratios, data.frame(Set=i, C1_Prob=results[[i]][[C1_num]], C2_Prob=results[[i]][[C2_num]]))
+          cond_ratios = rbind(cond_ratios, data.frame(Set=i, C1_Prob=results[[i]][[glue("Set{i}_C1_Prob_cond_on_{cond_on}")]], C2_Prob=results[[i]][[glue("Set{i}_C2_Prob_cond_on_{cond_on}")]]))
         } else {
           message(glue("Set {i} for the conditioned analysis (conditioned on {cond_on}) was skipped. See EFM run log in {out_path}config_log_files/{date}/efm_output_{log_name}_{date}.txt for more information.<br/>"))
         }
