@@ -14,4 +14,5 @@ test_that("Running EFM", {
   expect_message(run_indiv_efm_set(1, "", outpath, popFreq, refData, "Sample01a", "", glue("{outpath}/output"), attable_a, TRUE, cond = NULL, uncond=TRUE), "Running unconditioned analysis for set 1, attempt #1")
   expect_message(run_indiv_efm_set(1, "", outpath, popFreq, refData, "Sample01a", "", glue("{outpath}/output"), attable_a, TRUE, cond = c("Ref1"), uncond=TRUE), "Running mixture deconvolution conditioned on Ref1")
   expect_message(run_indiv_efm_set(1, "", outpath, popFreq, refData, "Sample01a", "", glue("{outpath}/output"), attable_a, TRUE, cond = c("Ref1", "Ref2"), uncond=TRUE), "Running mixture deconvolution conditioned on Ref2")
+  expect_message(run_indiv_efm_set(1, "", outpath, popFreq, refData, "Sample01a", "", glue("{outpath}/output"), attable_a, TRUE, software="EFMmps", uncond=TRUE), "Running unconditioned analysis for set 1, attempt #1")
 })
