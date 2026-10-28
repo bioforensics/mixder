@@ -67,17 +67,19 @@ run_workflow = function(date, id, replicate_id, twofreqs, popFreq, refData, refs
   message(glue("Replicate Sample: {replicate_id}<br/>"))
     ## run EFM
   if (isTruthy(run_mixdeconv) | isTruthy(runancestry)) {
-    if (dynamicAT != 0) {
+    if (dynamicAT != 0 & software == "EFM") {
       message("creating AT table<br/>")
       attable = process_kinreport(id, replicate_id, kinpath, dynamicAT, staticAT)
+    } else if (software == "EFMmps") {
+      attable = c(staticAT, dynamicAT)
     } else {
       attable = staticAT
     }
     if (isTruthy(twofreqs)) {
-      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, runancestry, assay, cond, uncond=unconditioned, keep_bins, threads=threads, parallel=parallel)
-      efm_results_minor = run_efm(date, popFreq[[2]], refData, id, replicate_id, kinpath, out_path, attable, sets, runancestry, assay, cond, uncond=unconditioned, keep_bins, threads=threads, parallel=parallel)
+      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, runancestry, assay, cond, uncond=unconditioned, keep_bins, software=software, threads=threads, parallel=parallel)
+      efm_results_minor = run_efm(date, popFreq[[2]], refData, id, replicate_id, kinpath, out_path, attable, sets, runancestry, assay, cond, uncond=unconditioned, keep_bins, software=software, threads=threads, parallel=parallel)
     } else {
-      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, runancestry, assay, cond, uncond=unconditioned, keep_bins, threads=threads, parallel=parallel)
+      efm_results_major = run_efm(date, popFreq[[1]], refData, id, replicate_id, kinpath, out_path, attable, sets, runancestry, assay, cond, uncond=unconditioned, keep_bins, software=software, threads=threads, parallel=parallel)
       efm_results_minor = efm_results_major
     }
   }
