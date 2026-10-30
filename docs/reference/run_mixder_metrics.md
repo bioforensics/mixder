@@ -8,9 +8,10 @@ run MixDeR using the CLI; calculate validation metrics
 run_mixder_metrics(
   sample_manifest = NULL,
   sample = NULL,
-  replicate = NULL,
+  replicate = "",
   sample_reports = getwd(),
   output = "output",
+  assay = "kintelligence",
   twofreqs = FALSE,
   freq_both = "global_1000g",
   freq_major = NULL,
@@ -32,7 +33,9 @@ run_mixder_metrics(
   minor = NULL,
   filter_missing = FALSE,
   minor_contrib_threshold = FALSE,
-  keep_bins = TRUE
+  keep_bins = TRUE,
+  threads = 0,
+  parallel = FALSE
 )
 ```
 
@@ -162,3 +165,12 @@ run_mixder_metrics(
 - keep_bins:
 
   Use existing binned SNP data, if exists (default=TRUE)
+
+- threads:
+
+  number of threads for EFM (default=0)
+
+- parallel:
+
+  parallelize EFM sets, will detect number of cores on machine and use
+  all available (default=FALSE)

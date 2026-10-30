@@ -1,24 +1,14 @@
-# Load in frequency data
+# Load frequency data
 
-Load in frequency data
+Load frequency data
 
 ## Usage
 
 ``` r
-load_freq(
-  out_path,
-  twofreqs,
-  freq_both_input,
-  freq_major_input,
-  freq_minor_input
-)
+load_freq(twofreqs, freq_both_input, freq_major_input, freq_minor_input)
 ```
 
 ## Arguments
-
-- out_path:
-
-  outpath directory
 
 - twofreqs:
 

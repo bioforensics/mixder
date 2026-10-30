@@ -16,6 +16,7 @@ create_config(
   replicate,
   out_path,
   run_mixdeconv,
+  software,
   unconditioned,
   cond,
   method,
@@ -33,9 +34,11 @@ create_config(
   major,
   minor,
   filter_missing,
-  skipancestry,
+  runancestry,
   pcasnps,
-  pcagroups
+  pcagroups,
+  assay,
+  pos
 )
 }
 \arguments{
@@ -60,6 +63,8 @@ create_config(
 \item{out_path}{name of output folder}
 
 \item{run_mixdeconv}{if running mixture deconvolution}
+
+\item{software}{mixture deconvolution software to use (EFM or EFMmps)}
 
 \item{unconditioned}{if running an unconditioned deconvolution}
 
@@ -95,11 +100,15 @@ create_config(
 
 \item{filter_missing}{TRUE/FALSE whether to filter SNPs if second allele is missing (99)}
 
-\item{skipancestry}{TRUE/FALSE whether to skip ancestry prediction step}
+\item{runancestry}{TRUE/FALSE whether to skip ancestry prediction step}
 
 \item{pcasnps}{SNPs used for PCA (ancestry prediction)}
 
 \item{pcagroups}{Groups used for PCA (ancestry prediction), either Superpopulations or Subpopulations}
+
+\item{assay}{name of sequencing assay, either `kintelligence` or `custom`}
+
+\item{pos}{Path to file containing SNP positions of custom assay, required if assay==`custom`}
 }
 \description{
 Create configuration file containing all settings for a specific run

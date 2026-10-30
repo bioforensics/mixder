@@ -19,28 +19,32 @@
 #' @param out_path Output path
 #' @param attable AT table
 #' @param nsets Number of SNP sets
-#' @param ancestry if not skipping ancestry prediction
+#' @param ancestry TRUE/FALSE if to run ancestry
+#' @param assay assay used (kintelligence or custom)
 #' @param cond Sample IDs to condition on
 #' @param uncond TRUE/FALSE if performing unconditioned analysis
+#' @param software mixture deconvolution software to use (EFM or EFMmps)
 #' @param keep_bins To use existing SNP bins or create new bins (and files)
+#' @param threads number of threads used for EFM
+#' @param parallel run in parallel
 #'
 #' @export
 #'
 #' @import parallel
 #'
-run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, attable, nsets, ancestry, cond = NULL, uncond=TRUE, keep_bins=TRUE) {
-  if (!ancestry) {
+run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, attable, nsets, ancestry, assay, cond = NULL, uncond=TRUE, keep_bins=TRUE, software="EFM", threads=0, parallel=FALSE) {
+  if (ancestry) {
     new_path = glue("{out_path}/ancestry_prediction/")
   } else {
     new_path = out_path
   }
   if (replicate_id == "") {
-    create_evid_all(inpath, id, nsets, keep_bins)
+    create_evid_all(inpath, id, nsets, keep_bins, assay)
     write_path = glue("{new_path}Single/{id}")
     log_name = id
   } else {
-    create_evid_all(inpath, id, nsets, keep_bins)
-    create_evid_all(inpath, replicate_id, nsets, keep_bins)
+    create_evid_all(inpath, id, nsets, keep_bins, assay)
+    create_evid_all(inpath, replicate_id, nsets, keep_bins, assay)
     write_path = glue("{new_path}Replicates/{id}")
     log_name = glue("{id}_{replicate_id}")
   }
@@ -51,9 +55,20 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
   } else {
     ids = NULL
   }
-  results = list()
-  for (i in 1:nsets) {
-    results[[i]] = run_indiv_efm_set(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, cond=cond, uncond=uncond)
+  if (length(attable) > 2){
+    write.table(attable, glue("{out_path}config_log_files/{date}/AT_table.txt"), row.names=F, quote=F, col.names=T, sep="\t")
+  }
+  if (parallel) {
+    numCores = ifelse(detectCores()<nsets, detectCores(), nsets)
+    message(glue("Running EFM mixture deconvolution using {numCores} cores."))
+    cl = makeCluster(numCores, outfile=glue("{out_path}config_log_files/{date}/efm_output_{log_name}_{date}.txt"))
+    on.exit(stopCluster(cl))
+    results = parLapply(cl, 1:(nsets), run_indiv_efm_set, ids=ids, snps_input=snps_input, popFreq=popFreq, refData=refData, id=id, replicate_id=replicate_id, write_path=write_path, attable=attable, keep_bins=keep_bins, software=software, cond=cond, uncond=uncond, threads=threads)
+  } else {
+    results = list()
+    for (i in 1:nsets) {
+      results[[i]] = run_indiv_efm_set(i, ids, snps_input, popFreq, refData, id, replicate_id, write_path, attable, keep_bins, software=software, cond=cond, uncond=uncond, threads=threads)
+    }
   }
   uncond_ratios = data.frame()
   uncond_finaltable_all = data.frame()
@@ -63,7 +78,7 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
       if (file.exists(set_file)) {
         set_results = read.table(set_file, header=T, sep="\t")
         uncond_finaltable_all = rbind(uncond_finaltable_all, set_results)
-        uncond_ratios = rbind(uncond_ratios, data.frame(Set=i, C1_Prob=results[[i]][[1]], C2_Prob=results[[i]][[2]]))
+        uncond_ratios = rbind(uncond_ratios, data.frame(Set=i, C1_Prob=results[[i]][[glue("Set{i}_C1_Prob_uncond")]], C2_Prob=results[[i]][[glue("Set{i}_C2_Prob_uncond")]]))
       } else {
         message(glue("Set {i} for the unconditioned analysis was skipped. See EFM run log in {out_path}config_log_files/{date}/efm_output_{log_name}_{date}.txt for more information.<br/>"))
       }
@@ -72,8 +87,6 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
   }
   final_list = list(uncond_finaltable_all, uncond_ratios)
   if (!is.null(cond)) {
-    C1_num = 3
-    C2_num = 4
     for (cond_on in cond) {
       cond_ratios = data.frame()
       cond_finaltable_all = data.frame()
@@ -82,15 +95,13 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
         if (file.exists(set_file)) {
           set_results = read.table(set_file, header=T, sep="\t")
           cond_finaltable_all = rbind(cond_finaltable_all, set_results)
-          cond_ratios = rbind(cond_ratios, data.frame(Set=i, C1_Prob=results[[i]][[C1_num]], C2_Prob=results[[i]][[C2_num]]))
+          cond_ratios = rbind(cond_ratios, data.frame(Set=i, C1_Prob=results[[i]][[glue("Set{i}_C1_Prob_cond_on_{cond_on}")]], C2_Prob=results[[i]][[glue("Set{i}_C2_Prob_cond_on_{cond_on}")]]))
         } else {
           message(glue("Set {i} for the conditioned analysis (conditioned on {cond_on}) was skipped. See EFM run log in {out_path}config_log_files/{date}/efm_output_{log_name}_{date}.txt for more information.<br/>"))
         }
       }
       check_ratios(cond_ratios, uncond=FALSE)
       final_list = c(final_list, list(cond_finaltable_all, cond_ratios))
-      C1_num = C1_num + 2
-      C2_num = C2_num + 2
     }
   }
   return(final_list)

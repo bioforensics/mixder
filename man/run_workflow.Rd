@@ -9,13 +9,12 @@ run_workflow(
   id,
   replicate_id,
   twofreqs,
-  freq_both,
-  freq_major,
-  freq_minor,
+  popFreq,
   refData,
   refs,
-  output,
+  out_path,
   run_mixdeconv,
+  software,
   unconditioned,
   cond,
   method,
@@ -35,9 +34,13 @@ run_workflow(
   minor_threshold,
   keep_bins,
   filter_missing,
-  skipancestry,
+  runancestry,
   ancestrysnps,
-  pcagroups
+  pcagroups,
+  assay,
+  positions,
+  threads = 0,
+  parallel = FALSE
 )
 }
 \arguments{
@@ -49,19 +52,15 @@ run_workflow(
 
 \item{twofreqs}{TRUE if using separate AF data for major and minor contributors}
 
-\item{freq_both}{Path (or name) of allele frequency data if using same data for both}
-
-\item{freq_major}{Path (or name) of allele frequency data for major contributor}
-
-\item{freq_minor}{Path (or name) of allele frequency data for minor contributor}
+\item{popFreq}{List of properly formatted allele frequency data}
 
 \item{refData}{Reference data (if available)}
 
 \item{refs}{Path of reference genotype(s) file}
 
-\item{output}{Name of output directory}
-
 \item{run_mixdeconv}{TRUE if running EFM mixture deconvolution}
+
+\item{software}{mixture deconvolution software to use (EFM or EFMmps)}
 
 \item{unconditioned}{TRUE if running unconditioned mixture deconvolution}
 
@@ -101,11 +100,19 @@ run_workflow(
 
 \item{filter_missing}{TRUE/FALSE whether to filter SNPs with either allele missing}
 
-\item{skipancestry}{TRUE/FALSE whether to skip ancestry prediction}
+\item{runancestry}{TRUE/FALSE whether to skip ancestry prediction}
 
 \item{ancestrysnps}{SNPs to use for ancestry prediction (either ancestry only or all SNPs)}
 
 \item{pcagroups}{How to color PCA plots (superpopulations and/or subpopulations)}
+
+\item{assay}{assay used (kintelligence or custom)}
+
+\item{positions}{SNP chromosomal positions}
+
+\item{threads}{number of threads to use for EFM}
+
+\item{output}{Name of output directory}
 }
 \description{
 Runs workflow

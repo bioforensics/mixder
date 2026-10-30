@@ -10,12 +10,10 @@ run_workflow(
   id,
   replicate_id,
   twofreqs,
-  freq_both,
-  freq_major,
-  freq_minor,
+  popFreq,
   refData,
   refs,
-  output,
+  out_path,
   run_mixdeconv,
   unconditioned,
   cond,
@@ -38,7 +36,11 @@ run_workflow(
   filter_missing,
   skipancestry,
   ancestrysnps,
-  pcagroups
+  pcagroups,
+  assay,
+  positions,
+  threads = 0,
+  parallel = FALSE
 )
 ```
 
@@ -60,17 +62,9 @@ run_workflow(
 
   TRUE if using separate AF data for major and minor contributors
 
-- freq_both:
+- popFreq:
 
-  Path (or name) of allele frequency data if using same data for both
-
-- freq_major:
-
-  Path (or name) of allele frequency data for major contributor
-
-- freq_minor:
-
-  Path (or name) of allele frequency data for minor contributor
+  List of properly formatted allele frequency data
 
 - refData:
 
@@ -79,10 +73,6 @@ run_workflow(
 - refs:
 
   Path of reference genotype(s) file
-
-- output:
-
-  Name of output directory
 
 - run_mixdeconv:
 
@@ -179,3 +169,19 @@ run_workflow(
 - pcagroups:
 
   How to color PCA plots (superpopulations and/or subpopulations)
+
+- assay:
+
+  assay used (kintelligence or custom)
+
+- positions:
+
+  SNP chromosomal positions
+
+- threads:
+
+  number of threads to use for EFM
+
+- output:
+
+  Name of output directory

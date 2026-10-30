@@ -14,8 +14,11 @@ run_indiv_efm_set(
   replicate_id,
   write_path,
   attable,
+  keep_bins,
+  software = "EFM",
   cond = NULL,
-  uncond = TRUE
+  uncond = TRUE,
+  threads = 0
 )
 }
 \arguments{
@@ -37,9 +40,15 @@ run_indiv_efm_set(
 
 \item{attable}{AT table}
 
+\item{keep_bins}{To use existing SNP bins or create new bins (and files)}
+
+\item{software}{mixture deconvolution software to use (EFM or EFMmps)}
+
 \item{cond}{Condition on specific references}
 
 \item{uncond}{TRUE/FALSE if performing unconditioned analyses}
+
+\item{threads}{number of threads to use for EFM}
 }
 \value{
 list of mixture ratios for each analysis
