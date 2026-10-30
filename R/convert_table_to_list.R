@@ -41,6 +41,7 @@ convert_table_to_list = function(table) {
       outL[[samplename]][[loc]]$adata = c(nestedlist[[samplename]][[loc_lower]][[A_ind[[1]]]], nestedlist[[samplename]][[loc_lower]][[A_ind[[2]]]])
       if(length(H_ind)>0) {
         outL[[samplename]][[loc]]$hdata = c(nestedlist[[samplename]][[loc_lower]][[H_ind[[1]]]], nestedlist[[samplename]][[loc_lower]][[H_ind[[2]]]])
+      }
     }
   }
   return(outL)
