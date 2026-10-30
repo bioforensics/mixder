@@ -6,7 +6,7 @@ test_that("Run MixDeR Metrics", {
   file.copy(test_path("testdata", "EFM_references.csv"), refdir)
   outpath_mps = paste0(tmpdir, "/snp_sets/output_mps/Single/Sample01a")
   run_mixder_metrics(sample="Sample01a", sample_reports=tmpdir, software="EFMmps", output="output_mps", refpath=refdir, major="Ref1", minor="Ref2", parallel=T)
-  exp_metrics = read.csv(test_path("testdata", "Ref1_uncond_metrics_table.tsv"), header=T, sep="\t")
+  exp_metrics = read.csv(test_path("testdata", "Ref1_efmmps_uncond_metrics_table.tsv"), header=T, sep="\t")
   obs_metrics = read.csv(glue("{outpath_mps}/unconditioned/Ref1_metrics_table.tsv"), header=T, sep="\t")
   expect_equal(exp_metrics, obs_metrics)
   outpath = paste0(tempdir(), "/snp_sets/output/Single/Sample01a/")
