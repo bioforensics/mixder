@@ -52,11 +52,11 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
       samplesSNP = EFMmps::evid2SNPformat(evidData)
     }
     ##create AT vector
-    if (length(attable) == 1) {
-      sample_at = attable
-    } else {
+    if (typeof(attable) == "list") {
       message(glue("Creating AT Table for sample {sample}<br/>"))
       sample_at = create_at(evidData, sample, replicate, attable)
+    } else if (software == "EFM") {
+      sample_at = attable
     }
     ratio_row = list()
     ratio_row[glue("Set{i}_C1_Prob_uncond")] = NA
@@ -83,7 +83,7 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
           repeat_num = repeat_num + 1
           if (repeat_num == 10) break
         } else {
-          uncond_results = EFMmps::calcMLE(2, samplesSNP, popFreqSNP, AT=sample_at, BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0, maxThreads=threads, SNPmodule=TRUE)
+          uncond_results = EFMmps::calcMLE(2, samplesSNP, popFreqSNP, AT=attable[1], dynThresh=attable[2], BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0, maxThreads=threads, SNPmodule=TRUE)
           uncond_finaltable = EFMmps::deconvolve(uncond_results)
           formatted_results = process_efmmps_list(uncond_finaltable)
           write.table(formatted_results$al, glue("{write_path}/unconditioned/{id}_set{i}_uncond.tsv"), quote=F, row.names=F, sep="\t")
@@ -121,7 +121,7 @@ run_indiv_efm_set = function(i, ids, snps_input, popFreq, refData, id, replicate
           write.table(final_condresults[["table4"]], glue("{write_path}/conditioned/cond_on_{cond_on}/unknown_cond_on_{cond_on}_set{i}.tsv"), quote=F, row.names=F, sep="\t")
         } else {
           refDataSNP = EFMmps::ref2SNPformat(refData)
-          condresults = EFMmps::calcMLE(2, samplesSNP, popFreqSNP, refDataSNP, AT=sample_at, condOrder=replace(cond_vector, list_num, 1), BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0, maxThreads=threads, SNPmodule=TRUE)
+          condresults = EFMmps::calcMLE(2, samplesSNP, popFreqSNP, refDataSNP, AT=attable[1], dynThresh=attable[2], condOrder=replace(cond_vector, list_num, 1), BWS=FALSE, FWS=FALSE, DEG=FALSE, steptol=0.001, pC=0.01, lambda=0.05, fst=0.01, resttol=0, maxThreads=threads, SNPmodule=TRUE)
           final_condresults = EFMmps::deconvolve(condresults)
           formatted_results = process_efmmps_list(final_condresults)
           write.table(formatted_results$al, glue("{write_path}/conditioned/cond_on_{cond_on}/unknown_cond_on_{cond_on}_set{i}.tsv"), quote=F, row.names=F, sep="\t")

@@ -55,13 +55,15 @@ run_efm = function(date, popFreq, refData, id, replicate_id, inpath, out_path, a
   } else {
     ids = NULL
   }
-  write.table(attable, glue("{out_path}config_log_files/{date}/AT_table.txt"), row.names=F, quote=F, col.names=T, sep="\t")
+  if (length(attable) > 2){
+    write.table(attable, glue("{out_path}config_log_files/{date}/AT_table.txt"), row.names=F, quote=F, col.names=T, sep="\t")
+  }
   if (parallel) {
     numCores = ifelse(detectCores()<nsets, detectCores(), nsets)
     message(glue("Running EFM mixture deconvolution using {numCores} cores."))
     cl = makeCluster(numCores, outfile=glue("{out_path}config_log_files/{date}/efm_output_{log_name}_{date}.txt"))
+    on.exit(stopCluster(cl))
     results = parLapply(cl, 1:(nsets), run_indiv_efm_set, ids=ids, snps_input=snps_input, popFreq=popFreq, refData=refData, id=id, replicate_id=replicate_id, write_path=write_path, attable=attable, keep_bins=keep_bins, software=software, cond=cond, uncond=uncond, threads=threads)
-    stopCluster(cl)
   } else {
     results = list()
     for (i in 1:nsets) {

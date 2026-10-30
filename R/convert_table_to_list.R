@@ -17,6 +17,7 @@
 #'
 #' @importFrom data.table fread
 #' @import rrapply
+#'
 convert_table_to_list = function(table) {
   #table=data.frame(fread(input, header=T))
   outL=rrapply(table[,c(1:4)], how="unmelt")
@@ -36,28 +37,10 @@ convert_table_to_list = function(table) {
     locs = unique(toupper(filt_table[,lind])) #locus names: Use uniques and Convert to upper case
     for(loc in locs) { #for each locus
       loc_lower=ifelse(loc=="N29INSA", "N29insA", ifelse(loc=="RS201326893_Y152OCH", "rs201326893_Y152OCH", tolower(loc)))
-      if (length(A_ind) == 2) {
-        outL[[samplename]][[loc]]$adata = c(nestedlist[[samplename]][[loc_lower]][[A_ind[[1]]]], nestedlist[[samplename]][[loc_lower]][[A_ind[[2]]]])
-        if(length(H_ind)>0) {
-          outL[[samplename]][[loc]]$hdata = c(nestedlist[[samplename]][[loc_lower]][[H_ind[[1]]]], nestedlist[[samplename]][[loc_lower]][[H_ind[[2]]]])
-        }
-      } else if (length(A_ind) == 3) {
-        if (!is.na(nestedlist[[samplename]][[loc_lower]][[A_ind[[3]]]]))  {
-          outL[[samplename]][[loc]]$adata = c(nestedlist[[samplename]][[loc_lower]][[A_ind[[1]]]], nestedlist[[samplename]][[loc_lower]][[A_ind[[2]]]], nestedlist[[samplename]][[loc_lower]][[A_ind[[3]]]])
-          outL[[samplename]][[loc]]$hdata = c(nestedlist[[samplename]][[loc_lower]][[H_ind[[1]]]], nestedlist[[samplename]][[loc_lower]][[H_ind[[2]]]], nestedlist[[samplename]][[loc_lower]][[H_ind[[3]]]])
-        } else {
-          outL[[samplename]][[loc]]$adata = c(nestedlist[[samplename]][[loc_lower]][[A_ind[[1]]]], nestedlist[[samplename]][[loc_lower]][[A_ind[[2]]]])
-          outL[[samplename]][[loc]]$hdata = c(nestedlist[[samplename]][[loc_lower]][[H_ind[[1]]]], nestedlist[[samplename]][[loc_lower]][[H_ind[[2]]]])
-        }
-      } else if (length(A_ind) == 4) {
-        if (!is.na(nestedlist[[samplename]][[loc_lower]][[A_ind[[4]]]])) {
-          outL[[samplename]][[loc]]$adata = c(nestedlist[[samplename]][[loc_lower]][[A_ind[[1]]]], nestedlist[[samplename]][[loc_lower]][[A_ind[[2]]]], nestedlist[[samplename]][[loc_lower]][[A_ind[[3]]]], nestedlist[[samplename]][[loc_lower]][[A_ind[[4]]]])
-          outL[[samplename]][[loc]]$hdata = c(nestedlist[[samplename]][[loc_lower]][[H_ind[[1]]]], nestedlist[[samplename]][[loc_lower]][[H_ind[[2]]]], nestedlist[[samplename]][[loc_lower]][[H_ind[[3]]]], nestedlist[[samplename]][[loc_lower]][[H_ind[[4]]]])
-        } else {
-          outL[[samplename]][[loc]]$adata = c(nestedlist[[samplename]][[loc_lower]][[A_ind[[1]]]], nestedlist[[samplename]][[loc_lower]][[A_ind[[2]]]], nestedlist[[samplename]][[loc_lower]][[A_ind[[3]]]])
-          outL[[samplename]][[loc]]$hdata = c(nestedlist[[samplename]][[loc_lower]][[H_ind[[1]]]], nestedlist[[samplename]][[loc_lower]][[H_ind[[2]]]], nestedlist[[samplename]][[loc_lower]][[H_ind[[3]]]])
-        }
-      }
+      #if (length(A_ind) == 2) {
+      outL[[samplename]][[loc]]$adata = c(nestedlist[[samplename]][[loc_lower]][[A_ind[[1]]]], nestedlist[[samplename]][[loc_lower]][[A_ind[[2]]]])
+      if(length(H_ind)>0) {
+        outL[[samplename]][[loc]]$hdata = c(nestedlist[[samplename]][[loc_lower]][[H_ind[[1]]]], nestedlist[[samplename]][[loc_lower]][[H_ind[[2]]]])
     }
   }
   return(outL)
